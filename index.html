@@ -2868,6 +2868,25 @@ body {
 @media(max-width:768px){#view-usuarios{width:100vw!important}}
 @media(max-width:650px){.user-admin-stats{grid-template-columns:1fr 1fr}.user-admin-tools{flex-direction:column}.user-admin-tools select{height:38px}.user-editor-grid{grid-template-columns:1fr}.user-security-note{align-items:flex-start}.password-actions{align-items:flex-start;flex-direction:column}}
 
+/* Publicidad y adquisición comercial */
+#view-publicidad{width:calc(100vw - var(--sidebar-w))!important;max-width:none!important;margin:0!important;box-sizing:border-box}.pub-page-header{margin-bottom:15px}.pub-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:13px}.pub-kpi{display:flex;align-items:center;gap:12px;min-height:92px;padding:15px;border:1px solid rgba(45,81,84,.25);border-radius:14px;background:linear-gradient(145deg,#e5ece9,#d4e1dd);box-shadow:0 9px 23px rgba(12,42,46,.10)}.pub-kpi-icon{display:grid;place-items:center;width:40px;height:40px;padding:10px;border-radius:11px;background:#315d62;color:#d3e451}.pub-kpi-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pub-kpi>div{display:flex;min-width:0;flex-direction:column}.pub-kpi small{color:#557174;font-size:7px;font-weight:850;letter-spacing:.7px;text-transform:uppercase}.pub-kpi b{margin:4px 0;color:#173b40;font:800 22px 'Syne';line-height:1}.pub-kpi em{overflow:hidden;color:#687f80;font-size:7px;font-style:normal;text-overflow:ellipsis;white-space:nowrap}.pub-kpi.blue{border-top:3px solid #668da1}.pub-kpi.teal{border-top:3px solid #438b79}.pub-kpi.amber{border-top:3px solid #be8b42}.pub-kpi.green{border-top:3px solid #76a046}
+.pub-acquisition-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.75fr);align-items:start;gap:13px;margin-bottom:13px}.pub-panel{overflow:hidden;border:1px solid rgba(45,80,83,.25);border-radius:15px;background:linear-gradient(145deg,#dfe9e5,#d1dfda);box-shadow:0 10px 27px rgba(11,40,44,.10)}.pub-panel>header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:71px;padding:13px 16px;border-bottom:1px solid rgba(44,80,82,.16);background:rgba(235,241,238,.58)}.pub-panel>header>div{display:flex;flex-direction:column;gap:3px}.pub-panel header small{color:#688082;font-size:6px;font-weight:850;letter-spacing:1px}.pub-panel header b{color:#1c4448;font:800 12px 'Syne'}.pub-panel header span{color:#6d8382;font-size:7px}.pub-panel header>em{padding:5px 8px;border-radius:999px;background:#d3e0dc;color:#4e706d;font-size:7px;font-style:normal;font-weight:800;text-transform:uppercase}
+.pub-source-list{display:flex;flex-direction:column;padding:7px 13px 12px}.pub-source-list>button{display:grid;grid-template-columns:28px minmax(120px,.7fr) minmax(150px,1.5fr) 40px 76px;align-items:center;gap:10px;width:100%;min-height:48px;padding:7px 4px;border:0;border-bottom:1px solid rgba(44,79,81,.10);background:transparent;text-align:left;cursor:pointer}.pub-source-list>button:last-child{border-bottom:0}.pub-source-list>button:hover{padding-right:8px;padding-left:8px;border-radius:9px;background:rgba(238,244,241,.70)}.pub-source-rank{color:#78908e;font:750 7px 'Syne'}.pub-source-name{display:flex;min-width:0;flex-direction:column;gap:3px}.pub-source-name b{overflow:hidden;color:#234a4d;font-size:9px;text-overflow:ellipsis;white-space:nowrap}.pub-source-name small{color:#728784;font-size:6px}.pub-source-track{height:8px;overflow:hidden;border-radius:999px;background:#afc1bf}.pub-source-track i{display:block;height:100%;border-radius:999px;background:var(--bar)}.pub-source-list strong{color:#1b4145;font:800 13px 'Syne';text-align:right}.pub-source-list>button>em{color:#607c79;font-size:7px;font-style:normal;text-align:right}
+.pub-insight-list{display:grid;grid-template-columns:1fr;padding:9px 13px 12px}.pub-insight{display:flex;align-items:center;gap:10px;min-height:61px;padding:9px;border-bottom:1px solid rgba(43,80,81,.10)}.pub-insight:last-child{border-bottom:0}.pub-insight>i{width:7px;height:37px;border-radius:8px;background:#668b96}.pub-insight.conversion>i{background:#468971}.pub-insight.warning>i{background:#bd8840}.pub-insight.quality>i{background:#91aa36}.pub-insight>span{display:flex;min-width:0;flex-direction:column}.pub-insight small{color:#6e8382;font-size:6px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}.pub-insight b{margin:3px 0;overflow:hidden;color:#20484b;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.pub-insight em{overflow:hidden;color:#708684;font-size:7px;font-style:normal;text-overflow:ellipsis;white-space:nowrap}
+.pub-performance-panel{margin-bottom:13px}.pub-table td{vertical-align:middle}.pub-table tbody tr{cursor:pointer}.pub-table td:first-child{display:flex;align-items:center;gap:8px}.pub-source-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--dot);box-shadow:0 0 0 3px color-mix(in srgb,var(--dot) 18%,transparent)}.pub-table td>b{color:#21484b}.pub-quality{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:7px;font-weight:800}.pub-quality.good{background:#d0e4da;color:#38735d}.pub-quality.mid{background:#e5dfce;color:#826530}.pub-quality.low{background:#e7d7d5;color:#89514e}
+.pub-loss-panel{margin-bottom:8px}.pub-loss-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px;padding:9px 16px 13px}.pub-loss-grid>div{display:grid;grid-template-columns:24px minmax(0,1fr) 25px;align-items:center;gap:9px;min-height:46px;border-bottom:1px solid rgba(45,80,82,.10)}.pub-loss-grid>div>span{color:#7a8e8c;font:750 7px 'Syne'}.pub-loss-grid section{display:flex;min-width:0;flex-direction:column;gap:6px}.pub-loss-grid section>b{overflow:hidden;color:#33595b;font-size:8px;font-weight:650;text-overflow:ellipsis;white-space:nowrap}.pub-loss-grid section>i{height:6px;overflow:hidden;border-radius:99px;background:#b4c5c2}.pub-loss-grid section>i>em{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#a95859,#ca6e6b)}.pub-loss-grid>div>strong{color:#21484a;font-size:9px;text-align:right}
+@media(max-width:1050px){.pub-kpi-grid{grid-template-columns:repeat(2,1fr)}.pub-acquisition-grid{grid-template-columns:1fr}.pub-insight-list{grid-template-columns:repeat(2,1fr);gap:0 12px}}
+@media(max-width:768px){#view-publicidad{width:100vw!important}.pub-source-list>button{grid-template-columns:24px minmax(105px,1fr) minmax(120px,1.5fr) 35px}.pub-source-list>button>em{display:none}.pub-loss-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.pub-kpi-grid{grid-template-columns:1fr}.pub-insight-list{grid-template-columns:1fr}.pub-source-list{overflow:auto}.pub-source-list>button{min-width:570px}.pub-panel>header{align-items:flex-start}.pub-panel header>em{display:none}}
+
+/* Cotizacion comercial: vista previa y marca */
+.cot-preview-dialog{width:min(1040px,97vw);border-color:rgba(207,229,222,.25);background:#d8e3df;box-shadow:0 34px 100px rgba(4,24,29,.58)}
+.cot-preview-toolbar{min-height:70px;padding:13px 18px;border-bottom:2px solid rgba(198,224,61,.75);background:linear-gradient(120deg,#1d5960 0%,#184850 70%,#12363f 100%)}
+.cot-preview-toolbar strong{font:800 14px 'Syne';letter-spacing:-.2px}.cot-preview-toolbar span{color:#bdd0d0;font-size:8px}.cot-print-btn{min-height:38px;padding:8px 14px;border-color:#c8e151;border-radius:10px;background:linear-gradient(145deg,#bfd83f,#a8c42e);color:#183e40;box-shadow:0 6px 16px rgba(9,41,43,.20)}.cot-print-btn:hover{background:linear-gradient(145deg,#cce54a,#b4cf35);transform:translateY(-1px)}.cot-preview-close{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.07)}
+.cot-preview-body{padding:22px;background:radial-gradient(circle at 100% 0,rgba(197,224,60,.10),transparent 20rem),linear-gradient(145deg,#c9d7d3,#b9cbc7)}
+#cot-preview{width:min(820px,100%);border:1px solid rgba(31,77,78,.12);border-radius:12px;box-shadow:0 18px 45px rgba(8,38,42,.27)}
+@media(max-width:640px){.cot-preview-dialog{width:100%}.cot-preview-toolbar{min-height:58px}.cot-preview-body{padding:8px}#cot-preview{min-width:700px}}
+
 </style>
 </head>
 <body>
@@ -3091,15 +3110,15 @@ body {
           <h1 class="page-title">Publicidad & Fuentes</h1>
         </div>
       </div>
-      <div class="kpi-grid" id="pub-kpi"></div>
+      <div class="kpi-grid" id="legacy-pub-kpi"></div>
       <div class="charts-row" style="margin-top:24px">
         <div class="chart-card" style="flex:2">
           <div class="chart-header"><div class="chart-title">Leads por fuente — detalle</div></div>
-          <div id="pub-fuentes-detail" class="bar-chart big"></div>
+          <div id="legacy-pub-fuentes-detail" class="bar-chart big"></div>
         </div>
         <div class="chart-card" style="flex:1">
           <div class="chart-header"><div class="chart-title">Motivos de pérdida</div></div>
-          <div id="pub-motivos" class="bar-chart big"></div>
+          <div id="legacy-pub-motivos" class="bar-chart big"></div>
         </div>
       </div>
     </div>
@@ -3439,7 +3458,7 @@ function digits(value){return String(value||'').replace(/\D/g,'');}
 function csvCell(value){let s=String(value??'');if(/^[=+\-@]/.test(s))s="'"+s;return`"${s.replace(/"/g,'""')}"`;}
 function updateUrgentBadge(){const c=allLeads.filter(l=>calcAlerta(l)==='URGENTE').length;document.querySelectorAll('[data-urgent-badge]').forEach(b=>{b.style.display=c>0?'inline':'none';b.textContent=c;});const a=allLeads.filter(l=>['URGENTE','VENCIDO'].includes(calcAlerta(l))||(!l.asesor&&!['Cierre ganado','Perdido'].includes(l.estado))).length;document.querySelectorAll('[data-crm-alert-badge]').forEach(b=>{b.style.display=a>0?'inline':'none';b.textContent=a>99?'99+':a;});}
 function toast(msg,type='success'){const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
-function getAsesores(){return (_usersCache||[]).filter(u=>['asesor','coordinadora','jefe_ventas'].includes(u.role)).map(u=>u.name);}
+function getAsesores(){return [...new Set((_usersCache||[]).filter(u=>['asesor','coordinadora','jefe_ventas'].includes(u.role)).map(u=>u.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));}
 function gf(id){return document.getElementById(id)?.value?.trim()||'';}
 
 // DASHBOARD
@@ -3512,7 +3531,7 @@ function getFilteredLeads(){
   const alerta=document.getElementById('filter-alerta')?.value||'';
   const asesor=document.getElementById('filter-asesor')?.value||'';
   return allLeads.filter(l=>{
-    if(q&&!`${l.nombre} ${l.telefono}`.toLowerCase().includes(q))return false;
+    if(q&&!`${l.nombre} ${l.telefono} ${l.fuente} ${l.ciudad} ${l.asesor}`.toLowerCase().includes(q))return false;
     if(est&&l.estado!==est)return false;
     if(alerta&&!calcAlerta(l).includes(alerta))return false;
     if(asesor&&l.asesor!==asesor)return false;
@@ -4052,7 +4071,7 @@ function renderVisitas(){
   const allScoped=(currentUser.role==='asesor')?allLeads.filter(l=>(l.visita_agendada==='Sí'||l.fecha_visita)&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='Sí'||l.fecha_visita);
   const rows=visitScopedRows(),wrap=document.getElementById('visitas-wrap');if(!wrap)return;
   const pending=allScoped.filter(l=>visitStatusClass(l)==='pending').length,confirmed=allScoped.filter(l=>visitStatusClass(l)==='confirmed').length,done=allScoped.filter(l=>visitStatusClass(l)==='done').length,missed=allScoped.filter(l=>visitStatusClass(l)==='missed').length;
-  const advisors=[...new Set(allScoped.map(l=>l.asesor_visita||l.asesor).filter(Boolean))].sort();
+  const advisors=getAsesores();
   wrap.innerHTML=`<section class="visit-command"><div class="visit-command-copy"><span>AGENDA COMERCIAL</span><b>Control de visitas</b><small>Organiza, confirma y registra cada encuentro con el cliente.</small></div><div class="visit-view-switch"><button class="${visitViewMode==='week'?'active':''}" onclick="visitSetMode('week')">Semana</button><button class="${visitViewMode==='month'?'active':''}" onclick="visitSetMode('month')">Mes</button><button class="${visitViewMode==='list'?'active':''}" onclick="visitSetMode('list')">Lista</button></div></section>
   <div class="visit-summary"><button onclick="visitStatusFilter='pending';renderVisitas()"><i class="pending"></i><span><b>${pending}</b><small>Pendientes</small></span></button><button onclick="visitStatusFilter='';renderVisitas()"><i class="confirmed"></i><span><b>${confirmed}</b><small>Confirmadas</small></span></button><button onclick="visitStatusFilter='done';renderVisitas()"><i class="done"></i><span><b>${done}</b><small>Realizadas</small></span></button><button onclick="visitStatusFilter='missed';renderVisitas()"><i class="missed"></i><span><b>${missed}</b><small>No asistieron</small></span></button></div>
   <div class="visit-toolbar"><div><label>Asesor de visita</label><select id="visit-filter-advisor" onchange="visitApplyFilters()"><option value="">Todos los asesores</option>${advisors.map(a=>`<option ${a===visitAdvisorFilter?'selected':''}>${esc(a)}</option>`).join('')}</select></div><div><label>Estado</label><select id="visit-filter-status" onchange="visitApplyFilters()"><option value="" ${!visitStatusFilter?'selected':''}>Todos</option><option value="pending" ${visitStatusFilter==='pending'?'selected':''}>Pendientes y confirmadas</option><option value="done" ${visitStatusFilter==='done'?'selected':''}>Realizadas</option><option value="missed" ${visitStatusFilter==='missed'?'selected':''}>No asistieron</option></select></div><button class="btn-primary" onclick="showView('nuevo-lead')">+ Programar visita</button></div>
@@ -4086,7 +4105,7 @@ async function renderUsuarios(){
   if(currentUser.role!=='gerente')return;
   const root=document.getElementById('view-usuarios');if(!root)return;
   root.innerHTML=`<div class="page-header user-admin-header"><div><div class="page-eyebrow">CONTROL DE ACCESOS</div><h1 class="page-title">Usuarios y permisos</h1><p class="page-subtitle">Administra las cuentas que pueden ingresar al CRM.</p></div><button class="btn-primary" onclick="userOpenCreate()">+ Nuevo usuario</button></div><div class="user-loading"><span></span>Consultando usuarios autorizados...</div>`;
-  try{const result=await adminUserRequest({action:'list'});_adminUsersCache=result.users||[];renderUserAdminContent()}
+  try{const result=await adminUserRequest({action:'list'});_adminUsersCache=result.users||[];_usersCache=_adminUsersCache.filter(u=>u.active).map(u=>({user:u.username,role:u.role,name:u.name,id:u.id}));renderUserAdminContent()}
   catch(error){root.innerHTML+=`<div class="user-api-error"><b>No se pudo abrir el administrador de usuarios</b><span>${esc(error.message)}</span><small>Verifica que la función <code>/api/admin-users</code> esté publicada y que las tres variables de Supabase estén configuradas en Vercel.</small><button class="btn-ghost" onclick="renderUsuarios()">Reintentar</button></div>`}
 }
 function renderUserAdminContent(){
@@ -4118,6 +4137,25 @@ async function userCreate(){const name=document.getElementById('nu-name').value.
 async function userSaveEdit(id){const name=document.getElementById('eu-name').value.trim(),user=document.getElementById('eu-user').value.trim().toLowerCase(),role=document.getElementById('eu-role')?.value||'',password=document.getElementById('eu-pass').value,button=document.getElementById('eu-save');if(!name||!/^[a-z0-9._-]{3,40}$/.test(user)||(password&&password.length<8)){userFormError('eu','Revisa el nombre, usuario y la contraseña (mínimo 8 caracteres).');return}button.disabled=true;button.textContent='Guardando...';try{await adminUserRequest({action:'update',id,updates:{name,user,role,password}});crmAudit('Usuario actualizado',name,id);toast('Cambios guardados');_usersCache=null;await renderUsuarios()}catch(error){userFormError('eu',error.message);button.disabled=false;button.textContent='Guardar cambios'}}
 function userConfirmAction(id,action){const u=_adminUsersCache.find(x=>x.id===id);if(!u)return;document.getElementById('user-confirm-modal')?.remove();const isDelete=action==='delete',title=isDelete?'Eliminar usuario definitivamente':action==='deactivate'?'Suspender acceso':'Reactivar acceso',copy=isDelete?'La cuenta y sus credenciales se eliminarán. Los clientes asignados conservarán sus datos, pero quedarán sin responsable.':action==='deactivate'?'La persona no podrá iniciar sesión hasta que vuelvas a activarla.':'La persona recuperará el acceso al CRM con sus credenciales actuales.';const modal=document.createElement('div');modal.id='user-confirm-modal';modal.className='user-confirm-modal';modal.innerHTML=`<div><span class="confirm-icon ${isDelete?'danger':''}">${isDelete?'!':'✓'}</span><b>${title}</b><strong>${esc(u.name)}</strong><p>${copy}</p><footer><button class="btn-ghost" onclick="document.getElementById('user-confirm-modal').remove()">Cancelar</button><button class="${isDelete?'btn-danger':'btn-primary'}" onclick="userRunAction('${id}','${action}',this)">${isDelete?'Eliminar definitivamente':action==='deactivate'?'Suspender':'Activar usuario'}</button></footer></div>`;document.body.appendChild(modal)}
 async function userRunAction(id,action,button){button.disabled=true;button.textContent='Procesando...';const u=_adminUsersCache.find(x=>x.id===id);try{await adminUserRequest({action,id});crmAudit(action==='delete'?'Usuario eliminado':action==='deactivate'?'Usuario suspendido':'Usuario activado',u?.name||'Usuario',id);document.getElementById('user-confirm-modal')?.remove();_usersCache=null;toast(action==='delete'?'Usuario eliminado':action==='deactivate'?'Acceso suspendido':'Usuario activado');await renderUsuarios()}catch(error){button.disabled=false;button.textContent='Reintentar';toast(error.message,'error')}}
+
+// PUBLICIDAD PRO: adquisición, calidad y conversión por canal
+function renderPublicidad(){
+  const root=document.getElementById('view-publicidad');if(!root)return;
+  const total=allLeads.length,contacted=allLeads.filter(l=>l.contesto==='Sí').length,visits=allLeads.filter(l=>l.asistio==='Sí').length,won=allLeads.filter(l=>l.estado==='Cierre ganado').length,lost=allLeads.filter(l=>l.estado==='Perdido'||l.motivo_perdida).length;
+  const map={};allLeads.forEach(l=>{const name=l.fuente||'Sin fuente';if(!map[name])map[name]={name,total:0,contacted:0,visits:0,won:0,lost:0};const x=map[name];x.total++;if(l.contesto==='Sí')x.contacted++;if(l.asistio==='Sí')x.visits++;if(l.estado==='Cierre ganado')x.won++;if(l.estado==='Perdido'||l.motivo_perdida)x.lost++});
+  const sources=Object.values(map).sort((a,b)=>b.total-a.total),max=Math.max(...sources.map(x=>x.total),1),top=sources[0],best=[...sources].filter(x=>x.total>=3).sort((a,b)=>pct(b.won,b.total)-pct(a.won,a.total)||b.total-a.total)[0],uncontacted=total-contacted,noSource=map['Sin fuente']?.total||0;
+  const reasons={};allLeads.filter(l=>l.motivo_perdida).forEach(l=>{const k=l.motivo_perdida.trim()||'Sin especificar';reasons[k]=(reasons[k]||0)+1});const reasonRows=Object.entries(reasons).sort((a,b)=>b[1]-a[1]),maxReason=Math.max(...reasonRows.map(x=>x[1]),1);
+  root.innerHTML=`<div class="page-header pub-page-header"><div><div class="page-eyebrow">ADQUISICIÓN COMERCIAL</div><h1 class="page-title">Publicidad y canales</h1><p class="page-subtitle">Analiza el origen, la calidad y la conversión de cada oportunidad.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
+  <div class="pub-kpi-grid">${pubKpi('Oportunidades',total,'Base comercial acumulada','leads','blue')}${pubKpi('Tasa de contacto',`${pct(contacted,total)}%`,`${contacted} clientes contactados`,'phone','teal')}${pubKpi('Visitas efectivas',visits,`${pct(visits,total)}% de los registros`,'visitas','amber')}${pubKpi('Conversión a venta',`${pct(won,total)}%`,`${won} cierres concretados`,'target','green')}</div>
+  <div class="pub-acquisition-grid"><section class="pub-panel pub-source-panel"><header><div><small>DISTRIBUCIÓN</small><b>Origen de oportunidades</b><span>Participación de cada canal en la captación total.</span></div><em>${sources.length} canales</em></header><div class="pub-source-list">${sources.map((x,i)=>`<button onclick="pubOpenSource('${attr(x.name)}')"><span class="pub-source-rank">${String(i+1).padStart(2,'0')}</span><span class="pub-source-name"><b>${esc(x.name)}</b><small>${pct(x.total,total)}% de participación</small></span><span class="pub-source-track"><i style="width:${pct(x.total,max)}%;--bar:${pubSourceColor(i)}"></i></span><strong>${x.total}</strong><em>${pct(x.contacted,x.total)}% contacto</em></button>`).join('')||'<div class="crm-empty">Sin fuentes registradas.</div>'}</div></section>
+  <aside class="pub-panel pub-insight-panel"><header><div><small>LECTURA EJECUTIVA</small><b>Rendimiento de canales</b><span>Señales para optimizar la gestión comercial.</span></div></header><div class="pub-insight-list">${pubInsight('Canal principal',top?.name||'Sin datos',top?`${top.total} oportunidades captadas`:'Sin información','source')}${pubInsight('Mejor conversión',best?.name||'Sin datos',best?`${pct(best.won,best.total)}% de cierre`:'Sin cierres registrados','conversion')}${pubInsight('Sin primer contacto',uncontacted,`${pct(uncontacted,total)}% requiere gestión`,'warning')}${pubInsight('Sin fuente registrada',noSource,noSource?'Corregir atribución comercial':'Atribución completa','quality')}</div></aside></div>
+  <section class="pub-panel pub-performance-panel"><header><div><small>CALIDAD POR CANAL</small><b>Desempeño comercial por fuente</b><span>Contacto, visitas y cierres generados por cada origen.</span></div></header><div class="table-wrap"><table class="data-table pub-table"><thead><tr><th>Fuente</th><th>Leads</th><th>Contactados</th><th>Tasa contacto</th><th>Visitas</th><th>Cierres</th><th>Conversión</th><th>Calidad</th></tr></thead><tbody>${sources.map((x,i)=>{const quality=Math.round(pct(x.contacted,x.total)*.45+pct(x.visits,x.total)*.25+Math.min(pct(x.won,x.total)*5,100)*.30);return`<tr onclick="pubOpenSource('${attr(x.name)}')"><td><span class="pub-source-dot" style="--dot:${pubSourceColor(i)}"></span><b>${esc(x.name)}</b></td><td>${x.total}</td><td>${x.contacted}</td><td>${pct(x.contacted,x.total)}%</td><td>${x.visits}</td><td>${x.won}</td><td><b>${pct(x.won,x.total)}%</b></td><td><span class="pub-quality ${quality>=70?'good':quality>=45?'mid':'low'}">${quality>=70?'Alta':quality>=45?'Media':'Por mejorar'}</span></td></tr>`}).join('')||'<tr><td colspan="8"><div class="crm-empty">Sin información disponible.</div></td></tr>'}</tbody></table></div></section>
+  <section class="pub-panel pub-loss-panel"><header><div><small>OPORTUNIDADES PERDIDAS</small><b>Motivos de pérdida</b><span>Razones registradas por el equipo comercial.</span></div><em>${reasonRows.reduce((s,x)=>s+x[1],0)} registros</em></header><div class="pub-loss-grid">${reasonRows.slice(0,12).map(([name,count],i)=>`<div title="${attr(name)}"><span>${String(i+1).padStart(2,'0')}</span><section><b>${esc(name)}</b><i><em style="width:${pct(count,maxReason)}%"></em></i></section><strong>${count}</strong></div>`).join('')||'<div class="crm-empty">No existen motivos de pérdida registrados.</div>'}</div></section>`;
+}
+function pubKpi(label,value,sub,icon,tone){return`<div class="pub-kpi ${tone}"><span class="pub-kpi-icon">${navIcon(icon)}</span><div><small>${label}</small><b>${value}</b><em>${sub}</em></div></div>`}
+function pubInsight(label,value,sub,tone){return`<div class="pub-insight ${tone}"><i></i><span><small>${label}</small><b>${esc(value)}</b><em>${esc(sub)}</em></span></div>`}
+function pubSourceColor(i){return['#557f93','#348472','#ba873d','#7c6e9b','#ad6260','#778d4b'][i%6]}
+function pubOpenSource(name){showView('leads');setTimeout(()=>{const q=document.getElementById('search-leads');if(q){q.value=name;filterLeads()}},0)}
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -4581,35 +4619,35 @@ function previewCot(){
   if(bonoMonto>0)descRows.push(`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0EEE6"><div style="font-size:12px;color:#2D6A2D">Bono Techo Propio</div><div style="font-size:12px;font-weight:600;color:#2D6A2D">- ${fmtS(bonoMonto)}</div></div>`);
   if(descExtra>0)descRows.push(`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0EEE6"><div style="font-size:12px;color:#1A56A0">Descuento especial autorizado</div><div style="font-size:12px;font-weight:600;color:#1A56A0">- ${fmtS(descExtra)}</div></div>`);
 
-  const html=`<div id="pdf-content" style="font-family:Arial,sans-serif;color:#1a1916;background:#fff;padding:0">
-    <div style="background:#0F3D2E;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
-      <img src="${LOGO_B64}" style="height:52px;object-fit:contain" alt="Vimka">
+  const html=`<div id="pdf-content" style="font-family:Arial,sans-serif;color:#193b3e;background:#fff;padding:0">
+    <div style="background:#153439;padding:16px 30px;display:flex;align-items:center;justify-content:space-between;border-bottom:4px solid #c4df3a">
+      <div style="width:174px;height:82px;overflow:hidden;background:#153439"><img src="${LOGO_B64}" style="width:174px;height:82px;display:block;object-fit:cover;object-position:center;transform:scale(1.08)" alt="VIMKA Inmobiliaria"></div>
       <div style="text-align:right;color:#fff">
         <div style="font-size:10px;opacity:.7;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px">Cotización</div>
-        <div style="font-size:18px;font-weight:700">${cotNum}</div>
-        <div style="font-size:10px;opacity:.6;margin-top:2px">${fechaStr}</div>
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.4px">${cotNum}</div>
+        <div style="font-size:10px;color:#bed0d1;margin-top:4px">${fechaStr}</div>
       </div>
     </div>
-    <div style="background:#F0F4F2;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #AACC00">
+    <div style="background:#edf3f0;padding:11px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #cbdad5">
       <div style="font-size:10px;color:#444"><strong>${EMPRESA.nombre}</strong> &nbsp;·&nbsp; RUC: ${EMPRESA.ruc}</div>
       <div style="font-size:10px;color:#444">📍 ${EMPRESA.direccion} &nbsp;·&nbsp; 📞 ${EMPRESA.telefono}</div>
     </div>
-    <div style="padding:20px 28px">
+    <div style="padding:22px 30px 20px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div style="background:#F9F9F7;border-radius:6px;padding:14px;border:1px solid #E8E6DE">
+        <div style="background:#f6f9f7;border-radius:10px;padding:16px;border:1px solid #d5e0dc;border-left:4px solid #668b92">
           <div style="font-size:10px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">Datos del cliente</div>
           <div style="font-size:14px;font-weight:700;color:#0F3D2E;margin-bottom:4px">${esc(nombre.toUpperCase())}</div>
           ${dni?`<div style="font-size:11px;color:#555;margin-bottom:2px">DNI: ${esc(dni)}</div>`:''}
           ${tel?`<div style="font-size:11px;color:#555">Tel: ${esc(tel)}</div>`:''}
         </div>
-        <div style="background:#F9F9F7;border-radius:6px;padding:14px;border:1px solid #E8E6DE">
+        <div style="background:#f6f9f7;border-radius:10px;padding:16px;border:1px solid #d5e0dc;border-left:4px solid #9eb832">
           <div style="font-size:10px;font-weight:700;color:#888;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">Datos del lote</div>
           <div style="font-size:14px;font-weight:700;color:#0F3D2E;margin-bottom:4px">Lote ${lote.id}</div>
           <div style="font-size:11px;color:#555;margin-bottom:2px">Área: <strong>${lote.area} m²</strong></div>
           <div style="font-size:11px;color:#555">Ubicación: ${lote.ubicacion}</div>
         </div>
       </div>
-      <div style="background:#0F3D2E;border-radius:6px;padding:14px 18px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+      <div style="background:linear-gradient(120deg,#174f55,#1c6460);border-radius:10px;padding:15px 19px;margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 18px rgba(18,67,68,.16)">
         <div>
           <div style="font-size:10px;color:rgba(255,255,255,.6);margin-bottom:3px">PRODUCTO</div>
           <div style="font-size:14px;font-weight:700;color:#fff">${productoLabel}</div>
@@ -4617,11 +4655,11 @@ function previewCot(){
         </div>
         <div style="text-align:right">
           <div style="font-size:10px;color:rgba(255,255,255,.6);margin-bottom:3px">PRECIO LISTA</div>
-          <div style="font-size:20px;font-weight:700;color:#AACC00">${fmtS(precio)}</div>
+          <div style="font-size:21px;font-weight:800;color:#d2e94f">${fmtS(precio)}</div>
         </div>
       </div>
-      <div style="border:1px solid #E8E6DE;border-radius:6px;overflow:hidden;margin-bottom:14px">
-        <div style="background:#F0F4F2;padding:10px 14px;font-size:10px;font-weight:700;color:#555;letter-spacing:.6px;text-transform:uppercase;display:flex;justify-content:space-between">
+      <div style="border:1px solid #d5dfdc;border-radius:10px;overflow:hidden;margin-bottom:15px">
+        <div style="background:#eaf1ee;padding:11px 15px;font-size:10px;font-weight:700;color:#3c6060;letter-spacing:.6px;text-transform:uppercase;display:flex;justify-content:space-between;border-bottom:1px solid #d6e1dd">
           <span>Forma de pago: ${pagoLabel}</span>
         </div>
         <div style="padding:14px">
@@ -4630,14 +4668,14 @@ function previewCot(){
           </div>
           ${descRows.join('')}
           ${totalDesc>0?`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0EEE6"><div style="font-size:12px;font-weight:600;color:#888">Total descuentos</div><div style="font-size:12px;font-weight:700;color:#2D6A2D">- ${fmtS(totalDesc)}</div></div>`:''}
-          <div style="display:flex;justify-content:space-between;padding:10px 0;background:#F9FFF5;border-radius:6px;padding:10px 12px;margin-top:8px">
-            <div style="font-size:14px;font-weight:700;color:#0F3D2E">PRECIO FINAL</div>
-            <div style="font-size:20px;font-weight:700;color:#0F3D2E">${fmtS(precioFinal)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#eff5e8;border:1px solid #dbe7b8;border-radius:8px;padding:12px 14px;margin-top:9px">
+            <div style="font-size:13px;font-weight:800;color:#285c51;letter-spacing:.5px">PRECIO FINAL</div>
+            <div style="font-size:22px;font-weight:800;color:#174f4b">${fmtS(precioFinal)}</div>
           </div>
         </div>
       </div>
       ${obs?`<div style="background:#FFF9E6;border:1px solid #F5D78A;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#555"><strong>Nota:</strong> ${esc(obs)}</div>`:''}
-      <div style="border-top:2px solid #AACC00;padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end">
+      <div style="border-top:2px solid #b2cf35;padding-top:13px;display:flex;justify-content:space-between;align-items:flex-end">
         <div style="font-size:10px;color:#888">
           <div>Vigencia: hasta el <strong>${vigStr}</strong></div>
           <div style="margin-top:2px">Precios sujetos a disponibilidad. Los Álamos — Juliaca, Puno.</div>
