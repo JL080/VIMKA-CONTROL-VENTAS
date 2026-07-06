@@ -2887,6 +2887,12 @@ body {
 #cot-preview{width:min(820px,100%);border:1px solid rgba(31,77,78,.12);border-radius:12px;box-shadow:0 18px 45px rgba(8,38,42,.27)}
 @media(max-width:640px){.cot-preview-dialog{width:100%}.cot-preview-toolbar{min-height:58px}.cot-preview-body{padding:8px}#cot-preview{min-width:700px}}
 
+/* Editor profesional de contactos */
+.lead-detail-head-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.lead-edit-trigger{display:inline-flex;align-items:center;gap:6px;min-height:29px;padding:6px 9px;border:1px solid #afc4bf;border-radius:8px;background:#eaf1ee;color:#315f5d;font-size:7px;font-weight:850;cursor:pointer}.lead-edit-trigger:hover{border-color:#6f918b;background:#dce9e4}.lead-edit-trigger svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lead-delete-contact{width:100%;margin-top:5px;padding:9px 12px;border:1px solid #c79d9a;border-radius:8px;background:#ead9d7;color:#984e4b;font-size:8px;font-weight:850;cursor:pointer}.lead-delete-contact:hover{border-color:#ad625e;background:#e3c9c7}
+.lead-editor-modal{position:fixed;inset:0;z-index:10070;display:grid;place-items:center;padding:18px;background:rgba(6,25,30,.84);backdrop-filter:blur(8px)}.lead-editor-dialog{display:flex;flex-direction:column;width:min(780px,96vw);max-height:94vh;overflow:hidden;border:1px solid rgba(255,255,255,.17);border-radius:17px;background:#e3ece8;box-shadow:0 32px 100px rgba(0,0,0,.50)}.lead-editor-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 19px;border-bottom:3px solid #b7d139;background:linear-gradient(120deg,#20565c,#183f48)}.lead-editor-dialog header>div{display:flex;flex-direction:column;gap:3px}.lead-editor-dialog header small{color:#d5ea5d;font-size:7px;font-weight:850;letter-spacing:1.2px}.lead-editor-dialog header b{color:#fff;font:800 17px 'Syne'}.lead-editor-dialog header span{color:#bed0d0;font-size:8px}.lead-editor-dialog header>button{width:36px;height:36px;border:1px solid rgba(255,255,255,.18);border-radius:9px;background:rgba(255,255,255,.07);color:#fff;font-size:20px;cursor:pointer}.lead-editor-body{padding:17px 19px;overflow:auto}.lead-editor-identity{display:flex;align-items:center;gap:11px;margin-bottom:15px;padding:11px 13px;border:1px solid #c1d1cc;border-radius:11px;background:#edf3f0}.lead-editor-identity>span{display:grid;place-items:center;width:39px;height:39px;border-radius:11px;background:#28575c;color:#d7e752;font:850 13px 'Syne'}.lead-editor-identity>div{display:flex;min-width:0;flex-direction:column;gap:3px}.lead-editor-identity b{overflow:hidden;color:#21484b;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.lead-editor-identity small{color:#708583;font-size:7px}.lead-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.lead-editor-grid label{display:flex;min-width:0;flex-direction:column;gap:6px;color:#496967;font-size:8px;font-weight:800}.lead-editor-grid label.wide{grid-column:1/3}.lead-editor-grid label>i{color:#b45d59;font-style:normal}.lead-editor-grid input,.lead-editor-grid select,.lead-editor-grid textarea{width:100%;min-height:41px;padding:9px 11px;border:1px solid #a9bfba;border-radius:9px;background:#f3f6f4;color:#234b4d;font:9px 'Inter';outline:none}.lead-editor-grid textarea{min-height:82px;resize:vertical;line-height:1.5}.lead-editor-grid input:focus,.lead-editor-grid select:focus,.lead-editor-grid textarea:focus{border-color:#618b84;box-shadow:0 0 0 3px rgba(52,121,109,.11)}.lead-editor-error{display:none;margin-top:12px;padding:9px 11px;border:1px solid #d2aaa7;border-radius:8px;background:#ead9d7;color:#914f4c;font-size:8px}.lead-editor-error.show{display:block}.lead-editor-dialog>footer{display:flex;justify-content:flex-end;gap:8px;padding:13px 19px;border-top:1px solid #c4d3ce;background:#d8e4df}.lead-editor-dialog>footer button{min-width:110px}
+@media(max-width:640px){.lead-editor-modal{padding:6px}.lead-editor-dialog{width:100%;max-height:98vh;border-radius:12px}.lead-editor-dialog>header{padding:13px}.lead-editor-dialog header span{display:none}.lead-editor-body{padding:12px}.lead-editor-grid{grid-template-columns:1fr}.lead-editor-grid label.wide{grid-column:auto}.lead-editor-dialog>footer{padding:11px}.lead-editor-dialog>footer button{min-width:0;flex:1}.lead-detail-head-actions{justify-content:flex-start}}
+
 </style>
 </head>
 <body>
@@ -3313,6 +3319,7 @@ function navIcon(id){
     wallet:'<rect x="2" y="5" width="20" height="15" rx="3"/><path d="M16 12h6M18 12h.01M6 9h6"/>',
     target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><path d="m15 9 5-5M16 4h4v4"/>',
     search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+    edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>',
     publicidad:'<path d="m3 11 18-5v12L3 14z"/><path d="M11.6 16.4 13 21H8l-1.5-6"/>',
     usuarios:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.1.4.3.7.6 1 .3.2.7.4 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6z"/>',
     logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>'
@@ -3547,13 +3554,14 @@ function openLead(id){
   document.getElementById('detail-title').textContent=lead.nombre||'Lead';
   const ownsLead=lead.owner_id===currentUser.id||currentUser.name===lead.asesor;
   const canEdit=['gerente','admin'].includes(currentUser.role)||ownsLead;
+  const canEditContact=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||ownsLead;
   const canEditSeguimiento=['gerente','admin','jefe_ventas'].includes(currentUser.role)||ownsLead;
   const isCoord=currentUser.role==='coordinadora';
   document.getElementById('lead-detail-wrap').innerHTML=`
     <div class="detail-grid">
       <div>
         <div class="detail-card">
-          <div class="detail-card-header">Datos del lead <div style="display:flex;gap:8px">${alertaChip(calcAlerta(lead))} ${estadoBadge(lead.estado)}</div></div>
+          <div class="detail-card-header">Datos del lead <div class="lead-detail-head-actions">${alertaChip(calcAlerta(lead))} ${estadoBadge(lead.estado)} ${canEditContact?`<button class="lead-edit-trigger" onclick="leadOpenEditor('${lead.id}')">${navIcon('edit')} Editar contacto</button>`:''}</div></div>
           ${dr('Nombre',lead.nombre)}${dr('Teléfono',lead.telefono)}${dr('Ciudad',lead.ciudad)}${dr('Fecha ingreso',lead.fecha_ingreso)}${dr('Fuente',lead.fuente)}${dr('Campaña',lead.campana)}${dr('Proyecto',lead.proyecto)}${dr('Asesor dueño',lead.asesor)}${dr('Asesor de visita',lead.asesor_visita)}
         </div>
         <div class="detail-card mt-16">
@@ -3597,6 +3605,7 @@ function openLead(id){
             <a href="tel:${digits(lead.telefono)}" class="btn-ghost" style="text-align:center;text-decoration:none">📞 Llamar</a>
             <a href="https://wa.me/51${digits(lead.telefono)}" target="_blank" rel="noopener" class="btn-success" style="text-align:center;text-decoration:none">💬 WhatsApp</a>
             ${canEdit&&lead.estado!=='Perdido'?`<button class="btn-danger" onclick="markLost('${lead.id}')">Marcar como perdido</button>`:''}
+            ${currentUser.role==='gerente'?`<button class="lead-delete-contact" onclick="leadConfirmDelete('${lead.id}')">Eliminar contacto</button>`:''}
           </div>
         </div>
       </div>
@@ -4156,6 +4165,53 @@ function pubKpi(label,value,sub,icon,tone){return`<div class="pub-kpi ${tone}"><
 function pubInsight(label,value,sub,tone){return`<div class="pub-insight ${tone}"><i></i><span><small>${label}</small><b>${esc(value)}</b><em>${esc(sub)}</em></span></div>`}
 function pubSourceColor(i){return['#557f93','#348472','#ba873d','#7c6e9b','#ad6260','#778d4b'][i%6]}
 function pubOpenSource(name){showView('leads');setTimeout(()=>{const q=document.getElementById('search-leads');if(q){q.value=name;filterLeads()}},0)}
+
+// EDICION COMPLETA DE CONTACTOS
+function leadOpenEditor(id){
+  const lead=allLeads.find(l=>l.id==id);if(!lead)return;
+  const owns=lead.owner_id===currentUser.id||lead.asesor===currentUser.name,allowed=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||owns;if(!allowed){toast('No tienes permiso para editar este contacto','error');return}
+  document.getElementById('lead-editor-modal')?.remove();
+  const advisors=[...new Set([lead.asesor,...getAsesores()].filter(Boolean))],sources=[...new Set([lead.fuente,'Facebook Ads','WhatsApp','Referido','Volanteo','Orgánico','Otro'].filter(Boolean))];
+  const modal=document.createElement('div');modal.id='lead-editor-modal';modal.className='lead-editor-modal';modal.onclick=e=>{if(e.target===modal)leadCloseEditor()};
+  modal.innerHTML=`<div class="lead-editor-dialog"><header><div><small>FICHA DEL CLIENTE</small><b>Editar contacto</b><span>Actualiza la información principal y el responsable comercial.</span></div><button onclick="leadCloseEditor()" aria-label="Cerrar">×</button></header><div class="lead-editor-body">
+    <div class="lead-editor-identity"><span>${esc((lead.nombre||'?').charAt(0).toUpperCase())}</span><div><b>${esc(lead.nombre||'Cliente')}</b><small>ID ${esc(String(lead.id))} · Registro en Supabase</small></div></div>
+    <div class="lead-editor-grid">
+      <label class="wide">Nombre completo <i>*</i><input id="ec-name" maxlength="120" value="${attr(lead.nombre||'')}" placeholder="Nombre y apellidos"></label>
+      <label>Teléfono <i>*</i><input id="ec-phone" maxlength="30" value="${attr(lead.telefono||'')}" placeholder="987 654 321" inputmode="tel"></label>
+      <label>Ciudad<input id="ec-city" maxlength="80" value="${attr(lead.ciudad||'')}" placeholder="Ej. Juliaca"></label>
+      <label>Proyecto<input id="ec-project" maxlength="100" value="${attr(lead.proyecto||'')}" placeholder="Ej. Los Álamos"></label>
+      <label>Fuente<select id="ec-source">${sources.map(x=>`<option ${x===lead.fuente?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
+      <label>Campaña<input id="ec-campaign" maxlength="100" value="${attr(lead.campana||'')}" placeholder="Nombre de campaña"></label>
+      <label>Asesor responsable<select id="ec-advisor">${advisors.map(x=>`<option ${x===lead.asesor?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
+      <label class="wide">Observaciones<textarea id="ec-notes" rows="4" maxlength="1500" placeholder="Información relevante del cliente...">${esc(lead.observaciones||'')}</textarea></label>
+    </div><div class="lead-editor-error" id="ec-error"></div></div><footer><button class="btn-ghost" onclick="leadCloseEditor()">Cancelar</button><button class="btn-primary" id="ec-save" onclick="leadSaveEditor('${lead.id}')">Guardar cambios</button></footer></div>`;
+  document.body.appendChild(modal);document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('ec-name')?.focus(),50);
+}
+function leadCloseEditor(){document.getElementById('lead-editor-modal')?.remove();document.body.style.overflow=''}
+function leadEditorValue(id){return(document.getElementById(id)?.value||'').trim()}
+async function leadSaveEditor(id){
+  const lead=allLeads.find(l=>l.id==id);if(!lead)return;const name=leadEditorValue('ec-name'),phone=leadEditorValue('ec-phone'),phoneKey=digits(phone).slice(-9),error=document.getElementById('ec-error'),button=document.getElementById('ec-save');
+  if(name.length<3||phoneKey.length<7){error.textContent='Completa un nombre válido y un teléfono de al menos 7 dígitos.';error.classList.add('show');return}
+  const duplicate=allLeads.find(l=>l.id!=id&&digits(l.telefono).slice(-9)===phoneKey);if(duplicate){error.innerHTML=`El teléfono ya pertenece a <b>${esc(duplicate.nombre||'otro contacto')}</b>.`;error.classList.add('show');return}
+  const advisor=leadEditorValue('ec-advisor'),profile=(_usersCache||[]).find(u=>u.name===advisor),updates={nombre:name.toUpperCase(),telefono:phone,ciudad:leadEditorValue('ec-city')||null,proyecto:leadEditorValue('ec-project')||null,fuente:leadEditorValue('ec-source')||null,campana:leadEditorValue('ec-campaign')||null,asesor:advisor||null,vendedor:advisor||null,owner_id:profile?.id||lead.owner_id||null,observaciones:leadEditorValue('ec-notes')||null};
+  button.disabled=true;button.textContent='Guardando...';error.classList.remove('show');
+  if(await updateLead(id,updates)){crmAudit('Datos de contacto editados',updates.nombre,id);leadCloseEditor();toast('Contacto actualizado correctamente');openLead(id);updateUrgentBadge()}else{button.disabled=false;button.textContent='Guardar cambios';error.textContent='No se pudieron guardar los cambios. Revisa tu conexión o permisos.';error.classList.add('show')}
+}
+
+function leadConfirmDelete(id){
+  if(currentUser.role!=='gerente'){toast('Solo Gerencia puede eliminar contactos','error');return}
+  const lead=allLeads.find(l=>l.id==id);if(!lead)return;
+  document.getElementById('lead-delete-modal')?.remove();
+  const modal=document.createElement('div');modal.id='lead-delete-modal';modal.className='user-confirm-modal';modal.onclick=e=>{if(e.target===modal)modal.remove()};
+  modal.innerHTML=`<div><span class="confirm-icon danger">!</span><b>Eliminar contacto definitivamente</b><strong>${esc(lead.nombre||'Cliente')}</strong><p>Se eliminará su ficha, seguimiento, visitas y datos comerciales. Esta acción no se puede deshacer.</p><footer><button class="btn-ghost" onclick="document.getElementById('lead-delete-modal').remove()">Cancelar</button><button class="btn-danger" onclick="leadDeleteContact('${lead.id}',this)">Eliminar definitivamente</button></footer></div>`;
+  document.body.appendChild(modal);
+}
+async function leadDeleteContact(id,button){
+  if(currentUser.role!=='gerente'){toast('Solo Gerencia puede eliminar contactos','error');return}
+  const lead=allLeads.find(l=>l.id==id);button.disabled=true;button.textContent='Eliminando...';
+  try{const{error}=await sb.from('leads').delete().eq('id',id);if(error)throw error;crmAudit('Contacto eliminado',lead?.nombre||String(id),id);allLeads=allLeads.filter(l=>l.id!=id);document.getElementById('lead-delete-modal')?.remove();updateUrgentBadge();toast('Contacto eliminado correctamente');showView('leads')}
+  catch(error){button.disabled=false;button.textContent='Reintentar';toast('No se pudo eliminar: '+(error.message||'sin conexión'),'error')}
+}
 
 
 // ═══════════════════════════════════════════════════════════════
