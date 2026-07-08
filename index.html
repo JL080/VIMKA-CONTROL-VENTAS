@@ -3477,16 +3477,16 @@ function calcAlerta(lead){
   return'OK';
 }
 function alertaChip(a){
-  if(a==='URGENTE')return'<span class="chip-urgente">ðŸ”´ URGENTE</span>';
-  if(a==='VENCIDO')return'<span class="chip-vencido">ðŸŸ  VENCIDO</span>';
-  if(a==='HOY')return'<span class="chip-hoy">ðŸŸ¡ HOY</span>';
-  return'<span class="chip-ok">âœ…</span>';
+  if(a==='URGENTE')return'<span class="chip-urgente">URGENTE</span>';
+  if(a==='VENCIDO')return'<span class="chip-vencido">VENCIDO</span>';
+  if(a==='HOY')return'<span class="chip-hoy">HOY</span>';
+  return'<span class="chip-ok">OK</span>';
 }
 function estadoBadge(e){
-  const m={'Lead nuevo':'badge-gray','Contactado':'badge-blue','Calificado':'badge-blue','Visita agendada':'badge-amber','Visita confirmada':'badge-amber','VisitÃ³ proyecto':'badge-amber','CotizaciÃ³n enviada':'badge-amber','Seguimiento activo':'badge-blue','Reserva / SeparaciÃ³n':'badge-green','Cierre ganado':'badge-green','Perdido':'badge-red'};
-  return`<span class="badge ${m[e]||'badge-gray'}">${esc(e||'â€”')}</span>`;
+  const m={'Lead nuevo':'badge-gray','Contactado':'badge-blue','Calificado':'badge-blue','Visita agendada':'badge-amber','Visita confirmada':'badge-amber','Visitó proyecto':'badge-amber','Cotización enviada':'badge-amber','Seguimiento activo':'badge-blue','Reserva / Separación':'badge-green','Cierre ganado':'badge-green','Perdido':'badge-red'};
+  return`<span class="badge ${m[e]||'badge-gray'}">${esc(fixText(e||'—'))}</span>`;
 }
-function fmt(n){if(!n&&n!==0)return'â€”';return'S/ '+Number(n).toLocaleString('es-PE');}
+function fmt(n){if(!n&&n!==0)return'—';return'S/ '+Number(n).toLocaleString('es-PE');}
 function prioridadValor(l){return l?.prioridad||'Media'}
 function prioridadBadge(p){
   const v=p||'Media', cls=v==='Alta'?'priority-high':v==='Baja'?'priority-low':'priority-medium';
@@ -3494,6 +3494,14 @@ function prioridadBadge(p){
 }
 function pct(a,b){return b?Math.round((a/b)*100):0;}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fixText(value){
+  return String(value??'')
+    .replace(/Ã¡/g,'á').replace(/Ã©/g,'é').replace(/Ã­/g,'í').replace(/Ã³/g,'ó').replace(/Ãº/g,'ú')
+    .replace(/Ã/g,'Á').replace(/Ã‰/g,'É').replace(/Ã/g,'Í').replace(/Ã“/g,'Ó').replace(/Ãš/g,'Ú')
+    .replace(/Ã±/g,'ñ').replace(/Ã‘/g,'Ñ').replace(/Â¿/g,'¿').replace(/Â°/g,'°')
+    .replace(/â€”/g,'—').replace(/â€“/g,'–').replace(/â†’/g,'→').replace(/âœ“/g,'✓').replace(/âœ—/g,'✕')
+    .replace(/Ã¢â‚¬â€/g,'—').replace(/ÃƒÂ©/g,'é').replace(/ÃƒÂ³/g,'ó');
+}
 function attr(value){return esc(value).replace(/`/g,'&#96;');}
 function digits(value){return String(value||'').replace(/\D/g,'');}
 function csvCell(value){let s=String(value??'');if(/^[=+\-@]/.test(s))s="'"+s;return`"${s.replace(/"/g,'""')}"`;}
@@ -3599,33 +3607,34 @@ function openLead(id){
       <div>
         <div class="detail-card">
           <div class="detail-card-header">Datos del lead <div class="lead-detail-head-actions">${alertaChip(calcAlerta(lead))} ${estadoBadge(lead.estado)} ${canEditContact?`<button class="lead-edit-trigger" onclick="leadOpenEditor('${lead.id}')">${navIcon('edit')} Editar contacto</button>`:''}</div></div>
-          ${dr('Nombre',lead.nombre)}${drHtml('Prioridad',prioridadBadge(prioridadValor(lead)))}${dr('TelÃ©fono',lead.telefono)}${dr('Ciudad',lead.ciudad)}${dr('Fecha ingreso',lead.fecha_ingreso)}${dr('Fuente',lead.fuente)}${dr('CampaÃ±a',lead.campana)}${dr('Proyecto',lead.proyecto)}${dr('Asesor dueÃ±o',lead.asesor)}${dr('Asesor de visita',lead.asesor_visita)}
+          ${dr('Nombre',lead.nombre)}${drHtml('Prioridad',prioridadBadge(prioridadValor(lead)))}${dr('Teléfono',lead.telefono)}${dr('Ciudad',lead.ciudad)}${dr('Fecha ingreso',lead.fecha_ingreso)}${dr('Fuente',lead.fuente)}${dr('Campaña',lead.campana)}${dr('Proyecto',lead.proyecto)}${dr('Asesor dueño',lead.asesor)}${dr('Asesor de visita',lead.asesor_visita)}
         </div>
         <div class="detail-card mt-16">
-          <div class="detail-card-header">CalificaciÃ³n</div>
-          ${dr('Tipo',lead.tipo_cliente)}${dr('Â¿ContestÃ³?',lead.contesto)}${dr('Tiempo resp.',lead.tiempo_respuesta?lead.tiempo_respuesta+' min':null)}${dr('Presupuesto',fmt(lead.presupuesto))}${dr('Inicial',fmt(lead.inicial))}${dr('Tipo ingreso',lead.tipo_ingreso)}${dr('Bono',lead.bono)}${dr('Forma pago',lead.forma_pago)}
+          <div class="detail-card-header">Calificación</div>
+          ${dr('Tipo',lead.tipo_cliente)}${dr('¿Contestó?',lead.contesto)}${dr('Tiempo resp.',lead.tiempo_respuesta?lead.tiempo_respuesta+' min':null)}${dr('Presupuesto',fmt(lead.presupuesto))}${dr('Inicial',fmt(lead.inicial))}${dr('Tipo ingreso',lead.tipo_ingreso)}${dr('Bono',lead.bono)}${dr('Forma pago',lead.forma_pago)}
         </div>
         <div class="detail-card mt-16">
-          <div class="detail-card-header">Visita y operaciÃ³n</div>
-          ${dr('Visita agendada',lead.visita_agendada)}${dr('Fecha visita',lead.fecha_visita)}${dr('Asesor visita',lead.asesor_visita)}${dr('Â¿AsistiÃ³?',lead.asistio)}${dr('CotizaciÃ³n',lead.cotizacion)}${dr('SeparÃ³',lead.separo)}${dr('Monto sep.',fmt(lead.monto_separacion))}${dr('Monto venta',fmt(lead.monto_venta))}${dr('Motivo pÃ©rd.',lead.motivo_perdida)}
+          <div class="detail-card-header">Visita y operación</div>
+          ${dr('Visita agendada',lead.visita_agendada)}${dr('Fecha visita',lead.fecha_visita)}${dr('Asesor visita',lead.asesor_visita)}${dr('¿Asistió?',lead.asistio)}${dr('Cotización',lead.cotizacion)}${dr('Separó',lead.separo)}${dr('Monto sep.',fmt(lead.monto_separacion))}${dr('Monto venta',fmt(lead.monto_venta))}${dr('Motivo pérdida',lead.motivo_perdida)}
         </div>
         ${lead.observaciones?`<div class="detail-card mt-16"><div class="detail-card-header">Observaciones</div><div style="padding:14px 18px;font-size:13px;color:var(--text-muted);line-height:1.6">${esc(lead.observaciones)}</div></div>`:''}
       </div>
       <div>
         <div class="detail-card crm-360-card">
-          <div class="detail-card-header">Ficha 360Â° <span class="crm-health-score">${crmScore(lead)}% completa</span></div>
-          <div class="crm-360-summary"><div><span>Etapa actual</span><b>${esc(lead.estado||'Sin estado')}</b></div><div><span>Responsable</span><b>${esc(lead.asesor||'Sin asignar')}</b></div><div><span>PrÃ³xima acciÃ³n</span><b>${crmDateLabel(lead.fecha_proxima_accion)}</b></div></div>
+          <div class="detail-card-header">Ficha 360° <span class="crm-health-score">${crmScore(lead)}% completa</span></div>
+          <div class="crm-360-summary"><div><span>Etapa actual</span><b>${esc(fixText(lead.estado||'Sin estado'))}</b></div><div><span>Responsable</span><b>${esc(lead.asesor||'Sin asignar')}</b></div><div><span>Próxima acción</span><b>${crmDateLabel(lead.fecha_proxima_accion)}</b></div></div>
           ${crmTimelineHTML(lead)}
         </div>
         <div class="detail-card">
           <div class="detail-card-header">Seguimiento</div>
-          ${dr('PrÃ³xima acciÃ³n',lead.fecha_proxima_accion)}${dr('AcciÃ³n',lead.accion_pendiente)}
+          ${dr('Próxima acción',lead.fecha_proxima_accion)}${dr('Acción',lead.accion_pendiente)}
           ${canEditSeguimiento?`<div class="status-update-form">
-            <div class="field"><label>Nuevo estado</label><select id="upd-estado"><option value="">â€” Sin cambio â€”</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option><option>Visita agendada</option><option>Visita confirmada</option><option>VisitÃ³ proyecto</option><option>CotizaciÃ³n enviada</option><option>Seguimiento activo</option><option>Reserva / SeparaciÃ³n</option><option>Cierre ganado</option><option>Perdido</option></select></div>
-            <div class="field"><label>ObservaciÃ³n</label><textarea id="upd-obs" placeholder="AÃ±adir nota..."></textarea></div>
-            <div class="field"><label>Nueva fecha prÃ³xima acciÃ³n</label><input type="date" id="upd-fecha"></div>
+            <div class="field"><label>Prioridad</label><select id="upd-prioridad"><option value="">Sin cambio</option><option value="Alta" ${prioridadValor(lead)==='Alta'?'selected':''}>Alta</option><option value="Media" ${prioridadValor(lead)==='Media'?'selected':''}>Media</option><option value="Baja" ${prioridadValor(lead)==='Baja'?'selected':''}>Baja</option></select></div>
+            <div class="field"><label>Nuevo estado</label><select id="upd-estado"><option value="">— Sin cambio —</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option><option>Visita agendada</option><option>Visita confirmada</option><option>Visitó proyecto</option><option>Cotización enviada</option><option>Seguimiento activo</option><option>Reserva / Separación</option><option>Cierre ganado</option><option>Perdido</option></select></div>
+            <div class="field"><label>Observación</label><textarea id="upd-obs" placeholder="Añadir nota..."></textarea></div>
+            <div class="field"><label>Nueva fecha próxima acción</label><input type="date" id="upd-fecha"></div>
             <button class="btn-primary full" onclick="updateLeadStatus('${lead.id}')">Guardar cambios</button>
-          </div>`:'<div style="padding:14px 18px;font-size:12px;color:var(--text-muted)">Solo lectura â€” coordinaciÃ³n</div>'}
+          </div>`:'<div style="padding:14px 18px;font-size:12px;color:var(--text-muted)">Solo lectura — coordinación</div>'}
         </div>
         <div class="detail-card mt-16">
           <div class="detail-card-header">Programar visita</div>
@@ -3648,7 +3657,7 @@ function openLead(id){
       </div>
     </div>`;
 }
-function dr(key,val){if(!val||val==='â€”')return'';return`<div class="detail-row"><div class="detail-key">${esc(key)}</div><div class="detail-val">${esc(val)}</div></div>`;}
+function dr(key,val){if(!val||val==='—'||val==='â€”')return'';return`<div class="detail-row"><div class="detail-key">${esc(fixText(key))}</div><div class="detail-val">${esc(fixText(val))}</div></div>`;}
 function drHtml(key,html){if(!html)return'';return`<div class="detail-row"><div class="detail-key">${esc(key)}</div><div class="detail-val">${html}</div></div>`;}
 async function programarVisita(id){
   const fecha=document.getElementById('vis-fecha').value,hora=document.getElementById('vis-hora').value,asesor=document.getElementById('vis-asesor').value;
@@ -3658,8 +3667,8 @@ async function programarVisita(id){
   if(ok){toast('Visita agendada con '+asesor);openLead(id);}
 }
 async function updateLeadStatus(id){
-  const estado=document.getElementById('upd-estado').value,obs=document.getElementById('upd-obs').value.trim(),fecha=document.getElementById('upd-fecha').value;
-  const updates={};if(estado)updates.estado=estado;if(obs)updates.observaciones=obs;if(fecha)updates.fecha_proxima_accion=fecha;
+  const estado=document.getElementById('upd-estado').value,prioridad=document.getElementById('upd-prioridad')?.value,obs=document.getElementById('upd-obs').value.trim(),fecha=document.getElementById('upd-fecha').value;
+  const updates={};if(prioridad)updates.prioridad=prioridad;if(estado)updates.estado=estado;if(obs)updates.observaciones=obs;if(fecha)updates.fecha_proxima_accion=fecha;
   if(!Object.keys(updates).length){toast('Nada que actualizar','error');return;}
   if(await updateLead(id,updates)){toast('Lead actualizado');openLead(id);}
 }
@@ -4066,19 +4075,19 @@ function exportCSV(){
 
 // Auto-refresh every 90 seconds â€” only if not currently saving
 // CENTRO CRM: visiÃ³n 360, embudo, agenda, calidad y auditorÃ­a
-function excelCell(value){return esc(value??'Ã¢â‚¬â€')}
+function excelCell(value){return esc(value??'—')}
 function exportCSV(){
   const leads=getFilteredLeads();
   const columns=[
     ['Alerta',l=>calcAlerta(l)],
     ['Prioridad',l=>prioridadValor(l)],
-    ['Nombre',l=>l.nombre||'Ã¢â‚¬â€'],
-    ['TelÃƒÂ©fono',l=>l.telefono||'Ã¢â‚¬â€'],
-    ['Estado',l=>l.estado||'Ã¢â‚¬â€'],
-    ['Fuente',l=>l.fuente||'Ã¢â‚¬â€'],
-    ['Asesor',l=>l.asesor||'Ã¢â‚¬â€'],
-    ['PrÃƒÂ³xima acciÃƒÂ³n',l=>l.fecha_proxima_accion||'Ã¢â‚¬â€'],
-    ['Ingreso',l=>l.fecha_ingreso||'Ã¢â‚¬â€'],
+    ['Nombre',l=>l.nombre||'—'],
+    ['Teléfono',l=>l.telefono||'—'],
+    ['Estado',l=>l.estado||'—'],
+    ['Fuente',l=>l.fuente||'—'],
+    ['Asesor',l=>l.asesor||'—'],
+    ['Próxima acción',l=>l.fecha_proxima_accion||'—'],
+    ['Ingreso',l=>l.fecha_ingreso||'—'],
   ];
   const rows=leads.map(l=>`<tr>${columns.map(([_,fn])=>`<td>${excelCell(fn(l))}</td>`).join('')}</tr>`).join('');
   const html=`<!doctype html><html><head><meta charset="utf-8">
