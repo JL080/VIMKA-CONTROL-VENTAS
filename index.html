@@ -2611,6 +2611,24 @@ body {
 .crm-priority-card strong { color:#35585d;font-size:9px;text-transform:uppercase;letter-spacing:.7px;white-space:nowrap; }
 .crm-priority-card small { grid-column:1/3;margin-top:4px;color:#637c7f;font-size:8px;white-space:nowrap; }
 .crm-priority-card i { margin-left:auto;color:#647f81;font-style:normal;font-size:15px; }
+.priority-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-width:76px;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  border:1px solid rgba(19,63,62,.10);
+  white-space:nowrap;
+}
+.priority-high{background:#ffe9e4;color:#9b2e1d;border-color:#efb2a6;}
+.priority-medium{background:#fff4d9;color:#8a5d00;border-color:#e7c779;}
+.priority-low{background:#e7f4ee;color:#176548;border-color:#9ad3bb;}
 .dashboard-analytics-grid {
   display:grid;
   grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
@@ -3052,6 +3070,12 @@ body {
           <option value="VENCIDO">Vencido</option>
           <option value="HOY">Para hoy</option>
         </select>
+        <select id="filter-prioridad" onchange="filterLeads()" class="filter-select">
+          <option value="">Todas las prioridades</option>
+          <option value="Alta">Prioridad alta</option>
+          <option value="Media">Prioridad media</option>
+          <option value="Baja">Prioridad baja</option>
+        </select>
         <select id="filter-asesor" onchange="filterLeads()" class="filter-select">
           <option value="">Todos los asesores</option>
         </select>
@@ -3148,13 +3172,13 @@ body {
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// CONFIG — la clave anon/publishable es pública por diseño; RLS protege los datos.
-// ═══════════════════════════════════════════════════════════════
+﻿// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// CONFIG â€” la clave anon/publishable es pÃºblica por diseÃ±o; RLS protege los datos.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const SUPABASE_URL = 'https://hbfndgmgnmlkrxxaydsn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZm5kZ21nbm1sa3J4eGF5ZHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMjE5NDUsImV4cCI6MjA5Mjg5Nzk0NX0.ASjjRsmk33TfNM9LCBOUPdtfmfIi4MB_ikd-XX5YUhU';
 
-// ── Perfiles públicos; las contraseñas pertenecen a Supabase Auth ─────────
+// â”€â”€ Perfiles pÃºblicos; las contraseÃ±as pertenecen a Supabase Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let _usersCache = null;
 async function getUsers(){
   if(_usersCache) return _usersCache;
@@ -3180,49 +3204,49 @@ async function deactivateUser(id){
 
 const NAV_ITEMS = {
   jefe_ventas:[
-    {id:'dashboard',    label:'Dashboard',      icon:'📊'},
-    {id:'leads',        label:'Clientes y Leads',icon:'👥'},
-    {id:'visitas',      label:'Visitas',        icon:'🏠'},
-    {id:'ventas',       label:'Ventas',         icon:'💰'},
-    {id:'cotizacion',   label:'Cotización',     icon:'📄'},
-    {id:'productividad',label:'Productividad',  icon:'📈'},
+    {id:'dashboard',    label:'Dashboard',      icon:'ðŸ“Š'},
+    {id:'leads',        label:'Clientes y Leads',icon:'ðŸ‘¥'},
+    {id:'visitas',      label:'Visitas',        icon:'ðŸ '},
+    {id:'ventas',       label:'Ventas',         icon:'ðŸ’°'},
+    {id:'cotizacion',   label:'CotizaciÃ³n',     icon:'ðŸ“„'},
+    {id:'productividad',label:'Productividad',  icon:'ðŸ“ˆ'},
   ],
   gerente:[
-    {id:'dashboard',label:'Dashboard',icon:'📊'},
-    {id:'leads',label:'Clientes y Leads',icon:'👥'},
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
-    {id:'visitas',label:'Visitas',icon:'🏠'},
-    {id:'ventas',label:'Ventas',icon:'💰'},
-    {id:'cotizacion',label:'Cotización',icon:'📄'},
-    {id:'productividad',label:'Productividad',icon:'📈'},
-    {id:'publicidad',label:'Publicidad',icon:'📣'},
-    {id:'usuarios',label:'Usuarios',icon:'⚙️'},
+    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
+    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
+    {id:'visitas',label:'Visitas',icon:'ðŸ '},
+    {id:'ventas',label:'Ventas',icon:'ðŸ’°'},
+    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
+    {id:'productividad',label:'Productividad',icon:'ðŸ“ˆ'},
+    {id:'publicidad',label:'Publicidad',icon:'ðŸ“£'},
+    {id:'usuarios',label:'Usuarios',icon:'âš™ï¸'},
   ],
   admin:[
-    {id:'dashboard',label:'Dashboard',icon:'📊'},
-    {id:'leads',label:'Clientes y Leads',icon:'👥'},
-    {id:'visitas',label:'Visitas',icon:'🏠'},
-    {id:'ventas',label:'Ventas',icon:'💰'},
-    {id:'cotizacion',label:'Cotización',icon:'📄'},
+    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
+    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
+    {id:'visitas',label:'Visitas',icon:'ðŸ '},
+    {id:'ventas',label:'Ventas',icon:'ðŸ’°'},
+    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
   ],
   publicidad:[
-    {id:'dashboard',label:'Dashboard',icon:'📊'},
-    {id:'publicidad',label:'Publicidad',icon:'📣'},
-    {id:'leads',label:'Clientes y Leads',icon:'👥'},
+    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
+    {id:'publicidad',label:'Publicidad',icon:'ðŸ“£'},
+    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
   ],
   coordinadora:[
-    {id:'dashboard',label:'Dashboard',icon:'📊'},
-    {id:'leads',label:'Clientes y Leads',icon:'👥'},
-    {id:'visitas',label:'Calendario Visitas',icon:'🗓️'},
-    {id:'productividad',label:'Productividad',icon:'📈'},
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
-    {id:'cotizacion',label:'Cotización',icon:'📄'},
+    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
+    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
+    {id:'visitas',label:'Calendario Visitas',icon:'ðŸ—“ï¸'},
+    {id:'productividad',label:'Productividad',icon:'ðŸ“ˆ'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
+    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
   ],
   asesor:[
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
-    {id:'leads',label:'Mis clientes',icon:'👥'},
-    {id:'visitas',label:'Mis Visitas',icon:'🏠'},
-    {id:'cotizacion',label:'Cotización',icon:'📄'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
+    {id:'leads',label:'Mis clientes',icon:'ðŸ‘¥'},
+    {id:'visitas',label:'Mis Visitas',icon:'ðŸ '},
+    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
   ],
 };
 
@@ -3248,7 +3272,7 @@ function authEmail(username){return username.includes('@')?username:`${username}
 function togglePasswordVisibility(){
   const input=document.getElementById('login-pass'),button=document.querySelector('.password-toggle');
   const show=input.type==='password';input.type=show?'text':'password';button.textContent=show?'Ocultar':'Ver';
-  button.setAttribute('aria-label',show?'Ocultar contraseña':'Mostrar contraseña');input.focus();
+  button.setAttribute('aria-label',show?'Ocultar contraseÃ±a':'Mostrar contraseÃ±a');input.focus();
 }
 async function loadCurrentUser(id){
   const{data,error}=await sb.from('profiles').select('id,username,name,role,active').eq('id',id).single();
@@ -3263,13 +3287,13 @@ async function doLogin(){
   if(btn){const label=btn.querySelector('span');if(label)label.textContent='Validando acceso...';btn.classList.add('loading');btn.disabled=true;}
   
   try{
-    if(!u||!p)throw new Error('Completa usuario y contraseña.');
+    if(!u||!p)throw new Error('Completa usuario y contraseÃ±a.');
     const{data,error}=await sb.auth.signInWithPassword({email:authEmail(u),password:p});
     if(error)throw error;
     await loadCurrentUser(data.user.id);
     document.getElementById('login-err').style.display='none';
     await startApp();
-  }catch(e){console.error('[CRM] login:',e);showLoginError('Usuario o contraseña incorrectos.');}
+  }catch(e){console.error('[CRM] login:',e);showLoginError('Usuario o contraseÃ±a incorrectos.');}
   finally{if(btn){const label=btn.querySelector('span');if(label)label.textContent='Ingresar al sistema';btn.classList.remove('loading');btn.disabled=false;}}
 }
 async function startApp(){
@@ -3290,7 +3314,7 @@ function buildNav(){
   const items=baseItems.slice();
   const dashboardPos=items.findIndex(i=>i.id==='dashboard');
   items.splice(dashboardPos>=0?dashboardPos+1:0,0,{id:'crm-center',label:'Centro CRM',icon:'crm-center'});
-  const renderItems=prefix=>`<div class="nav-section-label">Gestión comercial</div>`+items.map(i=>`<div class="nav-item" id="${prefix}-${i.id}" data-view="${i.id}" onclick="showView('${i.id}')">
+  const renderItems=prefix=>`<div class="nav-section-label">GestiÃ³n comercial</div>`+items.map(i=>`<div class="nav-item" id="${prefix}-${i.id}" data-view="${i.id}" onclick="showView('${i.id}')">
     <span class="nav-icon">${navIcon(i.id)}</span><span class="nav-label">${i.label}</span>
     ${i.id==='leads'?'<span class="nav-badge" data-urgent-badge style="display:none">0</span>':i.id==='crm-center'?'<span class="nav-badge crm-alert-badge" data-crm-alert-badge style="display:none">0</span>':''}
   </div>`).join('');
@@ -3301,9 +3325,9 @@ function buildNav(){
     <div class="user-profile">
       <div class="user-avatar">${esc(initials)}</div>
       <div class="user-identity"><div class="user-name">${esc(currentUser.name)}</div><div class="user-role">${rolLabel(currentUser.role)}</div></div>
-      <span class="user-online" title="Sesión activa"></span>
+      <span class="user-online" title="SesiÃ³n activa"></span>
     </div>
-    <button class="logout-btn" onclick="doLogout()">${navIcon('logout')}<span>Cerrar sesión</span></button>`;
+    <button class="logout-btn" onclick="doLogout()">${navIcon('logout')}<span>Cerrar sesiÃ³n</span></button>`;
 }
 function navIcon(id){
   const paths={
@@ -3330,7 +3354,7 @@ function navIcon(id){
 function rolLabel(r){return{gerente:'Gerente General',admin:'Administrador',publicidad:'Publicidad',coordinadora:'Coordinadora de Ventas',jefe_ventas:'Jefe de Ventas',asesor:'Asesor/a'}[r]||r;}
 
 if(Array.isArray(NAV_ITEMS.admin)&&!NAV_ITEMS.admin.some(i=>i.id==='productividad')){
-  NAV_ITEMS.admin.push({id:'productividad',label:'Productividad',icon:'📈'});
+  NAV_ITEMS.admin.push({id:'productividad',label:'Productividad',icon:'ðŸ“ˆ'});
 }
 
 function showView(id){
@@ -3381,7 +3405,7 @@ async function fetchLeads(){
 function showToastError(msg){
   const t=document.createElement('div');
   t.className='toast error';
-  t.textContent='⚠ '+msg;
+  t.textContent='âš  '+msg;
   t.style.cssText='position:fixed;top:80px;right:20px;background:#FFEBEB;color:#C00;border:1px solid #F99;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;max-width:320px';
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),8000);
@@ -3402,11 +3426,11 @@ async function saveLead(lead){
       return saved;
     }catch(error){
       console.error('[CRM] Supabase SAVE ERROR:',error);
-      showToastError('Error al guardar lead: '+(error.message||'sin conexión'));
+      showToastError('Error al guardar lead: '+(error.message||'sin conexiÃ³n'));
       return null;
     }
   }
-  showToastError('No existe una sesión válida.');
+  showToastError('No existe una sesiÃ³n vÃ¡lida.');
   return null;
 }
 async function updateLead(id,updates){
@@ -3418,7 +3442,7 @@ async function updateLead(id,updates){
       if(idx>=0)allLeads[idx]={...allLeads[idx],...updates};
       crmAudit('Cliente actualizado',allLeads[idx]?.nombre||String(id),id);
       return true;
-    }catch(error){showToastError('No se pudo actualizar: '+(error.message||'sin conexión'));return false;}
+    }catch(error){showToastError('No se pudo actualizar: '+(error.message||'sin conexiÃ³n'));return false;}
   }
   return false;
 }
@@ -3453,16 +3477,21 @@ function calcAlerta(lead){
   return'OK';
 }
 function alertaChip(a){
-  if(a==='URGENTE')return'<span class="chip-urgente">🔴 URGENTE</span>';
-  if(a==='VENCIDO')return'<span class="chip-vencido">🟠 VENCIDO</span>';
-  if(a==='HOY')return'<span class="chip-hoy">🟡 HOY</span>';
-  return'<span class="chip-ok">✅</span>';
+  if(a==='URGENTE')return'<span class="chip-urgente">ðŸ”´ URGENTE</span>';
+  if(a==='VENCIDO')return'<span class="chip-vencido">ðŸŸ  VENCIDO</span>';
+  if(a==='HOY')return'<span class="chip-hoy">ðŸŸ¡ HOY</span>';
+  return'<span class="chip-ok">âœ…</span>';
 }
 function estadoBadge(e){
-  const m={'Lead nuevo':'badge-gray','Contactado':'badge-blue','Calificado':'badge-blue','Visita agendada':'badge-amber','Visita confirmada':'badge-amber','Visitó proyecto':'badge-amber','Cotización enviada':'badge-amber','Seguimiento activo':'badge-blue','Reserva / Separación':'badge-green','Cierre ganado':'badge-green','Perdido':'badge-red'};
-  return`<span class="badge ${m[e]||'badge-gray'}">${esc(e||'—')}</span>`;
+  const m={'Lead nuevo':'badge-gray','Contactado':'badge-blue','Calificado':'badge-blue','Visita agendada':'badge-amber','Visita confirmada':'badge-amber','VisitÃ³ proyecto':'badge-amber','CotizaciÃ³n enviada':'badge-amber','Seguimiento activo':'badge-blue','Reserva / SeparaciÃ³n':'badge-green','Cierre ganado':'badge-green','Perdido':'badge-red'};
+  return`<span class="badge ${m[e]||'badge-gray'}">${esc(e||'â€”')}</span>`;
 }
-function fmt(n){if(!n&&n!==0)return'—';return'S/ '+Number(n).toLocaleString('es-PE');}
+function fmt(n){if(!n&&n!==0)return'â€”';return'S/ '+Number(n).toLocaleString('es-PE');}
+function prioridadValor(l){return l?.prioridad||'Media'}
+function prioridadBadge(p){
+  const v=p||'Media', cls=v==='Alta'?'priority-high':v==='Baja'?'priority-low':'priority-medium';
+  return`<span class="priority-badge ${cls}">${v==='Alta'?'⬆ ':v==='Baja'?'⬇ ':'● '}${esc(v)}</span>`;
+}
 function pct(a,b){return b?Math.round((a/b)*100):0;}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function attr(value){return esc(value).replace(/`/g,'&#96;');}
@@ -3476,8 +3505,8 @@ function gf(id){return document.getElementById(id)?.value?.trim()||'';}
 // DASHBOARD
 function renderDashboard(){
   const leads=allLeads,total=leads.length;
-  const contactados=leads.filter(l=>l.contesto==='Sí').length;
-  const visitasReal=leads.filter(l=>l.asistio==='Sí').length;
+  const contactados=leads.filter(l=>l.contesto==='SÃ­').length;
+  const visitasReal=leads.filter(l=>l.asistio==='SÃ­').length;
   const cerrados=leads.filter(l=>l.estado==='Cierre ganado').length;
   const urgentes=leads.filter(l=>calcAlerta(l)==='URGENTE').length;
   const vencidos=leads.filter(l=>calcAlerta(l)==='VENCIDO').length;
@@ -3489,63 +3518,66 @@ function renderDashboard(){
   const now=new Date(),thisStart=toDateStr(new Date(now.getFullYear(),now.getMonth(),1)),prevStart=toDateStr(new Date(now.getFullYear(),now.getMonth()-1,1));
   const leadDate=l=>String(l.fecha_ingreso||l.created_at||'').slice(0,10);
   const leadsMonth=leads.filter(l=>leadDate(l)>=thisStart).length,leadsPrev=leads.filter(l=>leadDate(l)>=prevStart&&leadDate(l)<thisStart).length;
-  const visitsMonth=leads.filter(l=>l.fecha_visita>=thisStart&&l.asistio==='Sí').length,salesMonth=leads.filter(l=>l.estado==='Cierre ganado'&&leadDate(l)>=thisStart).length;
-  const quoted=leads.filter(l=>l.cotizacion==='Sí'||['Cotización enviada','Seguimiento activo','Reserva / Separación'].includes(l.estado)),forecast=quoted.reduce((s,l)=>s+(Number(l.monto_venta)||Number(l.presupuesto)||0),0);
+  const visitsMonth=leads.filter(l=>l.fecha_visita>=thisStart&&l.asistio==='SÃ­').length,salesMonth=leads.filter(l=>l.estado==='Cierre ganado'&&leadDate(l)>=thisStart).length;
+  const quoted=leads.filter(l=>l.cotizacion==='SÃ­'||['CotizaciÃ³n enviada','Seguimiento activo','Reserva / SeparaciÃ³n'].includes(l.estado)),forecast=quoted.reduce((s,l)=>s+(Number(l.monto_venta)||Number(l.presupuesto)||0),0);
   document.getElementById('kpi-grid').innerHTML=[
     {label:'Clientes y leads',val:total,sub:'registros comerciales',color:'blue',icon:'leads'},
     {label:'Tasa de contacto',val:`${pct(contactados,total)}%`,sub:`${contactados} contactados`,color:'blue',icon:'phone'},
     {label:'Visitas realizadas',val:visitasReal,sub:`${pct(visitasReal,total)}%`,color:'amber',icon:'visitas'},
     {label:'Ventas cerradas',val:cerrados,sub:`${pct(cerrados,total)}% cierre`,color:'green',icon:'ventas'},
     {label:'Monto vendido',val:fmt(montoTotal),sub:`Margen: ${fmt(cerrados*52250)}`,color:'green',icon:'wallet',big:true},
-    {label:'Conversión comercial',val:`${pct(cerrados,total)}%`,sub:'de lead a cliente',color:'blue',icon:'target'},
+    {label:'ConversiÃ³n comercial',val:`${pct(cerrados,total)}%`,sub:'de lead a cliente',color:'blue',icon:'target'},
   ].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value${k.big?' big':''}">${k.val}</div><div class="kpi-sub">${k.sub}</div><div class="kpi-icon">${navIcon(k.icon)}</div></div>`).join('');
   document.getElementById('crm-priority-grid').innerHTML=[
     {icon:'productividad',label:'Urgentes',val:urgentes,sub:'sin contacto oportuno',tone:'red'},
-    {icon:'cotizacion',label:'Vencidos',val:vencidos,sub:'acción fuera de fecha',tone:'amber'},
+    {icon:'cotizacion',label:'Vencidos',val:vencidos,sub:'acciÃ³n fuera de fecha',tone:'amber'},
     {icon:'visitas',label:'Seguimientos hoy',val:seguimientosHoy,sub:'acciones programadas',tone:'blue'},
-    {icon:'leads',label:'Sin asesor',val:sinAsesor,sub:'requieren asignación',tone:'slate'},
-  ].map(x=>`<button class="crm-priority-card ${x.tone}" onclick="showView('leads')"><span class="crm-priority-icon">${navIcon(x.icon)}</span><span><b>${x.val}</b><strong>${x.label}</strong><small>${x.sub}</small></span><i>→</i></button>`).join('');
+    {icon:'leads',label:'Sin asesor',val:sinAsesor,sub:'requieren asignaciÃ³n',tone:'slate'},
+  ].map(x=>`<button class="crm-priority-card ${x.tone}" onclick="showView('leads')"><span class="crm-priority-icon">${navIcon(x.icon)}</span><span><b>${x.val}</b><strong>${x.label}</strong><small>${x.sub}</small></span><i>â†’</i></button>`).join('');
   const pulse=document.getElementById('executive-pulse-grid');if(pulse){const delta=leadsPrev?Math.round((leadsMonth-leadsPrev)/leadsPrev*100):(leadsMonth?100:0),coverage=pct(conProximaAccion,activos||1);pulse.innerHTML=[
     {label:'Nuevas relaciones',value:leadsMonth,meta:`${delta>=0?'+':''}${delta}% frente al mes anterior`,tone:delta>=0?'up':'down',icon:'leads'},
     {label:'Visitas efectivas',value:visitsMonth,meta:'realizadas durante el mes',tone:'neutral',icon:'visitas'},
     {label:'Cobertura de seguimiento',value:`${coverage}%`,meta:`${conProximaAccion} de ${activos} oportunidades activas`,tone:coverage>=75?'up':'warn',icon:'target'},
-    {label:'Valor en negociación',value:forecast?fmt(forecast):'Por registrar',meta:`${quoted.length} oportunidades cotizadas`,tone:'neutral',icon:'ventas'},
+    {label:'Valor en negociaciÃ³n',value:forecast?fmt(forecast):'Por registrar',meta:`${quoted.length} oportunidades cotizadas`,tone:'neutral',icon:'ventas'},
     {label:'Cierres del mes',value:salesMonth,meta:'ventas concretadas',tone:salesMonth?'up':'warn',icon:'wallet'}
-  ].map(x=>`<button class="executive-pulse-card ${x.tone}" onclick="showView('${x.label.includes('seguimiento')?'crm-center':x.label.includes('Visitas')?'visitas':'leads'}')"><span class="executive-pulse-icon">${navIcon(x.icon)}</span><span><small>${x.label}</small><b>${x.value}</b><em>${x.meta}</em></span><i>↗</i></button>`).join('')}
+  ].map(x=>`<button class="executive-pulse-card ${x.tone}" onclick="showView('${x.label.includes('seguimiento')?'crm-center':x.label.includes('Visitas')?'visitas':'leads'}')"><span class="executive-pulse-icon">${navIcon(x.icon)}</span><span><small>${x.label}</small><b>${x.value}</b><em>${x.meta}</em></span><i>â†—</i></button>`).join('')}
   const fc=['#3D7EFF','#2DB87A','#F5A623','#E84545','#9B59B6','#1ABC9C'];
   const fuentes={};leads.forEach(l=>{const f=l.fuente||'Sin fuente';fuentes[f]=(fuentes[f]||0)+1;});
   const maxF=Math.max(...Object.values(fuentes),1);
   document.getElementById('chart-fuentes').innerHTML=Object.entries(fuentes).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v],i)=>`<div class="bar-row"><div class="bar-label">${esc(k)}</div><div class="bar-track"><div class="bar-fill" style="width:${pct(v,maxF)}%;background:${fc[i%fc.length]}"></div></div><div class="bar-count">${v}</div></div>`).join('')||'<div class="loading">Sin datos</div>';
-  const stages=[{label:'Leads',val:total,color:'#3D7EFF'},{label:'Contactados',val:contactados,color:'#5B8FFF'},{label:'Calificados',val:leads.filter(l=>['Calificado','Visita agendada','Visita confirmada','Visitó proyecto','Cotización enviada','Seguimiento activo','Reserva / Separación','Cierre ganado'].includes(l.estado)).length,color:'#F5A623'},{label:'Visitas',val:visitasReal,color:'#E8A020'},{label:'Ventas',val:cerrados,color:'#2DB87A'}];
+  const stages=[{label:'Leads',val:total,color:'#3D7EFF'},{label:'Contactados',val:contactados,color:'#5B8FFF'},{label:'Calificados',val:leads.filter(l=>['Calificado','Visita agendada','Visita confirmada','VisitÃ³ proyecto','CotizaciÃ³n enviada','Seguimiento activo','Reserva / SeparaciÃ³n','Cierre ganado'].includes(l.estado)).length,color:'#F5A623'},{label:'Visitas',val:visitasReal,color:'#E8A020'},{label:'Ventas',val:cerrados,color:'#2DB87A'}];
   const maxS=stages[0].val||1;
   document.getElementById('chart-funnel').innerHTML=stages.map(s=>`<div class="funnel-row"><div class="funnel-label">${s.label}</div><div class="funnel-bar" style="width:${Math.max(pct(s.val,maxS),8)}%;background:${s.color}">${s.val}</div></div>`).join('');
   const recent=[...leads].sort((a,b)=>String(b.created_at||b.fecha_ingreso||'').localeCompare(String(a.created_at||a.fecha_ingreso||''))).slice(0,5);
-  document.getElementById('recent-activity').innerHTML=recent.length?recent.map(l=>`<button class="recent-item" onclick="openLead('${l.id}')"><span class="recent-avatar">${esc((l.nombre||'?').trim().charAt(0).toUpperCase())}</span><span class="recent-copy"><strong>${esc(l.nombre||'Sin nombre')}</strong><small>${esc(l.asesor||'Sin asesor')} · ${esc(l.fecha_ingreso||'Sin fecha')}</small></span>${estadoBadge(l.estado)}<i>›</i></button>`).join(''):'<div class="empty-state"><p>Sin actividad reciente</p></div>';
+  document.getElementById('recent-activity').innerHTML=recent.length?recent.map(l=>`<button class="recent-item" onclick="openLead('${l.id}')"><span class="recent-avatar">${esc((l.nombre||'?').trim().charAt(0).toUpperCase())}</span><span class="recent-copy"><strong>${esc(l.nombre||'Sin nombre')}</strong><small>${esc(l.asesor||'Sin asesor')} Â· ${esc(l.fecha_ingreso||'Sin fecha')}</small></span>${estadoBadge(l.estado)}<i>â€º</i></button>`).join(''):'<div class="empty-state"><p>Sin actividad reciente</p></div>';
   const urgLeads=leads.filter(l=>['URGENTE','VENCIDO'].includes(calcAlerta(l))).slice(0,10);
   const tbl=document.getElementById('urgent-leads-table');
-  if(!urgLeads.length){tbl.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><p>Sin leads urgentes</p></div>';return;}
-  tbl.innerHTML=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Asesor</th><th>Próx. acción</th></tr></thead><tbody>${urgLeads.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td class="table-name">${esc(l.nombre||'—')}</td><td class="table-phone">${esc(l.telefono||'—')}</td><td>${estadoBadge(l.estado)}</td><td>${esc(l.asesor||'—')}</td><td>${esc(l.fecha_proxima_accion||'—')}</td></tr>`).join('')}</tbody></table></div>`;
+  if(!urgLeads.length){tbl.innerHTML='<div class="empty-state"><div class="empty-icon">âœ…</div><p>Sin leads urgentes</p></div>';return;}
+  tbl.innerHTML=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Asesor</th><th>PrÃ³x. acciÃ³n</th></tr></thead><tbody>${urgLeads.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td class="table-name">${esc(l.nombre||'â€”')}</td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td>${esc(l.asesor||'â€”')}</td><td>${esc(l.fecha_proxima_accion||'â€”')}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
 // LEADS TABLE
 function renderLeadsTable(leads){
-  const toShow=leads||getFilteredLeads();
+  const prRank={Alta:0,Media:1,Baja:2};
+  const toShow=[...(leads||getFilteredLeads())].sort((a,b)=>(prRank[prioridadValor(a)]??1)-(prRank[prioridadValor(b)]??1)||String(b.created_at||b.fecha_ingreso||'').localeCompare(String(a.created_at||a.fecha_ingreso||'')));
   const asesores=[...new Set(allLeads.map(l=>l.asesor).filter(Boolean))];
   const sel=document.getElementById('filter-asesor');
   if(sel&&sel.options.length<=1)asesores.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
   const wrap=document.getElementById('leads-table-wrap');
-  if(!toShow.length){wrap.innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">👥</div><p>Sin leads</p></div></div>';return;}
-  wrap.innerHTML=`<div class="section-card"><div class="section-header"><div class="section-title">${toShow.length} lead${toShow.length!==1?'s':''}</div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Fuente</th><th>Asesor</th><th>Próxima acción</th><th>Ingreso</th></tr></thead><tbody>${toShow.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td><div class="table-name">${esc(l.nombre||'—')}</div><div class="table-phone">${esc(l.ciudad||'')}</div></td><td class="table-phone">${esc(l.telefono||'—')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fuente||'—')}</td><td style="font-size:12px">${esc(l.asesor||'—')}</td><td style="font-size:12px;color:${l.fecha_proxima_accion<today()&&l.fecha_proxima_accion?'var(--amber)':'var(--text-muted)'}">${esc(l.fecha_proxima_accion||'—')}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fecha_ingreso||'—')}</td></tr>`).join('')}</tbody></table></div></div>`;
+  if(!toShow.length){wrap.innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">ðŸ‘¥</div><p>Sin leads</p></div></div>';return;}
+  wrap.innerHTML=`<div class="section-card"><div class="section-header"><div class="section-title">${toShow.length} lead${toShow.length!==1?'s':''}</div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Prioridad</th><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Fuente</th><th>Asesor</th><th>PrÃ³xima acciÃ³n</th><th>Ingreso</th></tr></thead><tbody>${toShow.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td>${prioridadBadge(prioridadValor(l))}</td><td><div class="table-name">${esc(l.nombre||'â€”')}</div><div class="table-phone">${esc(l.ciudad||'')}</div></td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fuente||'â€”')}</td><td style="font-size:12px">${esc(l.asesor||'â€”')}</td><td style="font-size:12px;color:${l.fecha_proxima_accion<today()&&l.fecha_proxima_accion?'var(--amber)':'var(--text-muted)'}">${esc(l.fecha_proxima_accion||'â€”')}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fecha_ingreso||'â€”')}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function getFilteredLeads(){
   const q=(document.getElementById('search-leads')?.value||'').toLowerCase();
   const est=document.getElementById('filter-estado')?.value||'';
   const alerta=document.getElementById('filter-alerta')?.value||'';
+  const prioridad=document.getElementById('filter-prioridad')?.value||'';
   const asesor=document.getElementById('filter-asesor')?.value||'';
   return allLeads.filter(l=>{
-    if(q&&!`${l.nombre} ${l.telefono} ${l.fuente} ${l.ciudad} ${l.asesor}`.toLowerCase().includes(q))return false;
+    if(q&&!`${l.nombre} ${l.telefono} ${l.fuente} ${l.ciudad} ${l.asesor} ${prioridadValor(l)}`.toLowerCase().includes(q))return false;
     if(est&&l.estado!==est)return false;
     if(alerta&&!calcAlerta(l).includes(alerta))return false;
+    if(prioridad&&prioridadValor(l)!==prioridad)return false;
     if(asesor&&l.asesor!==asesor)return false;
     return true;
   });
@@ -3567,33 +3599,33 @@ function openLead(id){
       <div>
         <div class="detail-card">
           <div class="detail-card-header">Datos del lead <div class="lead-detail-head-actions">${alertaChip(calcAlerta(lead))} ${estadoBadge(lead.estado)} ${canEditContact?`<button class="lead-edit-trigger" onclick="leadOpenEditor('${lead.id}')">${navIcon('edit')} Editar contacto</button>`:''}</div></div>
-          ${dr('Nombre',lead.nombre)}${dr('Teléfono',lead.telefono)}${dr('Ciudad',lead.ciudad)}${dr('Fecha ingreso',lead.fecha_ingreso)}${dr('Fuente',lead.fuente)}${dr('Campaña',lead.campana)}${dr('Proyecto',lead.proyecto)}${dr('Asesor dueño',lead.asesor)}${dr('Asesor de visita',lead.asesor_visita)}
+          ${dr('Nombre',lead.nombre)}${drHtml('Prioridad',prioridadBadge(prioridadValor(lead)))}${dr('TelÃ©fono',lead.telefono)}${dr('Ciudad',lead.ciudad)}${dr('Fecha ingreso',lead.fecha_ingreso)}${dr('Fuente',lead.fuente)}${dr('CampaÃ±a',lead.campana)}${dr('Proyecto',lead.proyecto)}${dr('Asesor dueÃ±o',lead.asesor)}${dr('Asesor de visita',lead.asesor_visita)}
         </div>
         <div class="detail-card mt-16">
-          <div class="detail-card-header">Calificación</div>
-          ${dr('Tipo',lead.tipo_cliente)}${dr('¿Contestó?',lead.contesto)}${dr('Tiempo resp.',lead.tiempo_respuesta?lead.tiempo_respuesta+' min':null)}${dr('Presupuesto',fmt(lead.presupuesto))}${dr('Inicial',fmt(lead.inicial))}${dr('Tipo ingreso',lead.tipo_ingreso)}${dr('Bono',lead.bono)}${dr('Forma pago',lead.forma_pago)}
+          <div class="detail-card-header">CalificaciÃ³n</div>
+          ${dr('Tipo',lead.tipo_cliente)}${dr('Â¿ContestÃ³?',lead.contesto)}${dr('Tiempo resp.',lead.tiempo_respuesta?lead.tiempo_respuesta+' min':null)}${dr('Presupuesto',fmt(lead.presupuesto))}${dr('Inicial',fmt(lead.inicial))}${dr('Tipo ingreso',lead.tipo_ingreso)}${dr('Bono',lead.bono)}${dr('Forma pago',lead.forma_pago)}
         </div>
         <div class="detail-card mt-16">
-          <div class="detail-card-header">Visita y operación</div>
-          ${dr('Visita agendada',lead.visita_agendada)}${dr('Fecha visita',lead.fecha_visita)}${dr('Asesor visita',lead.asesor_visita)}${dr('¿Asistió?',lead.asistio)}${dr('Cotización',lead.cotizacion)}${dr('Separó',lead.separo)}${dr('Monto sep.',fmt(lead.monto_separacion))}${dr('Monto venta',fmt(lead.monto_venta))}${dr('Motivo pérd.',lead.motivo_perdida)}
+          <div class="detail-card-header">Visita y operaciÃ³n</div>
+          ${dr('Visita agendada',lead.visita_agendada)}${dr('Fecha visita',lead.fecha_visita)}${dr('Asesor visita',lead.asesor_visita)}${dr('Â¿AsistiÃ³?',lead.asistio)}${dr('CotizaciÃ³n',lead.cotizacion)}${dr('SeparÃ³',lead.separo)}${dr('Monto sep.',fmt(lead.monto_separacion))}${dr('Monto venta',fmt(lead.monto_venta))}${dr('Motivo pÃ©rd.',lead.motivo_perdida)}
         </div>
         ${lead.observaciones?`<div class="detail-card mt-16"><div class="detail-card-header">Observaciones</div><div style="padding:14px 18px;font-size:13px;color:var(--text-muted);line-height:1.6">${esc(lead.observaciones)}</div></div>`:''}
       </div>
       <div>
         <div class="detail-card crm-360-card">
-          <div class="detail-card-header">Ficha 360° <span class="crm-health-score">${crmScore(lead)}% completa</span></div>
-          <div class="crm-360-summary"><div><span>Etapa actual</span><b>${esc(lead.estado||'Sin estado')}</b></div><div><span>Responsable</span><b>${esc(lead.asesor||'Sin asignar')}</b></div><div><span>Próxima acción</span><b>${crmDateLabel(lead.fecha_proxima_accion)}</b></div></div>
+          <div class="detail-card-header">Ficha 360Â° <span class="crm-health-score">${crmScore(lead)}% completa</span></div>
+          <div class="crm-360-summary"><div><span>Etapa actual</span><b>${esc(lead.estado||'Sin estado')}</b></div><div><span>Responsable</span><b>${esc(lead.asesor||'Sin asignar')}</b></div><div><span>PrÃ³xima acciÃ³n</span><b>${crmDateLabel(lead.fecha_proxima_accion)}</b></div></div>
           ${crmTimelineHTML(lead)}
         </div>
         <div class="detail-card">
           <div class="detail-card-header">Seguimiento</div>
-          ${dr('Próxima acción',lead.fecha_proxima_accion)}${dr('Acción',lead.accion_pendiente)}
+          ${dr('PrÃ³xima acciÃ³n',lead.fecha_proxima_accion)}${dr('AcciÃ³n',lead.accion_pendiente)}
           ${canEditSeguimiento?`<div class="status-update-form">
-            <div class="field"><label>Nuevo estado</label><select id="upd-estado"><option value="">— Sin cambio —</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option><option>Visita agendada</option><option>Visita confirmada</option><option>Visitó proyecto</option><option>Cotización enviada</option><option>Seguimiento activo</option><option>Reserva / Separación</option><option>Cierre ganado</option><option>Perdido</option></select></div>
-            <div class="field"><label>Observación</label><textarea id="upd-obs" placeholder="Añadir nota..."></textarea></div>
-            <div class="field"><label>Nueva fecha próxima acción</label><input type="date" id="upd-fecha"></div>
+            <div class="field"><label>Nuevo estado</label><select id="upd-estado"><option value="">â€” Sin cambio â€”</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option><option>Visita agendada</option><option>Visita confirmada</option><option>VisitÃ³ proyecto</option><option>CotizaciÃ³n enviada</option><option>Seguimiento activo</option><option>Reserva / SeparaciÃ³n</option><option>Cierre ganado</option><option>Perdido</option></select></div>
+            <div class="field"><label>ObservaciÃ³n</label><textarea id="upd-obs" placeholder="AÃ±adir nota..."></textarea></div>
+            <div class="field"><label>Nueva fecha prÃ³xima acciÃ³n</label><input type="date" id="upd-fecha"></div>
             <button class="btn-primary full" onclick="updateLeadStatus('${lead.id}')">Guardar cambios</button>
-          </div>`:'<div style="padding:14px 18px;font-size:12px;color:var(--text-muted)">Solo lectura — coordinación</div>'}
+          </div>`:'<div style="padding:14px 18px;font-size:12px;color:var(--text-muted)">Solo lectura â€” coordinaciÃ³n</div>'}
         </div>
         <div class="detail-card mt-16">
           <div class="detail-card-header">Programar visita</div>
@@ -3607,8 +3639,8 @@ function openLead(id){
         <div class="detail-card mt-16">
           <div class="detail-card-header">Acciones</div>
           <div style="padding:14px 18px;display:flex;flex-direction:column;gap:8px">
-            <a href="tel:${digits(lead.telefono)}" class="btn-ghost" style="text-align:center;text-decoration:none">📞 Llamar</a>
-            <a href="https://wa.me/51${digits(lead.telefono)}" target="_blank" rel="noopener" class="btn-success" style="text-align:center;text-decoration:none">💬 WhatsApp</a>
+            <a href="tel:${digits(lead.telefono)}" class="btn-ghost" style="text-align:center;text-decoration:none">ðŸ“ž Llamar</a>
+            <a href="https://wa.me/51${digits(lead.telefono)}" target="_blank" rel="noopener" class="btn-success" style="text-align:center;text-decoration:none">ðŸ’¬ WhatsApp</a>
             ${canEdit&&lead.estado!=='Perdido'?`<button class="btn-danger" onclick="markLost('${lead.id}')">Marcar como perdido</button>`:''}
             ${currentUser.role==='gerente'?`<button class="lead-delete-contact" onclick="leadConfirmDelete('${lead.id}')">Eliminar contacto</button>`:''}
           </div>
@@ -3616,12 +3648,13 @@ function openLead(id){
       </div>
     </div>`;
 }
-function dr(key,val){if(!val||val==='—')return'';return`<div class="detail-row"><div class="detail-key">${esc(key)}</div><div class="detail-val">${esc(val)}</div></div>`;}
+function dr(key,val){if(!val||val==='â€”')return'';return`<div class="detail-row"><div class="detail-key">${esc(key)}</div><div class="detail-val">${esc(val)}</div></div>`;}
+function drHtml(key,html){if(!html)return'';return`<div class="detail-row"><div class="detail-key">${esc(key)}</div><div class="detail-val">${html}</div></div>`;}
 async function programarVisita(id){
   const fecha=document.getElementById('vis-fecha').value,hora=document.getElementById('vis-hora').value,asesor=document.getElementById('vis-asesor').value;
   if(!fecha){toast('Selecciona fecha','error');return;}
   const visitor=(_usersCache||[]).find(u=>u.name===asesor);
-  const ok=await updateLead(id,{visita_agendada:'Sí',fecha_visita:fecha,hora_visita:hora,asesor_visita:asesor,visitor_id:visitor?.id||null,estado:'Visita agendada',fecha_proxima_accion:fecha,accion_pendiente:'Visita con '+asesor});
+  const ok=await updateLead(id,{visita_agendada:'SÃ­',fecha_visita:fecha,hora_visita:hora,asesor_visita:asesor,visitor_id:visitor?.id||null,estado:'Visita agendada',fecha_proxima_accion:fecha,accion_pendiente:'Visita con '+asesor});
   if(ok){toast('Visita agendada con '+asesor);openLead(id);}
 }
 async function updateLeadStatus(id){
@@ -3631,7 +3664,7 @@ async function updateLeadStatus(id){
   if(await updateLead(id,updates)){toast('Lead actualizado');openLead(id);}
 }
 async function markLost(id){
-  const motivo=prompt('Motivo de pérdida (requerido):');if(!motivo)return;
+  const motivo=prompt('Motivo de pÃ©rdida (requerido):');if(!motivo)return;
   if(await updateLead(id,{estado:'Perdido',estado_final:'Perdido',motivo_perdida:motivo})){
     toast('Lead marcado como perdido');showView('leads');
   }
@@ -3643,17 +3676,17 @@ function renderLeadForm(){
   const tom=new Date(now);tom.setDate(tom.getDate()+1);const manana=toDateStr(tom);
   const asesores=getAsesores();
   document.getElementById('lead-form-wrap').innerHTML=`
-    <div class="lead-form-intro"><div><span>1</span><b>Identificación</b></div><i></i><div><span>2</span><b>Calificación</b></div><i></i><div><span>3</span><b>Seguimiento</b></div></div>
-    <div id="form-success" class="alert-box success" style="display:none">Lead registrado. <a href="#" onclick="showView('leads');return false">Ver leads →</a></div>
+    <div class="lead-form-intro"><div><span>1</span><b>IdentificaciÃ³n</b></div><i></i><div><span>2</span><b>CalificaciÃ³n</b></div><i></i><div><span>3</span><b>Seguimiento</b></div></div>
+    <div id="form-success" class="alert-box success" style="display:none">Lead registrado. <a href="#" onclick="showView('leads');return false">Ver leads â†’</a></div>
     <div id="form-error" class="alert-box error" style="display:none"></div>
     <div class="form-section-title">Datos del cliente</div>
     <div class="field-row">
-      <div class="field"><label>Nombre completo <span class="req">*</span></label><input type="text" id="f-nombre" placeholder="Juan Pérez García"></div>
-      <div class="field"><label>Teléfono <span class="req">*</span></label><input type="tel" id="f-telefono" placeholder="987 654 321" inputmode="numeric"></div>
+      <div class="field"><label>Nombre completo <span class="req">*</span></label><input type="text" id="f-nombre" placeholder="Juan PÃ©rez GarcÃ­a"></div>
+      <div class="field"><label>TelÃ©fono <span class="req">*</span></label><input type="tel" id="f-telefono" placeholder="987 654 321" inputmode="numeric"></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Ciudad</label><input type="text" id="f-ciudad" placeholder="Juliaca"></div>
-      <div class="field"><label>Proyecto</label><select id="f-proyecto"><option value="">—</option><option>Los Álamos</option></select></div>
+      <div class="field"><label>Proyecto</label><select id="f-proyecto"><option value="">â€”</option><option>Los Ãlamos</option></select></div>
     </div>
     <div class="field-row">
       <div class="field"><label>Fecha ingreso <span class="req">*</span></label><input type="date" id="f-fecha-ing" value="${hoy}"></div>
@@ -3664,18 +3697,18 @@ function renderLeadForm(){
       <div class="pill-group" id="fpg-fuente">
         <div class="pill sel" data-val="Facebook Ads">Facebook Ads</div>
         <div class="pill" data-val="WhatsApp">WhatsApp</div><div class="pill" data-val="Referido">Referido</div>
-        <div class="pill" data-val="Volanteo">Volanteo</div><div class="pill" data-val="Orgánico">Orgánico</div><div class="pill" data-val="Otro">Otro</div>
+        <div class="pill" data-val="Volanteo">Volanteo</div><div class="pill" data-val="OrgÃ¡nico">OrgÃ¡nico</div><div class="pill" data-val="Otro">Otro</div>
       </div></div>
     <div class="field-row">
-      <div class="field"><label>Campaña</label><input type="text" id="f-campana" placeholder="Campaña Abril"></div>
-      <div class="field"><label>Asesor dueño del lead</label>
+      <div class="field"><label>CampaÃ±a</label><input type="text" id="f-campana" placeholder="CampaÃ±a Abril"></div>
+      <div class="field"><label>Asesor dueÃ±o del lead</label>
         <select id="f-asesor" ${currentUser.role==='asesor'?'disabled':''}>
           ${asesores.map(a=>`<option value="${attr(a)}" ${a===currentUser.name?'selected':''}>${esc(a)}</option>`).join('')}
         </select></div>
     </div>
     <div class="form-section-title">Primer contacto</div>
-    <div class="field"><label>¿Contestó? <span class="req">*</span></label>
-      <div class="pill-group" id="fpg-contesto"><div class="pill" data-val="Sí">✓ Sí</div><div class="pill" data-val="No">✗ No</div></div></div>
+    <div class="field"><label>Â¿ContestÃ³? <span class="req">*</span></label>
+      <div class="pill-group" id="fpg-contesto"><div class="pill" data-val="SÃ­">âœ“ SÃ­</div><div class="pill" data-val="No">âœ— No</div></div></div>
     <div class="toggle-section" id="fts-si">
       <div class="field-row">
         <div class="field"><label>Fecha contacto</label><input type="date" id="f-fecha-cont" value="${hoy}"></div>
@@ -3683,20 +3716,26 @@ function renderLeadForm(){
       </div><div id="f-timing-display"></div>
     </div>
     <div class="toggle-section" id="fts-no">
-      <div class="field"><label>Número de intentos</label>
+      <div class="field"><label>NÃºmero de intentos</label>
         <div class="pill-group" id="fpg-intentos"><div class="pill" data-val="1">1</div><div class="pill" data-val="2">2</div><div class="pill" data-val="3">3</div><div class="pill" data-val="4+">4+</div></div></div>
     </div>
-    <div class="form-section-title">Calificación</div>
-    <div class="field"><label>Nivel de interés</label>
-      <div class="pill-group" id="fpg-tipo"><div class="pill" data-val="Frío" data-sel="sel-red">Frío</div><div class="pill" data-val="Tibio" data-sel="sel-amber">Tibio</div><div class="pill" data-val="Caliente" data-sel="sel-green">Caliente</div></div></div>
+    <div class="form-section-title">CalificaciÃ³n</div>
+    <div class="field"><label>Prioridad comercial</label>
+      <div class="pill-group" id="fpg-prioridad">
+        <div class="pill" data-val="Alta" data-sel="sel-red">Alta</div>
+        <div class="pill sel" data-val="Media" data-sel="sel-amber">Media</div>
+        <div class="pill" data-val="Baja">Baja</div>
+      </div></div>
+    <div class="field"><label>Nivel de interÃ©s</label>
+      <div class="pill-group" id="fpg-tipo"><div class="pill" data-val="FrÃ­o" data-sel="sel-red">FrÃ­o</div><div class="pill" data-val="Tibio" data-sel="sel-amber">Tibio</div><div class="pill" data-val="Caliente" data-sel="sel-green">Caliente</div></div></div>
     <div class="field-row">
       <div class="field"><label>Presupuesto (S/)</label><input type="number" id="f-presupuesto" placeholder="180000" inputmode="numeric"></div>
       <div class="field"><label>Inicial disponible (S/)</label><input type="number" id="f-inicial" placeholder="10000" inputmode="numeric"></div>
     </div>
     <div class="field-row">
-      <div class="field"><label>Tipo de ingreso</label><select id="f-tipo-ingreso"><option value="">—</option><option>Dependiente</option><option>Independiente</option><option>Empresario</option><option>Informal</option><option>Otro</option></select></div>
-      <div class="field"><label>¿Bono Techo Propio?</label>
-        <div class="pill-group" id="fpg-bono"><div class="pill" data-val="Sí">Sí</div><div class="pill" data-val="No">No</div><div class="pill" data-val="No sabe">No sabe</div></div></div>
+      <div class="field"><label>Tipo de ingreso</label><select id="f-tipo-ingreso"><option value="">â€”</option><option>Dependiente</option><option>Independiente</option><option>Empresario</option><option>Informal</option><option>Otro</option></select></div>
+      <div class="field"><label>Â¿Bono Techo Propio?</label>
+        <div class="pill-group" id="fpg-bono"><div class="pill" data-val="SÃ­">SÃ­</div><div class="pill" data-val="No">No</div><div class="pill" data-val="No sabe">No sabe</div></div></div>
     </div>
     <div class="field"><label>Forma de pago preferida</label>
       <div class="pill-group" id="fpg-pago">
@@ -3707,10 +3746,10 @@ function renderLeadForm(){
     <div class="form-section-title">Estado y visita</div>
     <div class="field"><label>Estado actual <span class="req">*</span></label>
       <select id="f-estado" onchange="onFormEstadoChange()">
-        <option value="">— Seleccionar —</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option>
-        <option>Visita agendada</option><option>Visita confirmada</option><option>Visitó proyecto</option>
-        <option>Cotización enviada</option><option>Seguimiento activo</option>
-        <option>Reserva / Separación</option><option>Cierre ganado</option><option>Perdido</option>
+        <option value="">â€” Seleccionar â€”</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option>
+        <option>Visita agendada</option><option>Visita confirmada</option><option>VisitÃ³ proyecto</option>
+        <option>CotizaciÃ³n enviada</option><option>Seguimiento activo</option>
+        <option>Reserva / SeparaciÃ³n</option><option>Cierre ganado</option><option>Perdido</option>
       </select></div>
     <div class="toggle-section" id="fts-visita">
       <div class="toggle-label">Datos de la visita</div>
@@ -3720,40 +3759,40 @@ function renderLeadForm(){
       </div>
       <div class="field"><label>Asesor que atiende la visita</label>
         <select id="f-asesor-vis">${asesores.map(a=>`<option value="${attr(a)}" ${a===currentUser.name?'selected':''}>${esc(a)}</option>`).join('')}</select></div>
-      <div class="field"><label>¿Asistió?</label>
-        <div class="pill-group" id="fpg-asistio"><div class="pill" data-val="Sí" data-sel="sel-green">Sí</div><div class="pill" data-val="No" data-sel="sel-red">No</div><div class="pill" data-val="Pendiente">Pendiente</div></div></div>
+      <div class="field"><label>Â¿AsistiÃ³?</label>
+        <div class="pill-group" id="fpg-asistio"><div class="pill" data-val="SÃ­" data-sel="sel-green">SÃ­</div><div class="pill" data-val="No" data-sel="sel-red">No</div><div class="pill" data-val="Pendiente">Pendiente</div></div></div>
     </div>
     <div class="toggle-section" id="fts-venta">
-      <div class="toggle-label">Datos de la operación</div>
+      <div class="toggle-label">Datos de la operaciÃ³n</div>
       <div class="field-row">
-        <div class="field"><label>Monto separación (S/)</label><input type="number" id="f-monto-sep" inputmode="numeric"></div>
+        <div class="field"><label>Monto separaciÃ³n (S/)</label><input type="number" id="f-monto-sep" inputmode="numeric"></div>
         <div class="field"><label>Monto venta (S/)</label><input type="number" id="f-monto-venta" inputmode="numeric"></div>
       </div></div>
     <div class="toggle-section" id="fts-perdido">
-      <div class="field"><label>Motivo de pérdida <span class="req">*</span></label>
-        <select id="f-motivo"><option value="">—</option><option>Precio</option><option>Ubicación</option><option>Tamaño del terreno</option><option>No califica al bono</option><option>No tiene inicial</option><option>No contesta</option><option>Compró en otro lado</option><option>Otro</option></select></div></div>
-    <div class="field"><label>¿Cotización enviada?</label>
-      <div class="pill-group" id="fpg-cotiz"><div class="pill" data-val="Sí" data-sel="sel-green">Sí</div><div class="pill" data-val="No">No</div></div></div>
-    <div class="form-section-title">Próxima acción</div>
+      <div class="field"><label>Motivo de pÃ©rdida <span class="req">*</span></label>
+        <select id="f-motivo"><option value="">â€”</option><option>Precio</option><option>UbicaciÃ³n</option><option>TamaÃ±o del terreno</option><option>No califica al bono</option><option>No tiene inicial</option><option>No contesta</option><option>ComprÃ³ en otro lado</option><option>Otro</option></select></div></div>
+    <div class="field"><label>Â¿CotizaciÃ³n enviada?</label>
+      <div class="pill-group" id="fpg-cotiz"><div class="pill" data-val="SÃ­" data-sel="sel-green">SÃ­</div><div class="pill" data-val="No">No</div></div></div>
+    <div class="form-section-title">PrÃ³xima acciÃ³n</div>
     <div class="field-row">
       <div class="field"><label>Fecha <span class="req">*</span></label><input type="date" id="f-fecha-acc" value="${manana}"></div>
-      <div class="field"><label>¿Qué harás? <span class="req">*</span></label>
+      <div class="field"><label>Â¿QuÃ© harÃ¡s? <span class="req">*</span></label>
         <div class="pill-group" id="fpg-accion">
           <div class="pill" data-val="Llamar">Llamar</div><div class="pill" data-val="WhatsApp">WhatsApp</div>
-          <div class="pill" data-val="Coordinar visita">Visita</div><div class="pill" data-val="Enviar cotización">Cotización</div>
-          <div class="pill" data-val="Seguimiento separación">Separación</div><div class="pill" data-val="Otro">Otro</div>
+          <div class="pill" data-val="Coordinar visita">Visita</div><div class="pill" data-val="Enviar cotizaciÃ³n">CotizaciÃ³n</div>
+          <div class="pill" data-val="Seguimiento separaciÃ³n">SeparaciÃ³n</div><div class="pill" data-val="Otro">Otro</div>
         </div></div>
     </div>
     <div class="field"><label>Observaciones</label><textarea id="f-obs" placeholder="Notas importantes..."></textarea></div>
     <div class="mt-24" style="display:flex;gap:12px">
-      <button class="btn-primary" style="flex:1;padding:14px;font-size:15px" onclick="submitLead()">Guardar lead →</button>
+      <button class="btn-primary" style="flex:1;padding:14px;font-size:15px" onclick="submitLead()">Guardar lead â†’</button>
       <button class="btn-ghost" onclick="showView('leads')">Cancelar</button>
     </div>`;
   initFormPills();
   ['f-fecha-cont','f-hora-cont','f-fecha-ing','f-hora-ing'].forEach(id=>document.getElementById(id)?.addEventListener('change',updateFormTiming));
 }
 function initFormPills(){
-  const groups={'fpg-fuente':{key:'fuente',default:'Facebook Ads'},'fpg-contesto':{key:'contesto',onChange:onContestoChange},'fpg-intentos':{key:'intentos'},'fpg-tipo':{key:'tipo',colored:true},'fpg-bono':{key:'bono'},'fpg-pago':{key:'pago'},'fpg-asistio':{key:'asistio',colored:true},'fpg-cotiz':{key:'cotiz',colored:true},'fpg-accion':{key:'accion'}};
+  const groups={'fpg-fuente':{key:'fuente',default:'Facebook Ads'},'fpg-contesto':{key:'contesto',onChange:onContestoChange},'fpg-intentos':{key:'intentos'},'fpg-prioridad':{key:'prioridad',default:'Media',colored:true},'fpg-tipo':{key:'tipo',colored:true},'fpg-bono':{key:'bono'},'fpg-pago':{key:'pago'},'fpg-asistio':{key:'asistio',colored:true},'fpg-cotiz':{key:'cotiz',colored:true},'fpg-accion':{key:'accion'}};
   Object.entries(groups).forEach(([id,cfg])=>{
     const grp=document.getElementById(id);if(!grp)return;
     if(cfg.default)R[cfg.key]=cfg.default;
@@ -3768,25 +3807,25 @@ function initFormPills(){
     });
   });
 }
-function onContestoChange(val){document.getElementById('fts-si').classList.toggle('show',val==='Sí');document.getElementById('fts-no').classList.toggle('show',val==='No');updateFormTiming();}
-function onFormEstadoChange(){const e=document.getElementById('f-estado').value;document.getElementById('fts-visita').classList.toggle('show',['Visita agendada','Visita confirmada','Visitó proyecto'].includes(e));document.getElementById('fts-venta').classList.toggle('show',['Reserva / Separación','Cierre ganado'].includes(e));document.getElementById('fts-perdido').classList.toggle('show',e==='Perdido');}
+function onContestoChange(val){document.getElementById('fts-si').classList.toggle('show',val==='SÃ­');document.getElementById('fts-no').classList.toggle('show',val==='No');updateFormTiming();}
+function onFormEstadoChange(){const e=document.getElementById('f-estado').value;document.getElementById('fts-visita').classList.toggle('show',['Visita agendada','Visita confirmada','VisitÃ³ proyecto'].includes(e));document.getElementById('fts-venta').classList.toggle('show',['Reserva / SeparaciÃ³n','Cierre ganado'].includes(e));document.getElementById('fts-perdido').classList.toggle('show',e==='Perdido');}
 function updateFormTiming(){
-  if(R.contesto!=='Sí')return;
+  if(R.contesto!=='SÃ­')return;
   const fi=gf('f-fecha-ing'),hi=gf('f-hora-ing'),fc=gf('f-fecha-cont'),hc=gf('f-hora-cont');
   if(!fi||!hi||!fc||!hc)return;
   const mins=Math.round((new Date(fc+'T'+hc)-new Date(fi+'T'+hi))/60000);
   const d=document.getElementById('f-timing-display');if(!d||mins<0)return;
   const u=mins>15;
-  d.innerHTML=`<div style="margin-top:10px;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;background:${u?'var(--red-light)':'var(--green-light)'};color:${u?'var(--red)':'var(--green)'}">${u?'⚠':'✓'} Tiempo: ${mins} min${u?' — supera 15 min':''}</div>`;
+  d.innerHTML=`<div style="margin-top:10px;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;background:${u?'var(--red-light)':'var(--green-light)'};color:${u?'var(--red)':'var(--green)'}">${u?'âš ':'âœ“'} Tiempo: ${mins} min${u?' â€” supera 15 min':''}</div>`;
   R._mins=mins;
 }
 async function submitLead(){
   const nombre=gf('f-nombre'),telefono=gf('f-telefono'),estado=gf('f-estado'),fechaAcc=gf('f-fecha-acc'),accion=R.accion;
   const errEl=document.getElementById('form-error');
-  if(!nombre||!telefono||!estado||!fechaAcc||!accion||!R.contesto||!R.fuente){errEl.textContent='Completa: nombre, teléfono, estado, próxima acción y fuente.';errEl.style.display='block';errEl.scrollIntoView({behavior:'smooth'});return;}
+  if(!nombre||!telefono||!estado||!fechaAcc||!accion||!R.contesto||!R.fuente){errEl.textContent='Completa: nombre, telÃ©fono, estado, prÃ³xima acciÃ³n y fuente.';errEl.style.display='block';errEl.scrollIntoView({behavior:'smooth'});return;}
   const telNormalizado=digits(telefono).slice(-9);
   const duplicado=allLeads.find(l=>digits(l.telefono).slice(-9)===telNormalizado&&telNormalizado.length>=7);
-  if(duplicado){errEl.innerHTML=`Este teléfono ya pertenece a <button type="button" class="crm-inline-link" onclick="openLead('${duplicado.id}')">${esc(duplicado.nombre||'otro cliente')}</button>. Revisa la ficha antes de duplicarlo.`;errEl.style.display='block';errEl.scrollIntoView({behavior:'smooth'});return;}
+  if(duplicado){errEl.innerHTML=`Este telÃ©fono ya pertenece a <button type="button" class="crm-inline-link" onclick="openLead('${duplicado.id}')">${esc(duplicado.nombre||'otro cliente')}</button>. Revisa la ficha antes de duplicarlo.`;errEl.style.display='block';errEl.scrollIntoView({behavior:'smooth'});return;}
   errEl.style.display='none';
   const asesorDueno=gf('f-asesor')||currentUser.name;
   const asesorVisita=gf('f-asesor-vis')||asesorDueno;
@@ -3813,6 +3852,7 @@ async function submitLead(){
     hora_contacto:dn(gf('f-hora-cont')),
     tiempo_respuesta:R._mins||null,
     intentos:R.intentos||null,
+    prioridad:R.prioridad||'Media',
     tipo_cliente:R.tipo||null,
     presupuesto:dn(gf('f-presupuesto'))?Number(gf('f-presupuesto')):null,
     inicial:dn(gf('f-inicial'))?Number(gf('f-inicial')):null,
@@ -3821,15 +3861,15 @@ async function submitLead(){
     forma_pago:R.pago||null,
     estado,
     estado_final:estado==='Cierre ganado'?'Ganado':estado==='Perdido'?'Perdido':'Abierto',
-    visita_agendada:dn(gf('f-fecha-vis'))?'Sí':'No',
+    visita_agendada:dn(gf('f-fecha-vis'))?'SÃ­':'No',
     fecha_visita:dn(gf('f-fecha-vis')),
     hora_visita:dn(gf('f-hora-vis')),
     asistio:R.asistio||null,
     cotizacion:R.cotiz||null,
     monto_separacion:dn(gf('f-monto-sep'))?Number(gf('f-monto-sep')):null,
-    separo:dn(gf('f-monto-sep'))?'Sí':'No',
+    separo:dn(gf('f-monto-sep'))?'SÃ­':'No',
     monto_venta:dn(gf('f-monto-venta'))?Number(gf('f-monto-venta')):null,
-    cerro_venta:estado==='Cierre ganado'?'Sí':'No',
+    cerro_venta:estado==='Cierre ganado'?'SÃ­':'No',
     motivo_perdida:dn(gf('f-motivo')),
     fecha_proxima_accion:dn(fechaAcc),
     accion_pendiente:accion,
@@ -3839,22 +3879,22 @@ async function submitLead(){
   _isSaving=true;
   const saved = await saveLead(lead);
   _isSaving=false;
-  btn.textContent='Guardar lead →';btn.disabled=false;
+  btn.textContent='Guardar lead â†’';btn.disabled=false;
   if(saved && saved.id){
     // Confirm by re-fetching from Supabase
     await fetchLeads();
     document.getElementById('form-success').style.display='block';
-    toast('Lead registrado — guardado en Supabase ✓');
+    toast('Lead registrado â€” guardado en Supabase âœ“');
     console.log('[CRM] Total leads after save:', allLeads.length);
     setTimeout(()=>renderLeadForm(),2500);
   } else {
-    toast('Error al guardar — revisa la consola','error');
+    toast('Error al guardar â€” revisa la consola','error');
   }
 }
 
 // VISITAS
 function renderVisitas(){
-  const all=(currentUser.role==='asesor')?allLeads.filter(l=>l.visita_agendada==='Sí'&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='Sí'||l.fecha_visita);
+  const all=(currentUser.role==='asesor')?allLeads.filter(l=>l.visita_agendada==='SÃ­'&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='SÃ­'||l.fecha_visita);
   const wrap=document.getElementById('visitas-wrap');
   const isCoord=['gerente','admin','coordinadora'].includes(currentUser.role);
   if(isCoord){
@@ -3862,27 +3902,27 @@ function renderVisitas(){
     const sow=new Date(now);sow.setDate(now.getDate()-now.getDay()+1);
     const days=[];for(let i=0;i<7;i++){const d=new Date(sow);d.setDate(sow.getDate()+i);days.push(d);}
     const wv={};days.forEach(d=>{const ds=toDateStr(d);wv[ds]=all.filter(l=>l.fecha_visita===ds);});
-    const dn=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+    const dn=['Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b','Dom'];
     wrap.innerHTML=`<div class="section-card" style="margin-bottom:16px">
-      <div class="section-header"><div class="section-title">📅 Semana: ${toDateStr(sow)} — ${toDateStr(days[6])}</div></div>
+      <div class="section-header"><div class="section-title">ðŸ“… Semana: ${toDateStr(sow)} â€” ${toDateStr(days[6])}</div></div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:16px;overflow-x:auto">
         ${days.map(d=>{const ds=toDateStr(d);const vis=wv[ds]||[];const isT=ds===today();
           return`<div style="border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px;${isT?'border-color:var(--accent);background:var(--accent-light)':'background:var(--surface2)'}">
             <div style="font-size:11px;font-weight:700;color:${isT?'var(--accent)':'var(--text-muted)'};margin-bottom:6px;text-transform:uppercase">${dn[d.getDay()===0?6:d.getDay()-1]} ${d.getDate()}</div>
-            ${vis.map(v=>`<div onclick="openLead('${v.id}')" style="background:var(--surface);border-left:3px solid var(--amber);padding:4px 6px;margin-bottom:4px;border-radius:3px;cursor:pointer;font-size:11px"><div style="font-weight:600">${esc((v.nombre||'').split(' ')[0])}</div><div style="color:var(--text-muted)">${esc(v.hora_visita||'—')} · ${esc((v.asesor_visita||v.asesor||'').split(' ')[0])}</div></div>`).join('')}
+            ${vis.map(v=>`<div onclick="openLead('${v.id}')" style="background:var(--surface);border-left:3px solid var(--amber);padding:4px 6px;margin-bottom:4px;border-radius:3px;cursor:pointer;font-size:11px"><div style="font-weight:600">${esc((v.nombre||'').split(' ')[0])}</div><div style="color:var(--text-muted)">${esc(v.hora_visita||'â€”')} Â· ${esc((v.asesor_visita||v.asesor||'').split(' ')[0])}</div></div>`).join('')}
             ${!vis.length?`<div style="font-size:10px;color:var(--text-hint);text-align:center;margin-top:12px">Sin visitas</div>`:''}
           </div>`}).join('')}
-      </div></div>`+prodCard()+visGroup('Próximas visitas',all.filter(l=>l.asistio!=='Sí'&&l.estado!=='Perdido'),'var(--amber)')+visGroup('Realizadas',all.filter(l=>l.asistio==='Sí'),'var(--green)');
+      </div></div>`+prodCard()+visGroup('PrÃ³ximas visitas',all.filter(l=>l.asistio!=='SÃ­'&&l.estado!=='Perdido'),'var(--amber)')+visGroup('Realizadas',all.filter(l=>l.asistio==='SÃ­'),'var(--green)');
   } else {
-    wrap.innerHTML=visGroup('Mis próximas visitas',all.filter(l=>l.asistio!=='Sí'&&l.estado!=='Perdido'),'var(--amber)')+visGroup('Mis visitas realizadas',all.filter(l=>l.asistio==='Sí'),'var(--green)');
+    wrap.innerHTML=visGroup('Mis prÃ³ximas visitas',all.filter(l=>l.asistio!=='SÃ­'&&l.estado!=='Perdido'),'var(--amber)')+visGroup('Mis visitas realizadas',all.filter(l=>l.asistio==='SÃ­'),'var(--green)');
   }
 }
 function visGroup(title,items,color){
   if(!items.length)return'';
-  const kind=title.toLowerCase().includes('próxim')?'upcoming':'completed';
+  const kind=title.toLowerCase().includes('prÃ³xim')?'upcoming':'completed';
   return`<div class="section-card visits-group ${kind}" style="margin-bottom:16px"><div class="section-header"><div class="section-title">${title}</div><span class="visits-count">${items.length}</span></div>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Tel</th><th>Fecha</th><th>Hora</th><th>Asesor dueño</th><th>Asesor visita</th><th>Estado</th></tr></thead>
-    <tbody>${items.map(l=>`<tr onclick="openLead('${l.id}')"><td class="table-name">${esc(l.nombre||'—')}</td><td class="table-phone">${esc(l.telefono||'—')}</td><td>${esc(l.fecha_visita||'—')}</td><td>${esc(l.hora_visita||'—')}</td><td><span class="owner-advisor">${esc(l.asesor||'—')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'—')}</span></td><td>${l.asistio==='Sí'?'<span class="badge badge-green">Asistió</span>':l.asistio==='No'?'<span class="badge badge-red">No asistió</span>':'<span class="badge badge-gray">Pendiente</span>'}</td></tr>`).join('')}
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Tel</th><th>Fecha</th><th>Hora</th><th>Asesor dueÃ±o</th><th>Asesor visita</th><th>Estado</th></tr></thead>
+    <tbody>${items.map(l=>`<tr onclick="openLead('${l.id}')"><td class="table-name">${esc(l.nombre||'â€”')}</td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${esc(l.fecha_visita||'â€”')}</td><td>${esc(l.hora_visita||'â€”')}</td><td><span class="owner-advisor">${esc(l.asesor||'â€”')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'â€”')}</span></td><td>${l.asistio==='SÃ­'?'<span class="badge badge-green">AsistiÃ³</span>':l.asistio==='No'?'<span class="badge badge-red">No asistiÃ³</span>':'<span class="badge badge-gray">Pendiente</span>'}</td></tr>`).join('')}
     </tbody></table></div></div>`;
 }
 
@@ -3896,12 +3936,12 @@ function prodCard(){
     const cm=allLeads.filter(l=>l.asesor===nombre&&l.estado==='Cierre ganado'&&l.fecha_ingreso>=toDateStr(ms)).length;
     const vo=vw>=5,co=cm>=5;
     return`<tr><td><div style="font-weight:600;font-size:13px">${esc(nombre.split(' ').slice(0,2).join(' '))}</div></td>
-      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vw}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vo?'✓ META':'⚠ PENDIENTE'}</div></td>
-      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${cm}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${co?'✓ META':'⚠ PENDIENTE'}</div></td>
-      <td style="text-align:center"><div style="width:36px;height:36px;border-radius:50%;background:${vo&&co?'var(--green)':!vo&&!co?'var(--red)':'var(--amber)'};display:inline-flex;align-items:center;justify-content:center;font-size:18px">${vo&&co?'🏆':!vo&&!co?'🔴':'🟡'}</div></td>
+      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vw}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vo?'âœ“ META':'âš  PENDIENTE'}</div></td>
+      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${cm}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${co?'âœ“ META':'âš  PENDIENTE'}</div></td>
+      <td style="text-align:center"><div style="width:36px;height:36px;border-radius:50%;background:${vo&&co?'var(--green)':!vo&&!co?'var(--red)':'var(--amber)'};display:inline-flex;align-items:center;justify-content:center;font-size:18px">${vo&&co?'ðŸ†':!vo&&!co?'ðŸ”´':'ðŸŸ¡'}</div></td>
     </tr>`;
   }).join('');
-  return`<div class="section-card" style="margin-bottom:16px"><div class="section-header"><div class="section-title">📈 Productividad del equipo</div></div>
+  return`<div class="section-card" style="margin-bottom:16px"><div class="section-header"><div class="section-title">ðŸ“ˆ Productividad del equipo</div></div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Asesor</th><th style="text-align:center">Visitas esta semana</th><th style="text-align:center">Cierres este mes</th><th style="text-align:center">Estado</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function renderProductividad(){
@@ -3911,8 +3951,8 @@ function renderProductividad(){
   const monthStart=toDateStr(new Date(now.getFullYear(),now.getMonth(),1));
   const stats=names.map(name=>{
     const own=scope.filter(l=>l.asesor===name||l.asesor_visita===name),assigned=scope.filter(l=>l.asesor===name),active=assigned.filter(l=>!['Cierre ganado','Perdido'].includes(l.estado));
-    const visits=own.filter(l=>l.fecha_visita&&new Date(l.fecha_visita+'T12:00:00')>=weekStart),attended=visits.filter(l=>l.asistio==='Sí');
-    const won=assigned.filter(l=>l.estado==='Cierre ganado'&&(l.fecha_ingreso||'')>=monthStart),contacted=assigned.filter(l=>l.contesto==='Sí');
+    const visits=own.filter(l=>l.fecha_visita&&new Date(l.fecha_visita+'T12:00:00')>=weekStart),attended=visits.filter(l=>l.asistio==='SÃ­');
+    const won=assigned.filter(l=>l.estado==='Cierre ganado'&&(l.fecha_ingreso||'')>=monthStart),contacted=assigned.filter(l=>l.contesto==='SÃ­');
     const responses=assigned.map(l=>Number(l.tiempo_respuesta)).filter(n=>n>0),avg=responses.length?Math.round(responses.reduce((a,b)=>a+b,0)/responses.length):0;
     const scheduled=active.filter(l=>l.fecha_proxima_accion),current=scheduled.filter(l=>l.fecha_proxima_accion>=td),follow=pct(current.length,scheduled.length||1),conversion=pct(won.length,assigned.length||1),attendance=pct(attended.length,visits.length||1),contact=pct(contacted.length,assigned.length||1);
     const score=Math.round(contact*.25+follow*.25+attendance*.2+Math.min(conversion*4,100)*.3),revenue=won.reduce((s,l)=>s+(Number(l.monto_venta)||0),0);
@@ -3921,11 +3961,11 @@ function renderProductividad(){
   const visitsWeek=stats.reduce((s,a)=>s+a.visits,0),wonMonth=stats.reduce((s,a)=>s+a.won,0),responses=scope.map(l=>Number(l.tiempo_respuesta)).filter(n=>n>0),avgTeam=responses.length?Math.round(responses.reduce((a,b)=>a+b,0)/responses.length):0,overdue=scope.filter(l=>l.fecha_proxima_accion&&l.fecha_proxima_accion<td&&!['Cierre ganado','Perdido'].includes(l.estado)).length;
   const maxActive=Math.max(...stats.map(a=>a.active),1),maxWon=Math.max(...stats.map(a=>a.won),1);
   el.innerHTML=`<div class="page-header prod-page-header"><div><div class="page-eyebrow">INTELIGENCIA COMERCIAL</div><h1 class="page-title">Productividad del equipo</h1><p class="page-subtitle">Rendimiento, seguimiento y cumplimiento de objetivos en tiempo real.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
-  <div class="prod-kpi-grid">${prodKpi('Visitas esta semana',visitsWeek,'Actividad comercial','visitas')}${prodKpi('Cierres este mes',wonMonth,'Ventas concretadas','ventas')}${prodKpi('Respuesta promedio',avgTeam?avgTeam+' min':'—','Objetivo: 15 min','phone')}${prodKpi('Seguimientos vencidos',overdue,'Requieren atención','cotizacion',overdue?'warn':'')}</div>
-  <div class="prod-main-grid"><section class="prod-leaderboard"><div class="prod-section-head"><div><b>Ranking comercial</b><span>Índice combinado de contacto, seguimiento, visitas y conversión.</span></div></div><div class="prod-ranking">${stats.map((a,i)=>`<button onclick="prodFilterAdvisor('${attr(a.name)}')"><span class="prod-rank ${i<3?'top':''}">${i+1}</span><span class="prod-person"><b>${esc(a.name)}</b><small>${a.active} oportunidades activas · ${a.won} cierre(s)</small></span><span class="prod-score"><b>${a.score}</b><small>puntos</small></span><span class="prod-score-ring" style="--score:${a.score}"><i>${a.score}%</i></span></button>`).join('')||'<div class="crm-empty">Sin asesores configurados.</div>'}</div></section>
+  <div class="prod-kpi-grid">${prodKpi('Visitas esta semana',visitsWeek,'Actividad comercial','visitas')}${prodKpi('Cierres este mes',wonMonth,'Ventas concretadas','ventas')}${prodKpi('Respuesta promedio',avgTeam?avgTeam+' min':'â€”','Objetivo: 15 min','phone')}${prodKpi('Seguimientos vencidos',overdue,'Requieren atenciÃ³n','cotizacion',overdue?'warn':'')}</div>
+  <div class="prod-main-grid"><section class="prod-leaderboard"><div class="prod-section-head"><div><b>Ranking comercial</b><span>Ãndice combinado de contacto, seguimiento, visitas y conversiÃ³n.</span></div></div><div class="prod-ranking">${stats.map((a,i)=>`<button onclick="prodFilterAdvisor('${attr(a.name)}')"><span class="prod-rank ${i<3?'top':''}">${i+1}</span><span class="prod-person"><b>${esc(a.name)}</b><small>${a.active} oportunidades activas Â· ${a.won} cierre(s)</small></span><span class="prod-score"><b>${a.score}</b><small>puntos</small></span><span class="prod-score-ring" style="--score:${a.score}"><i>${a.score}%</i></span></button>`).join('')||'<div class="crm-empty">Sin asesores configurados.</div>'}</div></section>
   <section class="prod-goals"><div class="prod-section-head"><div><b>Cumplimiento de metas</b><span>Objetivo mensual sugerido: 5 cierres por asesor.</span></div></div>${stats.map(a=>`<div class="prod-goal-row"><span><b>${esc(a.name)}</b><small>${a.won} de 5 cierres</small></span><div><i style="width:${Math.min(a.won/5*100,100)}%"></i></div><strong>${Math.min(Math.round(a.won/5*100),100)}%</strong></div>`).join('')}</section></div>
-  <div class="prod-analysis-grid"><section><div class="prod-section-head"><div><b>Carga comercial activa</b><span>Oportunidades abiertas por responsable.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.active,maxActive,'#267c73')).join('')}</section><section><div class="prod-section-head"><div><b>Cierres del mes</b><span>Comparación del rendimiento comercial.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.won,maxWon,'#9bb727')).join('')}</section></div>
-  <section class="prod-detail-card"><div class="prod-section-head"><div><b>Indicadores por asesor</b><span>Selecciona una fila para ver sus clientes.</span></div></div><div class="table-wrap"><table class="data-table prod-table"><thead><tr><th>Asesor</th><th>Clientes</th><th>Contacto</th><th>Seguimiento</th><th>Asistencia</th><th>Conversión</th><th>Resp. prom.</th><th>Ingresos</th><th>Estado</th></tr></thead><tbody>${stats.map(a=>`<tr onclick="prodFilterAdvisor('${attr(a.name)}')"><td class="table-name">${esc(a.name)}</td><td>${a.total}</td><td>${a.contact}%</td><td>${a.follow}%</td><td>${a.attendance}%</td><td>${a.conversion}%</td><td>${a.avg?a.avg+' min':'—'}</td><td>${fmt(a.revenue)}</td><td><span class="prod-status ${a.score>=75?'good':a.score>=50?'mid':'low'}">${a.score>=75?'Alto':a.score>=50?'En progreso':'Atención'}</span></td></tr>`).join('')}</tbody></table></div></section>`;
+  <div class="prod-analysis-grid"><section><div class="prod-section-head"><div><b>Carga comercial activa</b><span>Oportunidades abiertas por responsable.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.active,maxActive,'#267c73')).join('')}</section><section><div class="prod-section-head"><div><b>Cierres del mes</b><span>ComparaciÃ³n del rendimiento comercial.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.won,maxWon,'#9bb727')).join('')}</section></div>
+  <section class="prod-detail-card"><div class="prod-section-head"><div><b>Indicadores por asesor</b><span>Selecciona una fila para ver sus clientes.</span></div></div><div class="table-wrap"><table class="data-table prod-table"><thead><tr><th>Asesor</th><th>Clientes</th><th>Contacto</th><th>Seguimiento</th><th>Asistencia</th><th>ConversiÃ³n</th><th>Resp. prom.</th><th>Ingresos</th><th>Estado</th></tr></thead><tbody>${stats.map(a=>`<tr onclick="prodFilterAdvisor('${attr(a.name)}')"><td class="table-name">${esc(a.name)}</td><td>${a.total}</td><td>${a.contact}%</td><td>${a.follow}%</td><td>${a.attendance}%</td><td>${a.conversion}%</td><td>${a.avg?a.avg+' min':'â€”'}</td><td>${fmt(a.revenue)}</td><td><span class="prod-status ${a.score>=75?'good':a.score>=50?'mid':'low'}">${a.score>=75?'Alto':a.score>=50?'En progreso':'AtenciÃ³n'}</span></td></tr>`).join('')}</tbody></table></div></section>`;
 }
 function prodKpi(label,value,sub,icon,tone=''){return`<div class="prod-kpi ${tone}"><div class="prod-kpi-icon">${navIcon(icon)}</div><div><span>${label}</span><strong>${value}</strong><small>${sub}</small></div></div>`}
 function prodMetricBar(name,value,max,color){return`<div class="prod-metric-row"><span title="${attr(name)}">${esc(name.split(' ').slice(0,2).join(' '))}</span><div><i style="width:${pct(value,max)}%;background:${color}"></i></div><b>${value}</b></div>`}
@@ -3933,14 +3973,14 @@ function prodFilterAdvisor(name){showView('leads');const select=document.getElem
 
 // VENTAS
 function renderVentas(){
-  const ventas=allLeads.filter(l=>l.estado==='Cierre ganado'||l.estado==='Reserva / Separación'||l.separo==='Sí');
+  const ventas=allLeads.filter(l=>l.estado==='Cierre ganado'||l.estado==='Reserva / SeparaciÃ³n'||l.separo==='SÃ­');
   const cerradas=ventas.filter(l=>l.estado==='Cierre ganado');
   const mt=cerradas.reduce((s,l)=>s+(Number(l.monto_venta)||0),0);
-  document.getElementById('ventas-kpi').innerHTML=[{label:'Ventas cerradas',val:cerradas.length,color:'green'},{label:'En separación',val:ventas.filter(l=>l.estado==='Reserva / Separación').length,color:'amber'},{label:'Monto total',val:fmt(mt),color:'green',big:true},{label:'Margen estimado',val:fmt(cerradas.length*52250),color:'blue',big:true}].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value${k.big?' big':''}">${k.val}</div></div>`).join('');
-  if(!ventas.length){document.getElementById('ventas-wrap').innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">💰</div><p>Sin ventas</p></div></div>';return;}
+  document.getElementById('ventas-kpi').innerHTML=[{label:'Ventas cerradas',val:cerradas.length,color:'green'},{label:'En separaciÃ³n',val:ventas.filter(l=>l.estado==='Reserva / SeparaciÃ³n').length,color:'amber'},{label:'Monto total',val:fmt(mt),color:'green',big:true},{label:'Margen estimado',val:fmt(cerradas.length*52250),color:'blue',big:true}].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value${k.big?' big':''}">${k.val}</div></div>`).join('');
+  if(!ventas.length){document.getElementById('ventas-wrap').innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">ðŸ’°</div><p>Sin ventas</p></div></div>';return;}
   document.getElementById('ventas-wrap').innerHTML=`<div class="section-card"><div class="section-header"><div class="section-title">Ventas y separaciones</div></div>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>Teléfono</th><th>Estado</th><th>Asesor</th><th>Separación</th><th>Monto venta</th><th>Ingreso</th></tr></thead>
-    <tbody>${ventas.map(l=>`<tr onclick="openLead('${l.id}')"><td class="table-name">${esc(l.nombre||'—')}</td><td class="table-phone">${esc(l.telefono||'—')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px">${esc(l.vendedor||l.asesor||'—')}</td><td>${fmt(l.monto_separacion)}</td><td style="font-weight:600;color:var(--green)">${fmt(l.monto_venta)}</td><td style="color:var(--text-muted);font-size:12px">${esc(l.fecha_ingreso||'—')}</td></tr>`).join('')}
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Asesor</th><th>SeparaciÃ³n</th><th>Monto venta</th><th>Ingreso</th></tr></thead>
+    <tbody>${ventas.map(l=>`<tr onclick="openLead('${l.id}')"><td class="table-name">${esc(l.nombre||'â€”')}</td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px">${esc(l.vendedor||l.asesor||'â€”')}</td><td>${fmt(l.monto_separacion)}</td><td style="font-weight:600;color:var(--green)">${fmt(l.monto_venta)}</td><td style="color:var(--text-muted);font-size:12px">${esc(l.fecha_ingreso||'â€”')}</td></tr>`).join('')}
     </tbody></table></div></div>`;
 }
 
@@ -3948,24 +3988,24 @@ function renderVentas(){
 function renderPublicidad(){
   const total=allLeads.length,cerrados=allLeads.filter(l=>l.estado==='Cierre ganado').length;
   const fc=['#3D7EFF','#2DB87A','#F5A623','#E84545','#9B59B6','#1ABC9C','#E67E22'];
-  document.getElementById('pub-kpi').innerHTML=[{label:'Total leads',val:total,color:'blue'},{label:'Tasa contacto',val:pct(allLeads.filter(l=>l.contesto==='Sí').length,total)+'%',color:'blue'},{label:'Tasa lead→venta',val:pct(cerrados,total)+'%',color:'green'}].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div></div>`).join('');
+  document.getElementById('pub-kpi').innerHTML=[{label:'Total leads',val:total,color:'blue'},{label:'Tasa contacto',val:pct(allLeads.filter(l=>l.contesto==='SÃ­').length,total)+'%',color:'blue'},{label:'Tasa leadâ†’venta',val:pct(cerrados,total)+'%',color:'green'}].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div></div>`).join('');
   const fuentes={},motivos={};
   allLeads.forEach(l=>{const f=l.fuente||'Sin fuente';fuentes[f]=(fuentes[f]||0)+1;});
   allLeads.filter(l=>l.motivo_perdida).forEach(l=>{motivos[l.motivo_perdida]=(motivos[l.motivo_perdida]||0)+1;});
   const maxF=Math.max(...Object.values(fuentes),1),maxM=Math.max(...Object.values(motivos),1);
   document.getElementById('pub-fuentes-detail').innerHTML=Object.entries(fuentes).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="bar-row"><div class="bar-label" style="min-width:110px">${esc(k)}</div><div class="bar-track"><div class="bar-fill" style="width:${pct(v,maxF)}%;background:${fc[i%fc.length]}"></div></div><div class="bar-count">${v}</div><div style="font-size:11px;color:var(--text-muted);min-width:36px">${pct(v,total)}%</div></div>`).join('')||'<div class="loading">Sin datos</div>';
-  document.getElementById('pub-motivos').innerHTML=Object.entries(motivos).length?Object.entries(motivos).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="bar-row loss-reason-row" title="${attr(k)}"><div class="bar-label loss-reason-label"><span>${i+1}</span><b>${esc(k)}</b></div><div class="bar-track"><div class="bar-fill" style="width:${pct(v,maxM)}%;background:var(--red)"></div></div><div class="bar-count">${v}</div></div>`).join(''):'<div class="loading">Sin pérdidas</div>';
+  document.getElementById('pub-motivos').innerHTML=Object.entries(motivos).length?Object.entries(motivos).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="bar-row loss-reason-row" title="${attr(k)}"><div class="bar-label loss-reason-label"><span>${i+1}</span><b>${esc(k)}</b></div><div class="bar-track"><div class="bar-fill" style="width:${pct(v,maxM)}%;background:var(--red)"></div></div><div class="bar-count">${v}</div></div>`).join(''):'<div class="loading">Sin pÃ©rdidas</div>';
 }
 
-// GESTIÓN DE USUARIOS
+// GESTIÃ“N DE USUARIOS
 async function renderUsuarios(){
   if(currentUser.role!=='gerente')return;
   const{data:users,error}=await sb.from('profiles').select('id,username,name,role,active,created_at').order('name');
   if(error){showToastError(error.message);return;}
   document.getElementById('view-usuarios').innerHTML=`
-    <div class="page-header"><div><div class="page-eyebrow">Administración</div><h1 class="page-title">Gestión de Usuarios</h1></div>
-      <a class="btn-primary" href="https://supabase.com/dashboard/project/hbfndgmgnmlkrxxaydsn/auth/users" target="_blank" rel="noopener" style="text-decoration:none">Crear cuenta en Supabase ↗</a></div>
-    <div class="alert-box" style="display:block;margin-bottom:16px">Por seguridad, las cuentas y contraseñas se crean desde Supabase Authentication. Aquí puedes editar el nombre, usuario y rol del perfil.</div>
+    <div class="page-header"><div><div class="page-eyebrow">AdministraciÃ³n</div><h1 class="page-title">GestiÃ³n de Usuarios</h1></div>
+      <a class="btn-primary" href="https://supabase.com/dashboard/project/hbfndgmgnmlkrxxaydsn/auth/users" target="_blank" rel="noopener" style="text-decoration:none">Crear cuenta en Supabase â†—</a></div>
+    <div class="alert-box" style="display:block;margin-bottom:16px">Por seguridad, las cuentas y contraseÃ±as se crean desde Supabase Authentication. AquÃ­ puedes editar el nombre, usuario y rol del perfil.</div>
     <div id="legacy-user-form-wrap"></div>
     <div class="section-card"><div class="section-header"><div class="section-title">Usuarios del sistema</div></div>
       <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre completo</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -4004,11 +4044,11 @@ async function saveEditUser(userId){
   const user=document.getElementById('legacy-eu-user').value.trim().toLowerCase();
   const role=document.getElementById('legacy-eu-role')?.value;
   const ok=await updateUser(userId,{name,user,role});
-  if(ok){toast('Usuario actualizado ✓');renderUsuarios();}
+  if(ok){toast('Usuario actualizado âœ“');renderUsuarios();}
   else{toast('Error al actualizar','error');}
 }
 async function deleteUserById(userId){
-  if(!confirm('¿Desactivar este usuario? Ya no podrá ingresar al sistema.'))return;
+  if(!confirm('Â¿Desactivar este usuario? Ya no podrÃ¡ ingresar al sistema.'))return;
   const ok=await deactivateUser(userId);
   if(ok){toast('Usuario desactivado');renderUsuarios();}
   else{toast('Error al desactivar','error');}
@@ -4017,27 +4057,28 @@ async function deleteUserById(userId){
 // EXPORT CSV
 function exportCSV(){
   const leads=getFilteredLeads();
-  const h=['ID','Nombre','Teléfono','Ciudad','Proyecto','Fecha ingreso','Fuente','Campaña','Asesor','Asesor visita','Estado','Tipo cliente','Contestó','Presupuesto','Inicial','Tipo ingreso','Bono','Forma pago','Fecha contacto','Tiempo resp.','Visita agendada','Fecha visita','Asistió','Cotización','Monto sep.','Monto venta','Estado final','Motivo pérdida','Próxima acción','Acción','Observaciones'];
+  const h=['ID','Nombre','TelÃ©fono','Ciudad','Proyecto','Fecha ingreso','Fuente','CampaÃ±a','Asesor','Asesor visita','Estado','Tipo cliente','ContestÃ³','Presupuesto','Inicial','Tipo ingreso','Bono','Forma pago','Fecha contacto','Tiempo resp.','Visita agendada','Fecha visita','AsistiÃ³','CotizaciÃ³n','Monto sep.','Monto venta','Estado final','Motivo pÃ©rdida','PrÃ³xima acciÃ³n','AcciÃ³n','Observaciones'];
   const rows=leads.map(l=>[l.id,l.nombre,l.telefono,l.ciudad,l.proyecto,l.fecha_ingreso,l.fuente,l.campana,l.asesor,l.asesor_visita,l.estado,l.tipo_cliente,l.contesto,l.presupuesto,l.inicial,l.tipo_ingreso,l.bono,l.forma_pago,l.fecha_contacto,l.tiempo_respuesta,l.visita_agendada,l.fecha_visita,l.asistio,l.cotizacion,l.monto_separacion,l.monto_venta,l.estado_final,l.motivo_perdida,l.fecha_proxima_accion,l.accion_pendiente,l.observaciones].map(csvCell));
   const csv=[h.join(','),...rows.map(r=>r.join(','))].join('\n');
   const b=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`leads_${today()}.csv`;a.click();toast('CSV exportado');
 }
 
-// Auto-refresh every 90 seconds — only if not currently saving
-// CENTRO CRM: visión 360, embudo, agenda, calidad y auditoría
-function excelCell(value){return esc(value??'â€”')}
+// Auto-refresh every 90 seconds â€” only if not currently saving
+// CENTRO CRM: visiÃ³n 360, embudo, agenda, calidad y auditorÃ­a
+function excelCell(value){return esc(value??'Ã¢â‚¬â€')}
 function exportCSV(){
   const leads=getFilteredLeads();
   const columns=[
     ['Alerta',l=>calcAlerta(l)],
-    ['Nombre',l=>l.nombre||'â€”'],
-    ['TelÃ©fono',l=>l.telefono||'â€”'],
-    ['Estado',l=>l.estado||'â€”'],
-    ['Fuente',l=>l.fuente||'â€”'],
-    ['Asesor',l=>l.asesor||'â€”'],
-    ['PrÃ³xima acciÃ³n',l=>l.fecha_proxima_accion||'â€”'],
-    ['Ingreso',l=>l.fecha_ingreso||'â€”'],
+    ['Prioridad',l=>prioridadValor(l)],
+    ['Nombre',l=>l.nombre||'Ã¢â‚¬â€'],
+    ['TelÃƒÂ©fono',l=>l.telefono||'Ã¢â‚¬â€'],
+    ['Estado',l=>l.estado||'Ã¢â‚¬â€'],
+    ['Fuente',l=>l.fuente||'Ã¢â‚¬â€'],
+    ['Asesor',l=>l.asesor||'Ã¢â‚¬â€'],
+    ['PrÃƒÂ³xima acciÃƒÂ³n',l=>l.fecha_proxima_accion||'Ã¢â‚¬â€'],
+    ['Ingreso',l=>l.fecha_ingreso||'Ã¢â‚¬â€'],
   ];
   const rows=leads.map(l=>`<tr>${columns.map(([_,fn])=>`<td>${excelCell(fn(l))}</td>`).join('')}</tr>`).join('');
   const html=`<!doctype html><html><head><meta charset="utf-8">
@@ -4051,7 +4092,7 @@ function exportCSV(){
     tr:nth-child(even) td{background:#eef5f2}
   </style></head><body>
     <h1>Clientes y Leads - CRM Inmobiliario VIMKA</h1>
-    <div class="meta">Exportado el ${new Date().toLocaleString('es-PE')} Â· ${leads.length} registro(s)</div>
+    <div class="meta">Exportado el ${new Date().toLocaleString('es-PE')} Ã‚Â· ${leads.length} registro(s)</div>
     <table><thead><tr>${columns.map(([h])=>`<th>${excelCell(h)}</th>`).join('')}</tr></thead><tbody>${rows||`<tr><td colspan="${columns.length}">Sin registros</td></tr>`}</tbody></table>
   </body></html>`;
   const b=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
@@ -4062,19 +4103,19 @@ function crmScopedLeads(){return currentUser?.role==='asesor'?allLeads.filter(l=
 function crmStoreGet(key){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}}
 function crmStoreSet(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch{}}
 function crmAudit(action,target,leadId){if(!currentUser)return;const items=crmStoreGet('vimka_crm_audit');items.unshift({at:new Date().toISOString(),action,target,leadId,user:currentUser.name,role:rolLabel(currentUser.role)});crmStoreSet('vimka_crm_audit',items.slice(0,150));}
-function crmQualityIssues(l){const a=[];if(!l.telefono)a.push('Sin teléfono');if(!l.asesor)a.push('Sin asesor');if(!l.fuente)a.push('Sin fuente');if(!l.estado)a.push('Sin estado');if(!l.fecha_proxima_accion&&!['Cierre ganado','Perdido'].includes(l.estado))a.push('Sin seguimiento');if(!l.ciudad)a.push('Sin ciudad');return a;}
+function crmQualityIssues(l){const a=[];if(!l.telefono)a.push('Sin telÃ©fono');if(!l.asesor)a.push('Sin asesor');if(!l.fuente)a.push('Sin fuente');if(!l.estado)a.push('Sin estado');if(!l.fecha_proxima_accion&&!['Cierre ganado','Perdido'].includes(l.estado))a.push('Sin seguimiento');if(!l.ciudad)a.push('Sin ciudad');return a;}
 function crmScore(l){return Math.max(20,100-crmQualityIssues(l).length*13-(calcAlerta(l)==='VENCIDO'?12:0));}
-function crmDateLabel(v){if(!v)return'—';const d=new Date(v+'T12:00:00');return isNaN(d)?v:d.toLocaleDateString('es-PE',{day:'2-digit',month:'short'});}
-function crmTimelineHTML(l){const events=[['Cliente registrado',l.fecha_ingreso||String(l.created_at||'').slice(0,10)],['Primer contacto',l.fecha_contacto],['Visita programada',l.fecha_visita],['Cotización enviada',l.cotizacion==='Sí'?l.fecha_proxima_accion:null],['Venta cerrada',l.estado==='Cierre ganado'?(l.fecha_proxima_accion||l.fecha_ingreso):null]].filter(e=>e[1]);return`<div class="crm-timeline">${events.map((e,i)=>`<div class="${i===events.length-1?'current':''}"><i></i><span><b>${e[0]}</b><small>${crmDateLabel(e[1])}</small></span></div>`).join('')||'<p>Sin actividad registrada</p>'}</div>`;}
+function crmDateLabel(v){if(!v)return'â€”';const d=new Date(v+'T12:00:00');return isNaN(d)?v:d.toLocaleDateString('es-PE',{day:'2-digit',month:'short'});}
+function crmTimelineHTML(l){const events=[['Cliente registrado',l.fecha_ingreso||String(l.created_at||'').slice(0,10)],['Primer contacto',l.fecha_contacto],['Visita programada',l.fecha_visita],['CotizaciÃ³n enviada',l.cotizacion==='SÃ­'?l.fecha_proxima_accion:null],['Venta cerrada',l.estado==='Cierre ganado'?(l.fecha_proxima_accion||l.fecha_ingreso):null]].filter(e=>e[1]);return`<div class="crm-timeline">${events.map((e,i)=>`<div class="${i===events.length-1?'current':''}"><i></i><span><b>${e[0]}</b><small>${crmDateLabel(e[1])}</small></span></div>`).join('')||'<p>Sin actividad registrada</p>'}</div>`;}
 function renderCRMCentro(){
   const root=document.getElementById('view-crm-center');if(!root)return;const leads=crmScopedLeads(),td=today();
   const vencidos=leads.filter(l=>l.fecha_proxima_accion&&l.fecha_proxima_accion<td&&!['Cierre ganado','Perdido'].includes(l.estado));
   const hoy=leads.filter(l=>l.fecha_proxima_accion===td||l.fecha_visita===td),sinAsesor=leads.filter(l=>!l.asesor),incompletos=leads.filter(l=>crmQualityIssues(l).length);
   const phones={};leads.forEach(l=>{const p=digits(l.telefono).slice(-9);if(p.length>=7)(phones[p]??=[]).push(l)});const duplicados=Object.values(phones).filter(g=>g.length>1).flat();
   root.innerHTML=`<div class="page-header crm-center-header"><div><div class="page-eyebrow">RELACIONES CON CLIENTES</div><h1 class="page-title">Centro CRM</h1><p class="page-subtitle">Clientes, oportunidades, tareas y control comercial en una sola vista.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
-  <div class="crm-command-bar"><div class="crm-global-search"><span>${navIcon('search')}</span><input id="crm-global-q" placeholder="Buscar por nombre, teléfono, ciudad, asesor o estado..." oninput="renderCRMSearch()"><kbd>BUSCAR</kbd></div><div class="crm-command-alerts"><button onclick="crmOpenAlert('today')"><b>${hoy.length}</b> hoy</button><button class="warn" onclick="crmOpenAlert('overdue')"><b>${vencidos.length}</b> vencidos</button></div></div><div id="crm-search-results" class="crm-search-results"></div>
-  <div class="crm-overview-grid">${crmMiniStat('Relaciones activas',leads.filter(l=>!['Cierre ganado','Perdido'].includes(l.estado)).length,'Clientes en gestión','leads')}${crmMiniStat('Seguimientos hoy',hoy.length,'Acciones programadas','visitas')}${crmMiniStat('Calidad de datos',leads.length?pct(leads.length-incompletos.length,leads.length)+'%':'100%','Registros completos','target')}${crmMiniStat('Alertas activas',vencidos.length+sinAsesor.length+duplicados.length,'Requieren revisión','cotizacion')}</div>
-  <div class="crm-tabs"><button class="active" data-crm-tab="pipeline" onclick="crmSwitchTab('pipeline',this)">Embudo comercial</button><button data-crm-tab="agenda" onclick="crmSwitchTab('agenda',this)">Agenda y seguimiento</button><button data-crm-tab="quality" onclick="crmSwitchTab('quality',this)">Calidad y alertas</button><button data-crm-tab="team" onclick="crmSwitchTab('team',this)">Equipo comercial</button><button data-crm-tab="documents" onclick="crmSwitchTab('documents',this)">Documentos</button><button data-crm-tab="audit" onclick="crmSwitchTab('audit',this)">Auditoría</button></div>
+  <div class="crm-command-bar"><div class="crm-global-search"><span>${navIcon('search')}</span><input id="crm-global-q" placeholder="Buscar por nombre, telÃ©fono, ciudad, asesor o estado..." oninput="renderCRMSearch()"><kbd>BUSCAR</kbd></div><div class="crm-command-alerts"><button onclick="crmOpenAlert('today')"><b>${hoy.length}</b> hoy</button><button class="warn" onclick="crmOpenAlert('overdue')"><b>${vencidos.length}</b> vencidos</button></div></div><div id="crm-search-results" class="crm-search-results"></div>
+  <div class="crm-overview-grid">${crmMiniStat('Relaciones activas',leads.filter(l=>!['Cierre ganado','Perdido'].includes(l.estado)).length,'Clientes en gestiÃ³n','leads')}${crmMiniStat('Seguimientos hoy',hoy.length,'Acciones programadas','visitas')}${crmMiniStat('Calidad de datos',leads.length?pct(leads.length-incompletos.length,leads.length)+'%':'100%','Registros completos','target')}${crmMiniStat('Alertas activas',vencidos.length+sinAsesor.length+duplicados.length,'Requieren revisiÃ³n','cotizacion')}</div>
+  <div class="crm-tabs"><button class="active" data-crm-tab="pipeline" onclick="crmSwitchTab('pipeline',this)">Embudo comercial</button><button data-crm-tab="agenda" onclick="crmSwitchTab('agenda',this)">Agenda y seguimiento</button><button data-crm-tab="quality" onclick="crmSwitchTab('quality',this)">Calidad y alertas</button><button data-crm-tab="team" onclick="crmSwitchTab('team',this)">Equipo comercial</button><button data-crm-tab="documents" onclick="crmSwitchTab('documents',this)">Documentos</button><button data-crm-tab="audit" onclick="crmSwitchTab('audit',this)">AuditorÃ­a</button></div>
   <section class="crm-tab-panel active" data-crm-panel="pipeline">${crmPipelineHTML(leads)}</section><section class="crm-tab-panel" data-crm-panel="agenda">${crmAgendaHTML(leads)}</section><section class="crm-tab-panel" data-crm-panel="quality">${crmQualityHTML(incompletos,duplicados,sinAsesor,vencidos)}</section><section class="crm-tab-panel" data-crm-panel="team">${crmTeamHTML(leads)}</section><section class="crm-tab-panel" data-crm-panel="documents">${crmDocumentsHTML()}</section><section class="crm-tab-panel" data-crm-panel="audit">${crmAuditHTML()}</section>`;
 }
 function crmMiniStat(label,value,sub,icon){return`<div class="crm-mini-stat"><div class="crm-mini-icon">${navIcon(icon)}</div><div><span>${label}</span><strong>${value}</strong><small>${sub}</small></div></div>`}
@@ -4082,22 +4123,22 @@ function crmSwitchTab(tab,button){document.querySelectorAll('#view-crm-center .c
 function crmOpenAlert(type){
   const td=today(),all=crmScopedLeads();
   const rows=(type==='today'?all.filter(l=>l.fecha_proxima_accion===td||l.fecha_visita===td):all.filter(l=>l.fecha_proxima_accion&&l.fecha_proxima_accion<td&&!['Cierre ganado','Perdido'].includes(l.estado))).sort((a,b)=>String(a.fecha_proxima_accion||a.fecha_visita).localeCompare(String(b.fecha_proxima_accion||b.fecha_visita)));
-  const title=type==='today'?'Acciones programadas para hoy':'Seguimientos vencidos',subtitle=type==='today'?'Llamadas, visitas y tareas que deben realizarse hoy.':'Clientes que requieren atención y una nueva fecha de seguimiento.';
+  const title=type==='today'?'Acciones programadas para hoy':'Seguimientos vencidos',subtitle=type==='today'?'Llamadas, visitas y tareas que deben realizarse hoy.':'Clientes que requieren atenciÃ³n y una nueva fecha de seguimiento.';
   document.getElementById('crm-alert-modal')?.remove();
   const modal=document.createElement('div');modal.id='crm-alert-modal';modal.className='crm-alert-modal open';modal.onclick=e=>{if(e.target===modal)crmCloseAlert()};
-  modal.innerHTML=`<div class="crm-alert-dialog"><header><div><small>CENTRO DE SEGUIMIENTO</small><b>${title}</b><span>${subtitle}</span></div><button onclick="crmCloseAlert()" aria-label="Cerrar">×</button></header><div class="crm-alert-summary"><strong>${rows.length}</strong><span>${type==='today'?'acciones para hoy':'acciones fuera de fecha'}</span></div><div class="crm-alert-list">${rows.slice(0,250).map(l=>`<button onclick="crmCloseAlert();openLead('${l.id}')"><time>${crmDateLabel(l.fecha_proxima_accion||l.fecha_visita)}</time><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.accion_pendiente||'Seguimiento comercial')} · ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`).join('')||'<div class="crm-empty">No existen registros en esta categoría.</div>'}${rows.length>250?`<div class="crm-alert-more">Mostrando 250 de ${rows.length}. Usa el buscador para localizar un cliente.</div>`:''}</div></div>`;
+  modal.innerHTML=`<div class="crm-alert-dialog"><header><div><small>CENTRO DE SEGUIMIENTO</small><b>${title}</b><span>${subtitle}</span></div><button onclick="crmCloseAlert()" aria-label="Cerrar">Ã—</button></header><div class="crm-alert-summary"><strong>${rows.length}</strong><span>${type==='today'?'acciones para hoy':'acciones fuera de fecha'}</span></div><div class="crm-alert-list">${rows.slice(0,250).map(l=>`<button onclick="crmCloseAlert();openLead('${l.id}')"><time>${crmDateLabel(l.fecha_proxima_accion||l.fecha_visita)}</time><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.accion_pendiente||'Seguimiento comercial')} Â· ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`).join('')||'<div class="crm-empty">No existen registros en esta categorÃ­a.</div>'}${rows.length>250?`<div class="crm-alert-more">Mostrando 250 de ${rows.length}. Usa el buscador para localizar un cliente.</div>`:''}</div></div>`;
   document.body.appendChild(modal);document.body.style.overflow='hidden';
 }
 function crmCloseAlert(){document.getElementById('crm-alert-modal')?.remove();document.body.style.overflow='';}
-function renderCRMSearch(){const q=(document.getElementById('crm-global-q')?.value||'').trim().toLowerCase(),box=document.getElementById('crm-search-results');if(!box)return;if(q.length<2){box.innerHTML='';box.classList.remove('open');return;}const found=crmScopedLeads().filter(l=>[l.nombre,l.telefono,l.ciudad,l.asesor,l.estado,l.fuente,l.proyecto].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);box.innerHTML=found.length?found.map(l=>`<button onclick="openLead('${l.id}')"><span class="crm-result-avatar">${esc((l.nombre||'?').slice(0,1))}</span><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.telefono||'Sin teléfono')} · ${esc(l.estado||'Sin estado')}</small></span><em>${crmScore(l)}%</em></button>`).join(''):'<div class="crm-empty">No se encontraron coincidencias.</div>';box.classList.add('open');}
-function crmPipelineHTML(leads){const cols=[['Prospectos',['Lead nuevo']],['Contactados',['Contactado','Calificado']],['Visitas',['Visita agendada','Visita confirmada','Visitó proyecto']],['Negociación',['Cotización enviada','Seguimiento activo']],['Cierre',['Reserva / Separación','Cierre ganado']]];return`<div class="crm-panel-heading"><div><b>Embudo comercial</b><span>Arrastra las oportunidades para actualizar su etapa.</span></div><div class="crm-pipeline-total">${leads.length} oportunidades</div></div><div class="crm-kanban">${cols.map(([label,states])=>{const list=leads.filter(l=>states.includes(l.estado));return`<div class="crm-kanban-col" ondragover="event.preventDefault()" ondrop="crmDropLead(event,'${states[0]}')"><div class="crm-kanban-head"><span>${label}</span><b>${list.length}</b></div><div class="crm-kanban-list">${list.slice(0,30).map(l=>`<article class="crm-deal" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${l.id}')" onclick="openLead('${l.id}')"><div><strong>${esc(l.nombre||'Sin nombre')}</strong><span>${esc(l.asesor||'Sin asesor')}</span></div><small>${crmDateLabel(l.fecha_proxima_accion)} · ${crmScore(l)}%</small></article>`).join('')||'<div class="crm-col-empty">Sin oportunidades</div>'}</div></div>`}).join('')}</div>`;}
+function renderCRMSearch(){const q=(document.getElementById('crm-global-q')?.value||'').trim().toLowerCase(),box=document.getElementById('crm-search-results');if(!box)return;if(q.length<2){box.innerHTML='';box.classList.remove('open');return;}const found=crmScopedLeads().filter(l=>[l.nombre,l.telefono,l.ciudad,l.asesor,l.estado,l.fuente,l.proyecto].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);box.innerHTML=found.length?found.map(l=>`<button onclick="openLead('${l.id}')"><span class="crm-result-avatar">${esc((l.nombre||'?').slice(0,1))}</span><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.telefono||'Sin telÃ©fono')} Â· ${esc(l.estado||'Sin estado')}</small></span><em>${crmScore(l)}%</em></button>`).join(''):'<div class="crm-empty">No se encontraron coincidencias.</div>';box.classList.add('open');}
+function crmPipelineHTML(leads){const cols=[['Prospectos',['Lead nuevo']],['Contactados',['Contactado','Calificado']],['Visitas',['Visita agendada','Visita confirmada','VisitÃ³ proyecto']],['NegociaciÃ³n',['CotizaciÃ³n enviada','Seguimiento activo']],['Cierre',['Reserva / SeparaciÃ³n','Cierre ganado']]];return`<div class="crm-panel-heading"><div><b>Embudo comercial</b><span>Arrastra las oportunidades para actualizar su etapa.</span></div><div class="crm-pipeline-total">${leads.length} oportunidades</div></div><div class="crm-kanban">${cols.map(([label,states])=>{const list=leads.filter(l=>states.includes(l.estado));return`<div class="crm-kanban-col" ondragover="event.preventDefault()" ondrop="crmDropLead(event,'${states[0]}')"><div class="crm-kanban-head"><span>${label}</span><b>${list.length}</b></div><div class="crm-kanban-list">${list.slice(0,30).map(l=>`<article class="crm-deal" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${l.id}')" onclick="openLead('${l.id}')"><div><strong>${esc(l.nombre||'Sin nombre')}</strong><span>${esc(l.asesor||'Sin asesor')}</span></div><small>${crmDateLabel(l.fecha_proxima_accion)} Â· ${crmScore(l)}%</small></article>`).join('')||'<div class="crm-col-empty">Sin oportunidades</div>'}</div></div>`}).join('')}</div>`;}
 async function crmDropLead(event,estado){event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(!id)return;const lead=allLeads.find(l=>l.id==id),owns=lead&&(lead.owner_id===currentUser.id||lead.asesor===currentUser.name);if(!['gerente','admin','jefe_ventas'].includes(currentUser.role)&&!owns){toast('No tienes permiso para mover esta oportunidad','error');return;}const ok=await updateLead(id,{estado,estado_final:estado==='Cierre ganado'?'Ganado':'Abierto'});if(ok){toast('Etapa actualizada');renderCRMCentro();}}
-function crmAgendaHTML(leads){const rows=leads.filter(l=>l.fecha_proxima_accion||l.fecha_visita).sort((a,b)=>String(a.fecha_proxima_accion||a.fecha_visita).localeCompare(String(b.fecha_proxima_accion||b.fecha_visita))).slice(0,80);return`<div class="crm-panel-heading"><div><b>Agenda comercial</b><span>Próximas llamadas, seguimientos y visitas.</span></div><button class="btn-primary" onclick="showView('nuevo-lead')">Nuevo contacto</button></div><div class="crm-agenda-list">${rows.map(l=>{const date=l.fecha_proxima_accion||l.fecha_visita,late=date<today()&&!['Cierre ganado','Perdido'].includes(l.estado);return`<button onclick="openLead('${l.id}')" class="${late?'late':''}"><time>${crmDateLabel(date)}</time><span><b>${esc(l.accion_pendiente||'Seguimiento comercial')}</b><small>${esc(l.nombre||'Sin nombre')} · ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`}).join('')||'<div class="crm-empty">No hay actividades programadas.</div>'}</div>`;}
-function crmQualityHTML(incompletos,duplicados,sinAsesor,vencidos){const cards=[['Registros incompletos',incompletos,'Completa la información esencial'],['Posibles duplicados',duplicados,'Coinciden por teléfono'],['Sin asesor',sinAsesor,'Requieren responsable comercial'],['Seguimientos vencidos',vencidos,'Acciones fuera de fecha']];return`<div class="crm-panel-heading"><div><b>Calidad y control</b><span>Corrige datos que reducen la efectividad comercial.</span></div></div><div class="crm-quality-grid">${cards.map(([title,list,sub])=>`<div class="crm-quality-card"><header><div><b>${title}</b><span>${sub}</span></div><strong>${list.length}</strong></header><div>${list.slice(0,8).map(l=>`<button onclick="openLead('${l.id}')"><span>${esc(l.nombre||'Sin nombre')}</span><small>${title==='Registros incompletos'?crmQualityIssues(l).join(' · '):esc(l.telefono||l.estado||'Revisar')}</small></button>`).join('')||'<p>Todo en orden</p>'}</div></div>`).join('')}</div>`;}
-function crmTeamHTML(leads){const names=[...new Set(leads.map(l=>l.asesor).filter(Boolean))],data=names.map(name=>{const own=leads.filter(l=>l.asesor===name),won=own.filter(l=>l.estado==='Cierre ganado').length,active=own.filter(l=>!['Cierre ganado','Perdido'].includes(l.estado)).length;return{name,total:own.length,won,active,rate:pct(won,own.length)}}).sort((a,b)=>b.won-a.won||b.active-a.active);return`<div class="crm-panel-heading"><div><b>Rendimiento por asesor</b><span>Carga activa, cierres y conversión comercial.</span></div></div><div class="crm-team-table"><div class="crm-team-row head"><span>Asesor</span><span>Clientes</span><span>Activos</span><span>Cierres</span><span>Conversión</span></div>${data.map((a,i)=>`<div class="crm-team-row"><span><i>${i+1}</i><b>${esc(a.name)}</b></span><span>${a.total}</span><span>${a.active}</span><span>${a.won}</span><span><em style="--p:${a.rate}%"></em>${a.rate}%</span></div>`).join('')||'<div class="crm-empty">Sin asesores asignados.</div>'}</div>`;}
-function crmDocumentsHTML(){const docs=crmStoreGet('vimka_crm_documents');return`<div class="crm-panel-heading"><div><b>Documentos comerciales</b><span>Historial de cotizaciones generadas.</span></div><button class="btn-primary" onclick="showView('cotizacion')">Nueva cotización</button></div><div class="crm-doc-list">${docs.map(d=>`<div><span class="crm-doc-icon">${navIcon('cotizacion')}</span><span><b>${esc(d.number||'Cotización')}</b><small>${esc(d.client||'Cliente')} · Lote ${esc(d.lot||'—')} · ${new Date(d.at).toLocaleDateString('es-PE')}</small></span><strong>${esc(d.total||'')}</strong></div>`).join('')||'<div class="crm-empty">Aún no se registraron cotizaciones en este dispositivo.</div>'}</div>`}
-function crmRegisterDocument(d){if(!d)return;const docs=crmStoreGet('vimka_crm_documents');if(!docs.some(x=>x.number===d.cotNum))docs.unshift({at:new Date().toISOString(),number:d.cotNum,client:d.nombre,lot:d.lote?.id,total:'S/ '+Number(d.precioFinal||0).toLocaleString('es-PE'),user:currentUser?.name});crmStoreSet('vimka_crm_documents',docs.slice(0,100));crmAudit('Cotización generada',d.nombre||d.cotNum,null);}
-function crmAuditHTML(){const items=crmStoreGet('vimka_crm_audit');return`<div class="crm-panel-heading"><div><b>Auditoría de actividad</b><span>Últimos cambios realizados desde este dispositivo.</span></div></div><div class="crm-audit-list">${items.map(a=>`<div><i></i><span><b>${esc(a.action)}</b><small>${esc(a.target)} · ${esc(a.user)} (${esc(a.role)})</small></span><time>${new Date(a.at).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'})}</time></div>`).join('')||'<div class="crm-empty">Sin actividad registrada todavía.</div>'}</div>`}
+function crmAgendaHTML(leads){const rows=leads.filter(l=>l.fecha_proxima_accion||l.fecha_visita).sort((a,b)=>String(a.fecha_proxima_accion||a.fecha_visita).localeCompare(String(b.fecha_proxima_accion||b.fecha_visita))).slice(0,80);return`<div class="crm-panel-heading"><div><b>Agenda comercial</b><span>PrÃ³ximas llamadas, seguimientos y visitas.</span></div><button class="btn-primary" onclick="showView('nuevo-lead')">Nuevo contacto</button></div><div class="crm-agenda-list">${rows.map(l=>{const date=l.fecha_proxima_accion||l.fecha_visita,late=date<today()&&!['Cierre ganado','Perdido'].includes(l.estado);return`<button onclick="openLead('${l.id}')" class="${late?'late':''}"><time>${crmDateLabel(date)}</time><span><b>${esc(l.accion_pendiente||'Seguimiento comercial')}</b><small>${esc(l.nombre||'Sin nombre')} Â· ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`}).join('')||'<div class="crm-empty">No hay actividades programadas.</div>'}</div>`;}
+function crmQualityHTML(incompletos,duplicados,sinAsesor,vencidos){const cards=[['Registros incompletos',incompletos,'Completa la informaciÃ³n esencial'],['Posibles duplicados',duplicados,'Coinciden por telÃ©fono'],['Sin asesor',sinAsesor,'Requieren responsable comercial'],['Seguimientos vencidos',vencidos,'Acciones fuera de fecha']];return`<div class="crm-panel-heading"><div><b>Calidad y control</b><span>Corrige datos que reducen la efectividad comercial.</span></div></div><div class="crm-quality-grid">${cards.map(([title,list,sub])=>`<div class="crm-quality-card"><header><div><b>${title}</b><span>${sub}</span></div><strong>${list.length}</strong></header><div>${list.slice(0,8).map(l=>`<button onclick="openLead('${l.id}')"><span>${esc(l.nombre||'Sin nombre')}</span><small>${title==='Registros incompletos'?crmQualityIssues(l).join(' Â· '):esc(l.telefono||l.estado||'Revisar')}</small></button>`).join('')||'<p>Todo en orden</p>'}</div></div>`).join('')}</div>`;}
+function crmTeamHTML(leads){const names=[...new Set(leads.map(l=>l.asesor).filter(Boolean))],data=names.map(name=>{const own=leads.filter(l=>l.asesor===name),won=own.filter(l=>l.estado==='Cierre ganado').length,active=own.filter(l=>!['Cierre ganado','Perdido'].includes(l.estado)).length;return{name,total:own.length,won,active,rate:pct(won,own.length)}}).sort((a,b)=>b.won-a.won||b.active-a.active);return`<div class="crm-panel-heading"><div><b>Rendimiento por asesor</b><span>Carga activa, cierres y conversiÃ³n comercial.</span></div></div><div class="crm-team-table"><div class="crm-team-row head"><span>Asesor</span><span>Clientes</span><span>Activos</span><span>Cierres</span><span>ConversiÃ³n</span></div>${data.map((a,i)=>`<div class="crm-team-row"><span><i>${i+1}</i><b>${esc(a.name)}</b></span><span>${a.total}</span><span>${a.active}</span><span>${a.won}</span><span><em style="--p:${a.rate}%"></em>${a.rate}%</span></div>`).join('')||'<div class="crm-empty">Sin asesores asignados.</div>'}</div>`;}
+function crmDocumentsHTML(){const docs=crmStoreGet('vimka_crm_documents');return`<div class="crm-panel-heading"><div><b>Documentos comerciales</b><span>Historial de cotizaciones generadas.</span></div><button class="btn-primary" onclick="showView('cotizacion')">Nueva cotizaciÃ³n</button></div><div class="crm-doc-list">${docs.map(d=>`<div><span class="crm-doc-icon">${navIcon('cotizacion')}</span><span><b>${esc(d.number||'CotizaciÃ³n')}</b><small>${esc(d.client||'Cliente')} Â· Lote ${esc(d.lot||'â€”')} Â· ${new Date(d.at).toLocaleDateString('es-PE')}</small></span><strong>${esc(d.total||'')}</strong></div>`).join('')||'<div class="crm-empty">AÃºn no se registraron cotizaciones en este dispositivo.</div>'}</div>`}
+function crmRegisterDocument(d){if(!d)return;const docs=crmStoreGet('vimka_crm_documents');if(!docs.some(x=>x.number===d.cotNum))docs.unshift({at:new Date().toISOString(),number:d.cotNum,client:d.nombre,lot:d.lote?.id,total:'S/ '+Number(d.precioFinal||0).toLocaleString('es-PE'),user:currentUser?.name});crmStoreSet('vimka_crm_documents',docs.slice(0,100));crmAudit('CotizaciÃ³n generada',d.nombre||d.cotNum,null);}
+function crmAuditHTML(){const items=crmStoreGet('vimka_crm_audit');return`<div class="crm-panel-heading"><div><b>AuditorÃ­a de actividad</b><span>Ãšltimos cambios realizados desde este dispositivo.</span></div></div><div class="crm-audit-list">${items.map(a=>`<div><i></i><span><b>${esc(a.action)}</b><small>${esc(a.target)} Â· ${esc(a.user)} (${esc(a.role)})</small></span><time>${new Date(a.at).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'})}</time></div>`).join('')||'<div class="crm-empty">Sin actividad registrada todavÃ­a.</div>'}</div>`}
 
 let _isSaving = false;
 setInterval(()=>{ if(!_isSaving&&currentUser) refreshAll(); }, 90000);
@@ -4105,16 +4146,16 @@ setInterval(()=>{ if(!_isSaving&&currentUser) refreshAll(); }, 90000);
 // VISITAS PRO: agenda operativa con calendario, filtros y acciones rapidas
 let visitViewMode='week',visitAdvisorFilter='',visitStatusFilter='pending',visitMonthCursor=new Date();
 function visitScopedRows(){
-  const rows=(currentUser.role==='asesor')?allLeads.filter(l=>(l.visita_agendada==='Sí'||l.fecha_visita)&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='Sí'||l.fecha_visita);
-  return rows.filter(l=>(!visitAdvisorFilter||(l.asesor_visita||l.asesor)===visitAdvisorFilter)&&(!visitStatusFilter||(visitStatusFilter==='pending'&&l.asistio!=='Sí'&&l.asistio!=='No'&&l.estado!=='Perdido')||(visitStatusFilter==='done'&&l.asistio==='Sí')||(visitStatusFilter==='missed'&&l.asistio==='No')));
+  const rows=(currentUser.role==='asesor')?allLeads.filter(l=>(l.visita_agendada==='SÃ­'||l.fecha_visita)&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='SÃ­'||l.fecha_visita);
+  return rows.filter(l=>(!visitAdvisorFilter||(l.asesor_visita||l.asesor)===visitAdvisorFilter)&&(!visitStatusFilter||(visitStatusFilter==='pending'&&l.asistio!=='SÃ­'&&l.asistio!=='No'&&l.estado!=='Perdido')||(visitStatusFilter==='done'&&l.asistio==='SÃ­')||(visitStatusFilter==='missed'&&l.asistio==='No')));
 }
 function visitSetMode(mode){visitViewMode=mode;renderVisitas();}
 function visitApplyFilters(){visitAdvisorFilter=document.getElementById('visit-filter-advisor')?.value||'';visitStatusFilter=document.getElementById('visit-filter-status')?.value||'';renderVisitas();}
 function visitMoveMonth(delta){visitMonthCursor=new Date(visitMonthCursor.getFullYear(),visitMonthCursor.getMonth()+delta,1);renderVisitas();}
-function visitStatusClass(l){return l.asistio==='Sí'?'done':l.asistio==='No'?'missed':l.estado==='Visita confirmada'?'confirmed':'pending'}
-function visitStatusLabel(l){return l.asistio==='Sí'?'Realizada':l.asistio==='No'?'No asistió':l.estado==='Visita confirmada'?'Confirmada':'Pendiente'}
+function visitStatusClass(l){return l.asistio==='SÃ­'?'done':l.asistio==='No'?'missed':l.estado==='Visita confirmada'?'confirmed':'pending'}
+function visitStatusLabel(l){return l.asistio==='SÃ­'?'Realizada':l.asistio==='No'?'No asistiÃ³':l.estado==='Visita confirmada'?'Confirmada':'Pendiente'}
 function renderVisitas(){
-  const allScoped=(currentUser.role==='asesor')?allLeads.filter(l=>(l.visita_agendada==='Sí'||l.fecha_visita)&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='Sí'||l.fecha_visita);
+  const allScoped=(currentUser.role==='asesor')?allLeads.filter(l=>(l.visita_agendada==='SÃ­'||l.fecha_visita)&&(l.owner_id===currentUser.id||l.visitor_id===currentUser.id||l.asesor===currentUser.name||l.asesor_visita===currentUser.name)):allLeads.filter(l=>l.visita_agendada==='SÃ­'||l.fecha_visita);
   const rows=visitScopedRows(),wrap=document.getElementById('visitas-wrap');if(!wrap)return;
   const pending=allScoped.filter(l=>visitStatusClass(l)==='pending').length,confirmed=allScoped.filter(l=>visitStatusClass(l)==='confirmed').length,done=allScoped.filter(l=>visitStatusClass(l)==='done').length,missed=allScoped.filter(l=>visitStatusClass(l)==='missed').length;
   const advisors=getAsesores();
@@ -4125,79 +4166,79 @@ function renderVisitas(){
 }
 function visitWeekHTML(rows){
   const now=new Date(),start=new Date(now);start.setDate(now.getDate()-((now.getDay()+6)%7));start.setHours(0,0,0,0);const days=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}
-  return`<section class="visit-calendar-card"><header><div><b>Semana actual</b><span>${crmDateLabel(toDateStr(start))} — ${crmDateLabel(toDateStr(days[6]))}</span></div><em>${rows.length} visita(s) filtradas</em></header><div class="visit-week-grid">${days.map(d=>{const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds).sort((a,b)=>String(a.hora_visita||'').localeCompare(String(b.hora_visita||'')));return`<div class="visit-day ${ds===today()?'today':''}"><div class="visit-day-head"><span>${d.toLocaleDateString('es-PE',{weekday:'short'}).replace('.','')}</span><b>${d.getDate()}</b></div><div class="visit-day-events">${items.map(visitEventHTML).join('')||'<small class="visit-empty-day">Sin visitas</small>'}</div></div>`}).join('')}</div></section>${visGroup('Detalle de la semana',rows.filter(l=>l.fecha_visita>=toDateStr(start)&&l.fecha_visita<=toDateStr(days[6])),'')}`;
+  return`<section class="visit-calendar-card"><header><div><b>Semana actual</b><span>${crmDateLabel(toDateStr(start))} â€” ${crmDateLabel(toDateStr(days[6]))}</span></div><em>${rows.length} visita(s) filtradas</em></header><div class="visit-week-grid">${days.map(d=>{const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds).sort((a,b)=>String(a.hora_visita||'').localeCompare(String(b.hora_visita||'')));return`<div class="visit-day ${ds===today()?'today':''}"><div class="visit-day-head"><span>${d.toLocaleDateString('es-PE',{weekday:'short'}).replace('.','')}</span><b>${d.getDate()}</b></div><div class="visit-day-events">${items.map(visitEventHTML).join('')||'<small class="visit-empty-day">Sin visitas</small>'}</div></div>`}).join('')}</div></section>${visGroup('Detalle de la semana',rows.filter(l=>l.fecha_visita>=toDateStr(start)&&l.fecha_visita<=toDateStr(days[6])),'')}`;
 }
 function visitMonthHTML(rows){
   const y=visitMonthCursor.getFullYear(),m=visitMonthCursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7,cells=[];for(let i=0;i<offset;i++)cells.push(null);for(let d=1;d<=last.getDate();d++)cells.push(new Date(y,m,d));while(cells.length%7)cells.push(null);
-  return`<section class="visit-calendar-card month"><header><div class="visit-month-nav"><button onclick="visitMoveMonth(-1)">‹</button><div><b>${first.toLocaleDateString('es-PE',{month:'long',year:'numeric'})}</b><span>Calendario mensual de visitas</span></div><button onclick="visitMoveMonth(1)">›</button></div><em>${rows.filter(l=>String(l.fecha_visita||'').slice(0,7)===`${y}-${String(m+1).padStart(2,'0')}`).length} programadas</em></header><div class="visit-month-weekdays">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<span>${x}</span>`).join('')}</div><div class="visit-month-grid">${cells.map(d=>{if(!d)return'<div class="outside"></div>';const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds);return`<div class="visit-month-day ${ds===today()?'today':''}"><b>${d.getDate()}</b>${items.slice(0,3).map(v=>`<button class="${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'—')}</time><span>${esc((v.nombre||'Cliente').split(' ')[0])}</span></button>`).join('')}${items.length>3?`<small>+${items.length-3} más</small>`:''}</div>`}).join('')}</div></section>`;
+  return`<section class="visit-calendar-card month"><header><div class="visit-month-nav"><button onclick="visitMoveMonth(-1)">â€¹</button><div><b>${first.toLocaleDateString('es-PE',{month:'long',year:'numeric'})}</b><span>Calendario mensual de visitas</span></div><button onclick="visitMoveMonth(1)">â€º</button></div><em>${rows.filter(l=>String(l.fecha_visita||'').slice(0,7)===`${y}-${String(m+1).padStart(2,'0')}`).length} programadas</em></header><div class="visit-month-weekdays">${['Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b','Dom'].map(x=>`<span>${x}</span>`).join('')}</div><div class="visit-month-grid">${cells.map(d=>{if(!d)return'<div class="outside"></div>';const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds);return`<div class="visit-month-day ${ds===today()?'today':''}"><b>${d.getDate()}</b>${items.slice(0,3).map(v=>`<button class="${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'â€”')}</time><span>${esc((v.nombre||'Cliente').split(' ')[0])}</span></button>`).join('')}${items.length>3?`<small>+${items.length-3} mÃ¡s</small>`:''}</div>`}).join('')}</div></section>`;
 }
-function visitEventHTML(v){return`<button class="visit-event ${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'—')}</time><b>${esc((v.nombre||'Cliente').split(' ').slice(0,2).join(' '))}</b><span>${esc((v.asesor_visita||v.asesor||'Sin asesor').split(' ').slice(0,2).join(' '))}</span></button>`}
+function visitEventHTML(v){return`<button class="visit-event ${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'â€”')}</time><b>${esc((v.nombre||'Cliente').split(' ').slice(0,2).join(' '))}</b><span>${esc((v.asesor_visita||v.asesor||'Sin asesor').split(' ').slice(0,2).join(' '))}</span></button>`}
 function visGroup(title,items,color){
   const sorted=[...items].sort((a,b)=>`${a.fecha_visita||'9999'} ${a.hora_visita||''}`.localeCompare(`${b.fecha_visita||'9999'} ${b.hora_visita||''}`));
-  return`<div class="section-card visits-group upcoming"><div class="section-header"><div><div class="section-title">${title}</div><div class="chart-caption">Información y acciones de seguimiento</div></div><span class="visits-count">${sorted.length}</span></div><div class="table-wrap"><table class="data-table visit-table"><thead><tr><th>Cliente</th><th>Fecha y hora</th><th>Asesor propietario</th><th>Asesor de visita</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${sorted.map(l=>`<tr><td onclick="openLead('${l.id}')"><b class="table-name">${esc(l.nombre||'—')}</b><small class="visit-phone">${esc(l.telefono||'Sin teléfono')}</small></td><td onclick="openLead('${l.id}')"><b class="visit-date">${crmDateLabel(l.fecha_visita)}</b><small>${esc(l.hora_visita||'Hora pendiente')}</small></td><td><span class="owner-advisor">${esc(l.asesor||'Sin asignar')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'Sin asignar')}</span></td><td><span class="visit-state ${visitStatusClass(l)}">${visitStatusLabel(l)}</span></td><td><div class="visit-actions">${visitStatusClass(l)==='pending'?`<button title="Confirmar" onclick="visitQuickAction('${l.id}','confirm')">✓</button>`:''}${!['done','missed'].includes(visitStatusClass(l))?`<button title="Registrar visita" onclick="visitQuickAction('${l.id}','done')">●</button><button title="No asistió" onclick="visitQuickAction('${l.id}','missed')">×</button>`:''}<button title="Reprogramar" onclick="visitOpenReschedule('${l.id}')">↻</button><button title="Abrir cliente" onclick="openLead('${l.id}')">→</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="crm-empty">No hay visitas para los filtros seleccionados.</div></td></tr>'}</tbody></table></div></div>`;
+  return`<div class="section-card visits-group upcoming"><div class="section-header"><div><div class="section-title">${title}</div><div class="chart-caption">InformaciÃ³n y acciones de seguimiento</div></div><span class="visits-count">${sorted.length}</span></div><div class="table-wrap"><table class="data-table visit-table"><thead><tr><th>Cliente</th><th>Fecha y hora</th><th>Asesor propietario</th><th>Asesor de visita</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${sorted.map(l=>`<tr><td onclick="openLead('${l.id}')"><b class="table-name">${esc(l.nombre||'â€”')}</b><small class="visit-phone">${esc(l.telefono||'Sin telÃ©fono')}</small></td><td onclick="openLead('${l.id}')"><b class="visit-date">${crmDateLabel(l.fecha_visita)}</b><small>${esc(l.hora_visita||'Hora pendiente')}</small></td><td><span class="owner-advisor">${esc(l.asesor||'Sin asignar')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'Sin asignar')}</span></td><td><span class="visit-state ${visitStatusClass(l)}">${visitStatusLabel(l)}</span></td><td><div class="visit-actions">${visitStatusClass(l)==='pending'?`<button title="Confirmar" onclick="visitQuickAction('${l.id}','confirm')">âœ“</button>`:''}${!['done','missed'].includes(visitStatusClass(l))?`<button title="Registrar visita" onclick="visitQuickAction('${l.id}','done')">â—</button><button title="No asistiÃ³" onclick="visitQuickAction('${l.id}','missed')">Ã—</button>`:''}<button title="Reprogramar" onclick="visitOpenReschedule('${l.id}')">â†»</button><button title="Abrir cliente" onclick="openLead('${l.id}')">â†’</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="crm-empty">No hay visitas para los filtros seleccionados.</div></td></tr>'}</tbody></table></div></div>`;
 }
-async function visitQuickAction(id,action){const l=allLeads.find(x=>x.id==id);if(!l)return;const changes=action==='confirm'?{estado:'Visita confirmada'}:action==='done'?{asistio:'Sí',estado:'Visitó proyecto',fecha_proxima_accion:today(),accion_pendiente:'Enviar cotización y dar seguimiento'}:{asistio:'No',estado:'Seguimiento activo',fecha_proxima_accion:today(),accion_pendiente:'Reprogramar visita'};const ok=await updateLead(id,changes);if(ok){crmAudit(action==='confirm'?'Visita confirmada':action==='done'?'Visita realizada':'Inasistencia registrada',l.nombre||'Cliente',id);toast('Visita actualizada');renderVisitas()}}
-function visitOpenReschedule(id){const l=allLeads.find(x=>x.id==id);if(!l)return;document.getElementById('visit-modal')?.remove();const modal=document.createElement('div');modal.id='visit-modal';modal.className='visit-modal';modal.onclick=e=>{if(e.target===modal)visitCloseModal()};modal.innerHTML=`<div><header><span><small>AGENDA COMERCIAL</small><b>Reprogramar visita</b><em>${esc(l.nombre||'Cliente')}</em></span><button onclick="visitCloseModal()">×</button></header><section><label>Nueva fecha<input type="date" id="visit-new-date" value="${attr(l.fecha_visita||today())}"></label><label>Nueva hora<input type="time" id="visit-new-time" value="${attr(l.hora_visita||'09:00')}"></label><label>Asesor de visita<select id="visit-new-advisor">${getAsesores().map(a=>`<option ${a===(l.asesor_visita||l.asesor)?'selected':''}>${esc(a)}</option>`).join('')}</select></label></section><footer><button class="btn-ghost" onclick="visitCloseModal()">Cancelar</button><button class="btn-primary" onclick="visitSaveReschedule('${l.id}')">Guardar cambio</button></footer></div>`;document.body.appendChild(modal)}
+async function visitQuickAction(id,action){const l=allLeads.find(x=>x.id==id);if(!l)return;const changes=action==='confirm'?{estado:'Visita confirmada'}:action==='done'?{asistio:'SÃ­',estado:'VisitÃ³ proyecto',fecha_proxima_accion:today(),accion_pendiente:'Enviar cotizaciÃ³n y dar seguimiento'}:{asistio:'No',estado:'Seguimiento activo',fecha_proxima_accion:today(),accion_pendiente:'Reprogramar visita'};const ok=await updateLead(id,changes);if(ok){crmAudit(action==='confirm'?'Visita confirmada':action==='done'?'Visita realizada':'Inasistencia registrada',l.nombre||'Cliente',id);toast('Visita actualizada');renderVisitas()}}
+function visitOpenReschedule(id){const l=allLeads.find(x=>x.id==id);if(!l)return;document.getElementById('visit-modal')?.remove();const modal=document.createElement('div');modal.id='visit-modal';modal.className='visit-modal';modal.onclick=e=>{if(e.target===modal)visitCloseModal()};modal.innerHTML=`<div><header><span><small>AGENDA COMERCIAL</small><b>Reprogramar visita</b><em>${esc(l.nombre||'Cliente')}</em></span><button onclick="visitCloseModal()">Ã—</button></header><section><label>Nueva fecha<input type="date" id="visit-new-date" value="${attr(l.fecha_visita||today())}"></label><label>Nueva hora<input type="time" id="visit-new-time" value="${attr(l.hora_visita||'09:00')}"></label><label>Asesor de visita<select id="visit-new-advisor">${getAsesores().map(a=>`<option ${a===(l.asesor_visita||l.asesor)?'selected':''}>${esc(a)}</option>`).join('')}</select></label></section><footer><button class="btn-ghost" onclick="visitCloseModal()">Cancelar</button><button class="btn-primary" onclick="visitSaveReschedule('${l.id}')">Guardar cambio</button></footer></div>`;document.body.appendChild(modal)}
 function visitCloseModal(){document.getElementById('visit-modal')?.remove()}
 async function visitSaveReschedule(id){const fecha=document.getElementById('visit-new-date')?.value,hora=document.getElementById('visit-new-time')?.value,asesor=document.getElementById('visit-new-advisor')?.value;if(!fecha||!hora){toast('Completa la fecha y hora','error');return}const l=allLeads.find(x=>x.id==id),ok=await updateLead(id,{fecha_visita:fecha,hora_visita:hora,asesor_visita:asesor,estado:'Visita agendada',asistio:null,fecha_proxima_accion:fecha,accion_pendiente:'Visita reprogramada'});if(ok){crmAudit('Visita reprogramada',l?.nombre||'Cliente',id);visitCloseModal();toast('Visita reprogramada');renderVisitas()}}
 
 // ADMINISTRACION SEGURA DE USUARIOS (Vercel Function /api/admin-users)
 async function adminUserRequest(payload){
-  const{data:{session}}=await sb.auth.getSession();if(!session?.access_token)throw new Error('Tu sesión expiró. Ingresa nuevamente.');
+  const{data:{session}}=await sb.auth.getSession();if(!session?.access_token)throw new Error('Tu sesiÃ³n expirÃ³. Ingresa nuevamente.');
   const response=await fetch('/api/admin-users',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},body:JSON.stringify(payload)});
-  let body={};try{body=await response.json()}catch{}if(!response.ok)throw new Error(body.error||`No se pudo completar la operación (${response.status})`);return body;
+  let body={};try{body=await response.json()}catch{}if(!response.ok)throw new Error(body.error||`No se pudo completar la operaciÃ³n (${response.status})`);return body;
 }
 async function renderUsuarios(){
   if(currentUser.role!=='gerente')return;
   const root=document.getElementById('view-usuarios');if(!root)return;
   root.innerHTML=`<div class="page-header user-admin-header"><div><div class="page-eyebrow">CONTROL DE ACCESOS</div><h1 class="page-title">Usuarios y permisos</h1><p class="page-subtitle">Administra las cuentas que pueden ingresar al CRM.</p></div><button class="btn-primary" onclick="userOpenCreate()">+ Nuevo usuario</button></div><div class="user-loading"><span></span>Consultando usuarios autorizados...</div>`;
   try{const result=await adminUserRequest({action:'list'});_adminUsersCache=result.users||[];_usersCache=_adminUsersCache.filter(u=>u.active).map(u=>({user:u.username,role:u.role,name:u.name,id:u.id}));renderUserAdminContent()}
-  catch(error){root.innerHTML+=`<div class="user-api-error"><b>No se pudo abrir el administrador de usuarios</b><span>${esc(error.message)}</span><small>Verifica que la función <code>/api/admin-users</code> esté publicada y que las tres variables de Supabase estén configuradas en Vercel.</small><button class="btn-ghost" onclick="renderUsuarios()">Reintentar</button></div>`}
+  catch(error){root.innerHTML+=`<div class="user-api-error"><b>No se pudo abrir el administrador de usuarios</b><span>${esc(error.message)}</span><small>Verifica que la funciÃ³n <code>/api/admin-users</code> estÃ© publicada y que las tres variables de Supabase estÃ©n configuradas en Vercel.</small><button class="btn-ghost" onclick="renderUsuarios()">Reintentar</button></div>`}
 }
 function renderUserAdminContent(){
   const root=document.getElementById('view-usuarios'),users=_adminUsersCache,active=users.filter(u=>u.active).length,advisors=users.filter(u=>u.role==='asesor'&&u.active).length,managers=users.filter(u=>u.role==='gerente'&&u.active).length;
   root.innerHTML=`<div class="page-header user-admin-header"><div><div class="page-eyebrow">CONTROL DE ACCESOS</div><h1 class="page-title">Usuarios y permisos</h1><p class="page-subtitle">Administra las cuentas que pueden ingresar al CRM.</p></div><button class="btn-primary" onclick="userOpenCreate()">+ Nuevo usuario</button></div>
-  <div class="user-security-note"><span>${navIcon('usuarios')}</span><div><b>Administración protegida</b><small>Solo Gerencia puede crear cuentas, cambiar contraseñas o modificar permisos. Las contraseñas nunca se muestran ni se guardan en este navegador.</small></div></div>
+  <div class="user-security-note"><span>${navIcon('usuarios')}</span><div><b>AdministraciÃ³n protegida</b><small>Solo Gerencia puede crear cuentas, cambiar contraseÃ±as o modificar permisos. Las contraseÃ±as nunca se muestran ni se guardan en este navegador.</small></div></div>
   <div class="user-admin-stats"><div><i class="active"></i><span><b>${active}</b><small>Usuarios activos</small></span></div><div><i class="advisor"></i><span><b>${advisors}</b><small>Asesores activos</small></span></div><div><i class="manager"></i><span><b>${managers}</b><small>Gerentes</small></span></div><div><i class="inactive"></i><span><b>${users.length-active}</b><small>Accesos suspendidos</small></span></div></div>
   <div class="user-admin-tools"><div class="user-search"><span>${navIcon('search')}</span><input id="user-admin-search" placeholder="Buscar por nombre, usuario o rol..." oninput="renderUserRows()"></div><select id="user-admin-filter" onchange="renderUserRows()"><option value="">Todos los estados</option><option value="active">Activos</option><option value="inactive">Inactivos</option></select></div>
-  <div id="user-form-wrap"></div><section class="user-list-card"><header><div><b>Equipo con acceso al CRM</b><span id="user-list-caption">${users.length} cuentas registradas</span></div><span class="user-role-legend"><i></i> Gestión centralizada</span></header><div id="user-admin-rows"></div></section>`;renderUserRows();
+  <div id="user-form-wrap"></div><section class="user-list-card"><header><div><b>Equipo con acceso al CRM</b><span id="user-list-caption">${users.length} cuentas registradas</span></div><span class="user-role-legend"><i></i> GestiÃ³n centralizada</span></header><div id="user-admin-rows"></div></section>`;renderUserRows();
 }
 function renderUserRows(){
   const q=(document.getElementById('user-admin-search')?.value||'').trim().toLowerCase(),filter=document.getElementById('user-admin-filter')?.value||'';
   const rows=_adminUsersCache.filter(u=>(!q||`${u.name} ${u.username} ${rolLabel(u.role)}`.toLowerCase().includes(q))&&(!filter||(filter==='active'?u.active:!u.active))),box=document.getElementById('user-admin-rows');if(!box)return;
   document.getElementById('user-list-caption').textContent=`${rows.length} de ${_adminUsersCache.length} cuentas`;
-  box.innerHTML=rows.length?`<div class="table-wrap"><table class="data-table user-table"><thead><tr><th>Usuario</th><th>Nombre completo</th><th>Rol y alcance</th><th>Estado</th><th>Creación</th><th>Acciones</th></tr></thead><tbody>${rows.map(u=>`<tr><td><div class="user-identity"><span>${esc((u.name||u.username||'?').trim().charAt(0).toUpperCase())}</span><div><b>${esc(u.username)}</b><small>${esc(u.username)}@vimka.local</small></div></div></td><td><b class="user-fullname">${esc(u.name||'Sin nombre')}</b></td><td><span class="user-role ${u.role}">${rolLabel(u.role)}</span><small class="user-scope">${userRoleScope(u.role)}</small></td><td><span class="user-status ${u.active?'active':'inactive'}"><i></i>${u.active?'Activo':'Suspendido'}</span></td><td><span class="user-created">${u.created_at?new Date(u.created_at).toLocaleDateString('es-PE'):'—'}</span></td><td><div class="user-row-actions"><button onclick="userOpenEdit('${u.id}')">Editar</button>${u.id!==currentUser.id?(u.active?`<button class="suspend" onclick="userConfirmAction('${u.id}','deactivate')">Suspender</button>`:`<button class="activate" onclick="userConfirmAction('${u.id}','activate')">Activar</button>`):''}${u.id!==currentUser.id?`<button class="delete" onclick="userConfirmAction('${u.id}','delete')" title="Eliminar definitivamente">Eliminar</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`:'<div class="crm-empty">No se encontraron usuarios con esos filtros.</div>';
+  box.innerHTML=rows.length?`<div class="table-wrap"><table class="data-table user-table"><thead><tr><th>Usuario</th><th>Nombre completo</th><th>Rol y alcance</th><th>Estado</th><th>CreaciÃ³n</th><th>Acciones</th></tr></thead><tbody>${rows.map(u=>`<tr><td><div class="user-identity"><span>${esc((u.name||u.username||'?').trim().charAt(0).toUpperCase())}</span><div><b>${esc(u.username)}</b><small>${esc(u.username)}@vimka.local</small></div></div></td><td><b class="user-fullname">${esc(u.name||'Sin nombre')}</b></td><td><span class="user-role ${u.role}">${rolLabel(u.role)}</span><small class="user-scope">${userRoleScope(u.role)}</small></td><td><span class="user-status ${u.active?'active':'inactive'}"><i></i>${u.active?'Activo':'Suspendido'}</span></td><td><span class="user-created">${u.created_at?new Date(u.created_at).toLocaleDateString('es-PE'):'â€”'}</span></td><td><div class="user-row-actions"><button onclick="userOpenEdit('${u.id}')">Editar</button>${u.id!==currentUser.id?(u.active?`<button class="suspend" onclick="userConfirmAction('${u.id}','deactivate')">Suspender</button>`:`<button class="activate" onclick="userConfirmAction('${u.id}','activate')">Activar</button>`):''}${u.id!==currentUser.id?`<button class="delete" onclick="userConfirmAction('${u.id}','delete')" title="Eliminar definitivamente">Eliminar</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`:'<div class="crm-empty">No se encontraron usuarios con esos filtros.</div>';
 }
-function userRoleScope(role){return({gerente:'Acceso total y administración',jefe_ventas:'Equipo, clientes y resultados',coordinadora:'Agenda, visitas y contactos',asesor:'Clientes y actividades asignadas',publicidad:'Campañas y fuentes comerciales',admin:'Operación general del CRM'})[role]||'Acceso personalizado'}
+function userRoleScope(role){return({gerente:'Acceso total y administraciÃ³n',jefe_ventas:'Equipo, clientes y resultados',coordinadora:'Agenda, visitas y contactos',asesor:'Clientes y actividades asignadas',publicidad:'CampaÃ±as y fuentes comerciales',admin:'OperaciÃ³n general del CRM'})[role]||'Acceso personalizado'}
 function userRoleOptions(selected){return[['asesor','Asesor/a'],['jefe_ventas','Jefe de Ventas'],['coordinadora','Coordinadora'],['publicidad','Publicidad'],['admin','Administrador'],['gerente','Gerencia']].map(([v,l])=>`<option value="${v}" ${v===selected?'selected':''}>${l}</option>`).join('')}
 
 function userOpenCreate(){
-  document.getElementById('user-form-wrap').innerHTML=`<section class="user-editor"><header><div><small>NUEVA CUENTA</small><b>Registrar usuario</b><span>Crea sus credenciales y define qué podrá gestionar.</span></div><button onclick="userCloseEditor()">×</button></header><div class="user-editor-grid"><label>Nombre completo <i>*</i><input id="nu-name" maxlength="90" placeholder="Ej. María Quispe"></label><label>Nombre de usuario <i>*</i><div class="username-field"><input id="nu-user" maxlength="40" placeholder="maria.quispe" oninput="userNormalizeInput(this)"><span>@vimka.local</span></div></label><label>Rol de acceso <i>*</i><select id="nu-role">${userRoleOptions('asesor')}</select></label><label>Contraseña temporal <i>*</i><div class="password-admin-field"><input type="password" id="nu-pass" minlength="8" placeholder="Mínimo 8 caracteres"><button onclick="userToggleAdminPass('nu-pass',this)" type="button">Ver</button></div><small class="password-help">La persona podrá ingresar inmediatamente con esta contraseña.</small></label></div><div class="password-actions"><button class="btn-ghost sm" onclick="userGeneratePassword('nu-pass')">Generar contraseña segura</button><span id="nu-error"></span></div><footer><button class="btn-ghost" onclick="userCloseEditor()">Cancelar</button><button class="btn-primary" id="nu-save" onclick="userCreate()">Crear usuario</button></footer></section>`;document.getElementById('user-form-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('user-form-wrap').innerHTML=`<section class="user-editor"><header><div><small>NUEVA CUENTA</small><b>Registrar usuario</b><span>Crea sus credenciales y define quÃ© podrÃ¡ gestionar.</span></div><button onclick="userCloseEditor()">Ã—</button></header><div class="user-editor-grid"><label>Nombre completo <i>*</i><input id="nu-name" maxlength="90" placeholder="Ej. MarÃ­a Quispe"></label><label>Nombre de usuario <i>*</i><div class="username-field"><input id="nu-user" maxlength="40" placeholder="maria.quispe" oninput="userNormalizeInput(this)"><span>@vimka.local</span></div></label><label>Rol de acceso <i>*</i><select id="nu-role">${userRoleOptions('asesor')}</select></label><label>ContraseÃ±a temporal <i>*</i><div class="password-admin-field"><input type="password" id="nu-pass" minlength="8" placeholder="MÃ­nimo 8 caracteres"><button onclick="userToggleAdminPass('nu-pass',this)" type="button">Ver</button></div><small class="password-help">La persona podrÃ¡ ingresar inmediatamente con esta contraseÃ±a.</small></label></div><div class="password-actions"><button class="btn-ghost sm" onclick="userGeneratePassword('nu-pass')">Generar contraseÃ±a segura</button><span id="nu-error"></span></div><footer><button class="btn-ghost" onclick="userCloseEditor()">Cancelar</button><button class="btn-primary" id="nu-save" onclick="userCreate()">Crear usuario</button></footer></section>`;document.getElementById('user-form-wrap').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function userOpenEdit(id){const u=_adminUsersCache.find(x=>x.id===id);if(!u)return;document.getElementById('user-form-wrap').innerHTML=`<section class="user-editor"><header><div><small>EDITAR ACCESO</small><b>${esc(u.name)}</b><span>Actualiza sus datos, permisos o asigna una contraseña nueva.</span></div><button onclick="userCloseEditor()">×</button></header><div class="user-editor-grid"><label>Nombre completo <i>*</i><input id="eu-name" maxlength="90" value="${attr(u.name)}"></label><label>Nombre de usuario <i>*</i><div class="username-field"><input id="eu-user" maxlength="40" value="${attr(u.username)}" oninput="userNormalizeInput(this)" ${u.id===currentUser.id?'readonly':''}><span>@vimka.local</span></div></label><label>Rol de acceso <i>*</i><select id="eu-role" ${u.id===currentUser.id?'disabled':''}>${userRoleOptions(u.role)}</select></label><label>Nueva contraseña <span class="optional">Opcional</span><div class="password-admin-field"><input type="password" id="eu-pass" minlength="8" placeholder="Déjalo vacío para conservarla"><button onclick="userToggleAdminPass('eu-pass',this)" type="button">Ver</button></div><small class="password-help">Si escribes una nueva, la anterior dejará de funcionar.</small></label></div><div class="password-actions"><button class="btn-ghost sm" onclick="userGeneratePassword('eu-pass')">Generar contraseña segura</button><span id="eu-error"></span></div><footer><button class="btn-ghost" onclick="userCloseEditor()">Cancelar</button><button class="btn-primary" id="eu-save" onclick="userSaveEdit('${u.id}')">Guardar cambios</button></footer></section>`;document.getElementById('user-form-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
+function userOpenEdit(id){const u=_adminUsersCache.find(x=>x.id===id);if(!u)return;document.getElementById('user-form-wrap').innerHTML=`<section class="user-editor"><header><div><small>EDITAR ACCESO</small><b>${esc(u.name)}</b><span>Actualiza sus datos, permisos o asigna una contraseÃ±a nueva.</span></div><button onclick="userCloseEditor()">Ã—</button></header><div class="user-editor-grid"><label>Nombre completo <i>*</i><input id="eu-name" maxlength="90" value="${attr(u.name)}"></label><label>Nombre de usuario <i>*</i><div class="username-field"><input id="eu-user" maxlength="40" value="${attr(u.username)}" oninput="userNormalizeInput(this)" ${u.id===currentUser.id?'readonly':''}><span>@vimka.local</span></div></label><label>Rol de acceso <i>*</i><select id="eu-role" ${u.id===currentUser.id?'disabled':''}>${userRoleOptions(u.role)}</select></label><label>Nueva contraseÃ±a <span class="optional">Opcional</span><div class="password-admin-field"><input type="password" id="eu-pass" minlength="8" placeholder="DÃ©jalo vacÃ­o para conservarla"><button onclick="userToggleAdminPass('eu-pass',this)" type="button">Ver</button></div><small class="password-help">Si escribes una nueva, la anterior dejarÃ¡ de funcionar.</small></label></div><div class="password-actions"><button class="btn-ghost sm" onclick="userGeneratePassword('eu-pass')">Generar contraseÃ±a segura</button><span id="eu-error"></span></div><footer><button class="btn-ghost" onclick="userCloseEditor()">Cancelar</button><button class="btn-primary" id="eu-save" onclick="userSaveEdit('${u.id}')">Guardar cambios</button></footer></section>`;document.getElementById('user-form-wrap').scrollIntoView({behavior:'smooth',block:'start'})}
 function userCloseEditor(){const el=document.getElementById('user-form-wrap');if(el)el.innerHTML=''}
 function userNormalizeInput(input){input.value=input.value.toLowerCase().replace(/[^a-z0-9._-]/g,'')}
 function userToggleAdminPass(id,button){const input=document.getElementById(id);if(!input)return;const show=input.type==='password';input.type=show?'text':'password';button.textContent=show?'Ocultar':'Ver'}
-function userGeneratePassword(id){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';const bytes=new Uint8Array(14);crypto.getRandomValues(bytes);const pass=Array.from(bytes,b=>chars[b%chars.length]).join('');const input=document.getElementById(id);if(input){input.value=pass;input.type='text';input.dispatchEvent(new Event('input'));toast('Contraseña segura generada')}}
+function userGeneratePassword(id){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';const bytes=new Uint8Array(14);crypto.getRandomValues(bytes);const pass=Array.from(bytes,b=>chars[b%chars.length]).join('');const input=document.getElementById(id);if(input){input.value=pass;input.type='text';input.dispatchEvent(new Event('input'));toast('ContraseÃ±a segura generada')}}
 function userFormError(prefix,message){const el=document.getElementById(`${prefix}-error`);if(el){el.textContent=message;el.style.display='block'}}
-async function userCreate(){const name=document.getElementById('nu-name').value.trim(),user=document.getElementById('nu-user').value.trim().toLowerCase(),role=document.getElementById('nu-role').value,pass=document.getElementById('nu-pass').value,button=document.getElementById('nu-save');if(!name||!/^[a-z0-9._-]{3,40}$/.test(user)||pass.length<8){userFormError('nu','Completa el nombre, un usuario válido y una contraseña de mínimo 8 caracteres.');return}button.disabled=true;button.textContent='Creando cuenta...';try{await adminUserRequest({action:'create',user:{name,user,role,pass}});crmAudit('Usuario creado',name,null);toast('Usuario creado correctamente');_usersCache=null;await renderUsuarios()}catch(error){userFormError('nu',error.message);button.disabled=false;button.textContent='Crear usuario'}}
-async function userSaveEdit(id){const name=document.getElementById('eu-name').value.trim(),user=document.getElementById('eu-user').value.trim().toLowerCase(),role=document.getElementById('eu-role')?.value||'',password=document.getElementById('eu-pass').value,button=document.getElementById('eu-save');if(!name||!/^[a-z0-9._-]{3,40}$/.test(user)||(password&&password.length<8)){userFormError('eu','Revisa el nombre, usuario y la contraseña (mínimo 8 caracteres).');return}button.disabled=true;button.textContent='Guardando...';try{await adminUserRequest({action:'update',id,updates:{name,user,role,password}});crmAudit('Usuario actualizado',name,id);toast('Cambios guardados');_usersCache=null;await renderUsuarios()}catch(error){userFormError('eu',error.message);button.disabled=false;button.textContent='Guardar cambios'}}
-function userConfirmAction(id,action){const u=_adminUsersCache.find(x=>x.id===id);if(!u)return;document.getElementById('user-confirm-modal')?.remove();const isDelete=action==='delete',title=isDelete?'Eliminar usuario definitivamente':action==='deactivate'?'Suspender acceso':'Reactivar acceso',copy=isDelete?'La cuenta y sus credenciales se eliminarán. Los clientes asignados conservarán sus datos, pero quedarán sin responsable.':action==='deactivate'?'La persona no podrá iniciar sesión hasta que vuelvas a activarla.':'La persona recuperará el acceso al CRM con sus credenciales actuales.';const modal=document.createElement('div');modal.id='user-confirm-modal';modal.className='user-confirm-modal';modal.innerHTML=`<div><span class="confirm-icon ${isDelete?'danger':''}">${isDelete?'!':'✓'}</span><b>${title}</b><strong>${esc(u.name)}</strong><p>${copy}</p><footer><button class="btn-ghost" onclick="document.getElementById('user-confirm-modal').remove()">Cancelar</button><button class="${isDelete?'btn-danger':'btn-primary'}" onclick="userRunAction('${id}','${action}',this)">${isDelete?'Eliminar definitivamente':action==='deactivate'?'Suspender':'Activar usuario'}</button></footer></div>`;document.body.appendChild(modal)}
+async function userCreate(){const name=document.getElementById('nu-name').value.trim(),user=document.getElementById('nu-user').value.trim().toLowerCase(),role=document.getElementById('nu-role').value,pass=document.getElementById('nu-pass').value,button=document.getElementById('nu-save');if(!name||!/^[a-z0-9._-]{3,40}$/.test(user)||pass.length<8){userFormError('nu','Completa el nombre, un usuario vÃ¡lido y una contraseÃ±a de mÃ­nimo 8 caracteres.');return}button.disabled=true;button.textContent='Creando cuenta...';try{await adminUserRequest({action:'create',user:{name,user,role,pass}});crmAudit('Usuario creado',name,null);toast('Usuario creado correctamente');_usersCache=null;await renderUsuarios()}catch(error){userFormError('nu',error.message);button.disabled=false;button.textContent='Crear usuario'}}
+async function userSaveEdit(id){const name=document.getElementById('eu-name').value.trim(),user=document.getElementById('eu-user').value.trim().toLowerCase(),role=document.getElementById('eu-role')?.value||'',password=document.getElementById('eu-pass').value,button=document.getElementById('eu-save');if(!name||!/^[a-z0-9._-]{3,40}$/.test(user)||(password&&password.length<8)){userFormError('eu','Revisa el nombre, usuario y la contraseÃ±a (mÃ­nimo 8 caracteres).');return}button.disabled=true;button.textContent='Guardando...';try{await adminUserRequest({action:'update',id,updates:{name,user,role,password}});crmAudit('Usuario actualizado',name,id);toast('Cambios guardados');_usersCache=null;await renderUsuarios()}catch(error){userFormError('eu',error.message);button.disabled=false;button.textContent='Guardar cambios'}}
+function userConfirmAction(id,action){const u=_adminUsersCache.find(x=>x.id===id);if(!u)return;document.getElementById('user-confirm-modal')?.remove();const isDelete=action==='delete',title=isDelete?'Eliminar usuario definitivamente':action==='deactivate'?'Suspender acceso':'Reactivar acceso',copy=isDelete?'La cuenta y sus credenciales se eliminarÃ¡n. Los clientes asignados conservarÃ¡n sus datos, pero quedarÃ¡n sin responsable.':action==='deactivate'?'La persona no podrÃ¡ iniciar sesiÃ³n hasta que vuelvas a activarla.':'La persona recuperarÃ¡ el acceso al CRM con sus credenciales actuales.';const modal=document.createElement('div');modal.id='user-confirm-modal';modal.className='user-confirm-modal';modal.innerHTML=`<div><span class="confirm-icon ${isDelete?'danger':''}">${isDelete?'!':'âœ“'}</span><b>${title}</b><strong>${esc(u.name)}</strong><p>${copy}</p><footer><button class="btn-ghost" onclick="document.getElementById('user-confirm-modal').remove()">Cancelar</button><button class="${isDelete?'btn-danger':'btn-primary'}" onclick="userRunAction('${id}','${action}',this)">${isDelete?'Eliminar definitivamente':action==='deactivate'?'Suspender':'Activar usuario'}</button></footer></div>`;document.body.appendChild(modal)}
 async function userRunAction(id,action,button){button.disabled=true;button.textContent='Procesando...';const u=_adminUsersCache.find(x=>x.id===id);try{await adminUserRequest({action,id});crmAudit(action==='delete'?'Usuario eliminado':action==='deactivate'?'Usuario suspendido':'Usuario activado',u?.name||'Usuario',id);document.getElementById('user-confirm-modal')?.remove();_usersCache=null;toast(action==='delete'?'Usuario eliminado':action==='deactivate'?'Acceso suspendido':'Usuario activado');await renderUsuarios()}catch(error){button.disabled=false;button.textContent='Reintentar';toast(error.message,'error')}}
 
-// PUBLICIDAD PRO: adquisición, calidad y conversión por canal
+// PUBLICIDAD PRO: adquisiciÃ³n, calidad y conversiÃ³n por canal
 function renderPublicidad(){
   const root=document.getElementById('view-publicidad');if(!root)return;
-  const total=allLeads.length,contacted=allLeads.filter(l=>l.contesto==='Sí').length,visits=allLeads.filter(l=>l.asistio==='Sí').length,won=allLeads.filter(l=>l.estado==='Cierre ganado').length,lost=allLeads.filter(l=>l.estado==='Perdido'||l.motivo_perdida).length;
-  const map={};allLeads.forEach(l=>{const name=l.fuente||'Sin fuente';if(!map[name])map[name]={name,total:0,contacted:0,visits:0,won:0,lost:0};const x=map[name];x.total++;if(l.contesto==='Sí')x.contacted++;if(l.asistio==='Sí')x.visits++;if(l.estado==='Cierre ganado')x.won++;if(l.estado==='Perdido'||l.motivo_perdida)x.lost++});
+  const total=allLeads.length,contacted=allLeads.filter(l=>l.contesto==='SÃ­').length,visits=allLeads.filter(l=>l.asistio==='SÃ­').length,won=allLeads.filter(l=>l.estado==='Cierre ganado').length,lost=allLeads.filter(l=>l.estado==='Perdido'||l.motivo_perdida).length;
+  const map={};allLeads.forEach(l=>{const name=l.fuente||'Sin fuente';if(!map[name])map[name]={name,total:0,contacted:0,visits:0,won:0,lost:0};const x=map[name];x.total++;if(l.contesto==='SÃ­')x.contacted++;if(l.asistio==='SÃ­')x.visits++;if(l.estado==='Cierre ganado')x.won++;if(l.estado==='Perdido'||l.motivo_perdida)x.lost++});
   const sources=Object.values(map).sort((a,b)=>b.total-a.total),max=Math.max(...sources.map(x=>x.total),1),top=sources[0],best=[...sources].filter(x=>x.total>=3).sort((a,b)=>pct(b.won,b.total)-pct(a.won,a.total)||b.total-a.total)[0],uncontacted=total-contacted,noSource=map['Sin fuente']?.total||0;
   const reasons={};allLeads.filter(l=>l.motivo_perdida).forEach(l=>{const k=l.motivo_perdida.trim()||'Sin especificar';reasons[k]=(reasons[k]||0)+1});const reasonRows=Object.entries(reasons).sort((a,b)=>b[1]-a[1]),maxReason=Math.max(...reasonRows.map(x=>x[1]),1);
-  root.innerHTML=`<div class="page-header pub-page-header"><div><div class="page-eyebrow">ADQUISICIÓN COMERCIAL</div><h1 class="page-title">Publicidad y canales</h1><p class="page-subtitle">Analiza el origen, la calidad y la conversión de cada oportunidad.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
-  <div class="pub-kpi-grid">${pubKpi('Oportunidades',total,'Base comercial acumulada','leads','blue')}${pubKpi('Tasa de contacto',`${pct(contacted,total)}%`,`${contacted} clientes contactados`,'phone','teal')}${pubKpi('Visitas efectivas',visits,`${pct(visits,total)}% de los registros`,'visitas','amber')}${pubKpi('Conversión a venta',`${pct(won,total)}%`,`${won} cierres concretados`,'target','green')}</div>
-  <div class="pub-acquisition-grid"><section class="pub-panel pub-source-panel"><header><div><small>DISTRIBUCIÓN</small><b>Origen de oportunidades</b><span>Participación de cada canal en la captación total.</span></div><em>${sources.length} canales</em></header><div class="pub-source-list">${sources.map((x,i)=>`<button onclick="pubOpenSource('${attr(x.name)}')"><span class="pub-source-rank">${String(i+1).padStart(2,'0')}</span><span class="pub-source-name"><b>${esc(x.name)}</b><small>${pct(x.total,total)}% de participación</small></span><span class="pub-source-track"><i style="width:${pct(x.total,max)}%;--bar:${pubSourceColor(i)}"></i></span><strong>${x.total}</strong><em>${pct(x.contacted,x.total)}% contacto</em></button>`).join('')||'<div class="crm-empty">Sin fuentes registradas.</div>'}</div></section>
-  <aside class="pub-panel pub-insight-panel"><header><div><small>LECTURA EJECUTIVA</small><b>Rendimiento de canales</b><span>Señales para optimizar la gestión comercial.</span></div></header><div class="pub-insight-list">${pubInsight('Canal principal',top?.name||'Sin datos',top?`${top.total} oportunidades captadas`:'Sin información','source')}${pubInsight('Mejor conversión',best?.name||'Sin datos',best?`${pct(best.won,best.total)}% de cierre`:'Sin cierres registrados','conversion')}${pubInsight('Sin primer contacto',uncontacted,`${pct(uncontacted,total)}% requiere gestión`,'warning')}${pubInsight('Sin fuente registrada',noSource,noSource?'Corregir atribución comercial':'Atribución completa','quality')}</div></aside></div>
-  <section class="pub-panel pub-performance-panel"><header><div><small>CALIDAD POR CANAL</small><b>Desempeño comercial por fuente</b><span>Contacto, visitas y cierres generados por cada origen.</span></div></header><div class="table-wrap"><table class="data-table pub-table"><thead><tr><th>Fuente</th><th>Leads</th><th>Contactados</th><th>Tasa contacto</th><th>Visitas</th><th>Cierres</th><th>Conversión</th><th>Calidad</th></tr></thead><tbody>${sources.map((x,i)=>{const quality=Math.round(pct(x.contacted,x.total)*.45+pct(x.visits,x.total)*.25+Math.min(pct(x.won,x.total)*5,100)*.30);return`<tr onclick="pubOpenSource('${attr(x.name)}')"><td><span class="pub-source-dot" style="--dot:${pubSourceColor(i)}"></span><b>${esc(x.name)}</b></td><td>${x.total}</td><td>${x.contacted}</td><td>${pct(x.contacted,x.total)}%</td><td>${x.visits}</td><td>${x.won}</td><td><b>${pct(x.won,x.total)}%</b></td><td><span class="pub-quality ${quality>=70?'good':quality>=45?'mid':'low'}">${quality>=70?'Alta':quality>=45?'Media':'Por mejorar'}</span></td></tr>`}).join('')||'<tr><td colspan="8"><div class="crm-empty">Sin información disponible.</div></td></tr>'}</tbody></table></div></section>
-  <section class="pub-panel pub-loss-panel"><header><div><small>OPORTUNIDADES PERDIDAS</small><b>Motivos de pérdida</b><span>Razones registradas por el equipo comercial.</span></div><em>${reasonRows.reduce((s,x)=>s+x[1],0)} registros</em></header><div class="pub-loss-grid">${reasonRows.slice(0,12).map(([name,count],i)=>`<div title="${attr(name)}"><span>${String(i+1).padStart(2,'0')}</span><section><b>${esc(name)}</b><i><em style="width:${pct(count,maxReason)}%"></em></i></section><strong>${count}</strong></div>`).join('')||'<div class="crm-empty">No existen motivos de pérdida registrados.</div>'}</div></section>`;
+  root.innerHTML=`<div class="page-header pub-page-header"><div><div class="page-eyebrow">ADQUISICIÃ“N COMERCIAL</div><h1 class="page-title">Publicidad y canales</h1><p class="page-subtitle">Analiza el origen, la calidad y la conversiÃ³n de cada oportunidad.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
+  <div class="pub-kpi-grid">${pubKpi('Oportunidades',total,'Base comercial acumulada','leads','blue')}${pubKpi('Tasa de contacto',`${pct(contacted,total)}%`,`${contacted} clientes contactados`,'phone','teal')}${pubKpi('Visitas efectivas',visits,`${pct(visits,total)}% de los registros`,'visitas','amber')}${pubKpi('ConversiÃ³n a venta',`${pct(won,total)}%`,`${won} cierres concretados`,'target','green')}</div>
+  <div class="pub-acquisition-grid"><section class="pub-panel pub-source-panel"><header><div><small>DISTRIBUCIÃ“N</small><b>Origen de oportunidades</b><span>ParticipaciÃ³n de cada canal en la captaciÃ³n total.</span></div><em>${sources.length} canales</em></header><div class="pub-source-list">${sources.map((x,i)=>`<button onclick="pubOpenSource('${attr(x.name)}')"><span class="pub-source-rank">${String(i+1).padStart(2,'0')}</span><span class="pub-source-name"><b>${esc(x.name)}</b><small>${pct(x.total,total)}% de participaciÃ³n</small></span><span class="pub-source-track"><i style="width:${pct(x.total,max)}%;--bar:${pubSourceColor(i)}"></i></span><strong>${x.total}</strong><em>${pct(x.contacted,x.total)}% contacto</em></button>`).join('')||'<div class="crm-empty">Sin fuentes registradas.</div>'}</div></section>
+  <aside class="pub-panel pub-insight-panel"><header><div><small>LECTURA EJECUTIVA</small><b>Rendimiento de canales</b><span>SeÃ±ales para optimizar la gestiÃ³n comercial.</span></div></header><div class="pub-insight-list">${pubInsight('Canal principal',top?.name||'Sin datos',top?`${top.total} oportunidades captadas`:'Sin informaciÃ³n','source')}${pubInsight('Mejor conversiÃ³n',best?.name||'Sin datos',best?`${pct(best.won,best.total)}% de cierre`:'Sin cierres registrados','conversion')}${pubInsight('Sin primer contacto',uncontacted,`${pct(uncontacted,total)}% requiere gestiÃ³n`,'warning')}${pubInsight('Sin fuente registrada',noSource,noSource?'Corregir atribuciÃ³n comercial':'AtribuciÃ³n completa','quality')}</div></aside></div>
+  <section class="pub-panel pub-performance-panel"><header><div><small>CALIDAD POR CANAL</small><b>DesempeÃ±o comercial por fuente</b><span>Contacto, visitas y cierres generados por cada origen.</span></div></header><div class="table-wrap"><table class="data-table pub-table"><thead><tr><th>Fuente</th><th>Leads</th><th>Contactados</th><th>Tasa contacto</th><th>Visitas</th><th>Cierres</th><th>ConversiÃ³n</th><th>Calidad</th></tr></thead><tbody>${sources.map((x,i)=>{const quality=Math.round(pct(x.contacted,x.total)*.45+pct(x.visits,x.total)*.25+Math.min(pct(x.won,x.total)*5,100)*.30);return`<tr onclick="pubOpenSource('${attr(x.name)}')"><td><span class="pub-source-dot" style="--dot:${pubSourceColor(i)}"></span><b>${esc(x.name)}</b></td><td>${x.total}</td><td>${x.contacted}</td><td>${pct(x.contacted,x.total)}%</td><td>${x.visits}</td><td>${x.won}</td><td><b>${pct(x.won,x.total)}%</b></td><td><span class="pub-quality ${quality>=70?'good':quality>=45?'mid':'low'}">${quality>=70?'Alta':quality>=45?'Media':'Por mejorar'}</span></td></tr>`}).join('')||'<tr><td colspan="8"><div class="crm-empty">Sin informaciÃ³n disponible.</div></td></tr>'}</tbody></table></div></section>
+  <section class="pub-panel pub-loss-panel"><header><div><small>OPORTUNIDADES PERDIDAS</small><b>Motivos de pÃ©rdida</b><span>Razones registradas por el equipo comercial.</span></div><em>${reasonRows.reduce((s,x)=>s+x[1],0)} registros</em></header><div class="pub-loss-grid">${reasonRows.slice(0,12).map(([name,count],i)=>`<div title="${attr(name)}"><span>${String(i+1).padStart(2,'0')}</span><section><b>${esc(name)}</b><i><em style="width:${pct(count,maxReason)}%"></em></i></section><strong>${count}</strong></div>`).join('')||'<div class="crm-empty">No existen motivos de pÃ©rdida registrados.</div>'}</div></section>`;
 }
 function pubKpi(label,value,sub,icon,tone){return`<div class="pub-kpi ${tone}"><span class="pub-kpi-icon">${navIcon(icon)}</span><div><small>${label}</small><b>${value}</b><em>${sub}</em></div></div>`}
 function pubInsight(label,value,sub,tone){return`<div class="pub-insight ${tone}"><i></i><span><small>${label}</small><b>${esc(value)}</b><em>${esc(sub)}</em></span></div>`}
@@ -4209,19 +4250,20 @@ function leadOpenEditor(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;
   const owns=lead.owner_id===currentUser.id||lead.asesor===currentUser.name,allowed=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||owns;if(!allowed){toast('No tienes permiso para editar este contacto','error');return}
   document.getElementById('lead-editor-modal')?.remove();
-  const advisors=[...new Set([lead.asesor,...getAsesores()].filter(Boolean))],sources=[...new Set([lead.fuente,'Facebook Ads','WhatsApp','Referido','Volanteo','Orgánico','Otro'].filter(Boolean))];
+  const advisors=[...new Set([lead.asesor,...getAsesores()].filter(Boolean))],sources=[...new Set([lead.fuente,'Facebook Ads','WhatsApp','Referido','Volanteo','OrgÃ¡nico','Otro'].filter(Boolean))];
   const modal=document.createElement('div');modal.id='lead-editor-modal';modal.className='lead-editor-modal';modal.onclick=e=>{if(e.target===modal)leadCloseEditor()};
-  modal.innerHTML=`<div class="lead-editor-dialog"><header><div><small>FICHA DEL CLIENTE</small><b>Editar contacto</b><span>Actualiza la información principal y el responsable comercial.</span></div><button onclick="leadCloseEditor()" aria-label="Cerrar">×</button></header><div class="lead-editor-body">
-    <div class="lead-editor-identity"><span>${esc((lead.nombre||'?').charAt(0).toUpperCase())}</span><div><b>${esc(lead.nombre||'Cliente')}</b><small>ID ${esc(String(lead.id))} · Registro en Supabase</small></div></div>
+  modal.innerHTML=`<div class="lead-editor-dialog"><header><div><small>FICHA DEL CLIENTE</small><b>Editar contacto</b><span>Actualiza la informaciÃ³n principal y el responsable comercial.</span></div><button onclick="leadCloseEditor()" aria-label="Cerrar">Ã—</button></header><div class="lead-editor-body">
+    <div class="lead-editor-identity"><span>${esc((lead.nombre||'?').charAt(0).toUpperCase())}</span><div><b>${esc(lead.nombre||'Cliente')}</b><small>ID ${esc(String(lead.id))} Â· Registro en Supabase</small></div></div>
     <div class="lead-editor-grid">
       <label class="wide">Nombre completo <i>*</i><input id="ec-name" maxlength="120" value="${attr(lead.nombre||'')}" placeholder="Nombre y apellidos"></label>
-      <label>Teléfono <i>*</i><input id="ec-phone" maxlength="30" value="${attr(lead.telefono||'')}" placeholder="987 654 321" inputmode="tel"></label>
+      <label>TelÃ©fono <i>*</i><input id="ec-phone" maxlength="30" value="${attr(lead.telefono||'')}" placeholder="987 654 321" inputmode="tel"></label>
       <label>Ciudad<input id="ec-city" maxlength="80" value="${attr(lead.ciudad||'')}" placeholder="Ej. Juliaca"></label>
-      <label>Proyecto<input id="ec-project" maxlength="100" value="${attr(lead.proyecto||'')}" placeholder="Ej. Los Álamos"></label>
+      <label>Proyecto<input id="ec-project" maxlength="100" value="${attr(lead.proyecto||'')}" placeholder="Ej. Los Ãlamos"></label>
+      <label>Prioridad<select id="ec-priority"><option value="Alta" ${prioridadValor(lead)==='Alta'?'selected':''}>Alta</option><option value="Media" ${prioridadValor(lead)==='Media'?'selected':''}>Media</option><option value="Baja" ${prioridadValor(lead)==='Baja'?'selected':''}>Baja</option></select></label>
       <label>Fuente<select id="ec-source">${sources.map(x=>`<option ${x===lead.fuente?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
-      <label>Campaña<input id="ec-campaign" maxlength="100" value="${attr(lead.campana||'')}" placeholder="Nombre de campaña"></label>
+      <label>CampaÃ±a<input id="ec-campaign" maxlength="100" value="${attr(lead.campana||'')}" placeholder="Nombre de campaÃ±a"></label>
       <label>Asesor responsable<select id="ec-advisor">${advisors.map(x=>`<option ${x===lead.asesor?'selected':''}>${esc(x)}</option>`).join('')}</select></label>
-      <label class="wide">Observaciones<textarea id="ec-notes" rows="4" maxlength="1500" placeholder="Información relevante del cliente...">${esc(lead.observaciones||'')}</textarea></label>
+      <label class="wide">Observaciones<textarea id="ec-notes" rows="4" maxlength="1500" placeholder="InformaciÃ³n relevante del cliente...">${esc(lead.observaciones||'')}</textarea></label>
     </div><div class="lead-editor-error" id="ec-error"></div></div><footer><button class="btn-ghost" onclick="leadCloseEditor()">Cancelar</button><button class="btn-primary" id="ec-save" onclick="leadSaveEditor('${lead.id}')">Guardar cambios</button></footer></div>`;
   document.body.appendChild(modal);document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('ec-name')?.focus(),50);
 }
@@ -4229,11 +4271,11 @@ function leadCloseEditor(){document.getElementById('lead-editor-modal')?.remove(
 function leadEditorValue(id){return(document.getElementById(id)?.value||'').trim()}
 async function leadSaveEditor(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;const name=leadEditorValue('ec-name'),phone=leadEditorValue('ec-phone'),phoneKey=digits(phone).slice(-9),error=document.getElementById('ec-error'),button=document.getElementById('ec-save');
-  if(name.length<3||phoneKey.length<7){error.textContent='Completa un nombre válido y un teléfono de al menos 7 dígitos.';error.classList.add('show');return}
-  const duplicate=allLeads.find(l=>l.id!=id&&digits(l.telefono).slice(-9)===phoneKey);if(duplicate){error.innerHTML=`El teléfono ya pertenece a <b>${esc(duplicate.nombre||'otro contacto')}</b>.`;error.classList.add('show');return}
-  const advisor=leadEditorValue('ec-advisor'),profile=(_usersCache||[]).find(u=>u.name===advisor),updates={nombre:name.toUpperCase(),telefono:phone,ciudad:leadEditorValue('ec-city')||null,proyecto:leadEditorValue('ec-project')||null,fuente:leadEditorValue('ec-source')||null,campana:leadEditorValue('ec-campaign')||null,asesor:advisor||null,vendedor:advisor||null,owner_id:profile?.id||lead.owner_id||null,observaciones:leadEditorValue('ec-notes')||null};
+  if(name.length<3||phoneKey.length<7){error.textContent='Completa un nombre vÃ¡lido y un telÃ©fono de al menos 7 dÃ­gitos.';error.classList.add('show');return}
+  const duplicate=allLeads.find(l=>l.id!=id&&digits(l.telefono).slice(-9)===phoneKey);if(duplicate){error.innerHTML=`El telÃ©fono ya pertenece a <b>${esc(duplicate.nombre||'otro contacto')}</b>.`;error.classList.add('show');return}
+  const advisor=leadEditorValue('ec-advisor'),profile=(_usersCache||[]).find(u=>u.name===advisor),updates={nombre:name.toUpperCase(),telefono:phone,ciudad:leadEditorValue('ec-city')||null,proyecto:leadEditorValue('ec-project')||null,prioridad:leadEditorValue('ec-priority')||'Media',fuente:leadEditorValue('ec-source')||null,campana:leadEditorValue('ec-campaign')||null,asesor:advisor||null,vendedor:advisor||null,owner_id:profile?.id||lead.owner_id||null,observaciones:leadEditorValue('ec-notes')||null};
   button.disabled=true;button.textContent='Guardando...';error.classList.remove('show');
-  if(await updateLead(id,updates)){crmAudit('Datos de contacto editados',updates.nombre,id);leadCloseEditor();toast('Contacto actualizado correctamente');openLead(id);updateUrgentBadge()}else{button.disabled=false;button.textContent='Guardar cambios';error.textContent='No se pudieron guardar los cambios. Revisa tu conexión o permisos.';error.classList.add('show')}
+  if(await updateLead(id,updates)){crmAudit('Datos de contacto editados',updates.nombre,id);leadCloseEditor();toast('Contacto actualizado correctamente');openLead(id);updateUrgentBadge()}else{button.disabled=false;button.textContent='Guardar cambios';error.textContent='No se pudieron guardar los cambios. Revisa tu conexiÃ³n o permisos.';error.classList.add('show')}
 }
 
 function leadConfirmDelete(id){
@@ -4241,15 +4283,16 @@ function leadConfirmDelete(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;
   document.getElementById('lead-delete-modal')?.remove();
   const modal=document.createElement('div');modal.id='lead-delete-modal';modal.className='user-confirm-modal';modal.onclick=e=>{if(e.target===modal)modal.remove()};
-  modal.innerHTML=`<div><span class="confirm-icon danger">!</span><b>Eliminar contacto definitivamente</b><strong>${esc(lead.nombre||'Cliente')}</strong><p>Se eliminará su ficha, seguimiento, visitas y datos comerciales. Esta acción no se puede deshacer.</p><footer><button class="btn-ghost" onclick="document.getElementById('lead-delete-modal').remove()">Cancelar</button><button class="btn-danger" onclick="leadDeleteContact('${lead.id}',this)">Eliminar definitivamente</button></footer></div>`;
+  modal.innerHTML=`<div><span class="confirm-icon danger">!</span><b>Eliminar contacto definitivamente</b><strong>${esc(lead.nombre||'Cliente')}</strong><p>Se eliminarÃ¡ su ficha, seguimiento, visitas y datos comerciales. Esta acciÃ³n no se puede deshacer.</p><footer><button class="btn-ghost" onclick="document.getElementById('lead-delete-modal').remove()">Cancelar</button><button class="btn-danger" onclick="leadDeleteContact('${lead.id}',this)">Eliminar definitivamente</button></footer></div>`;
   document.body.appendChild(modal);
 }
 async function leadDeleteContact(id,button){
   if(currentUser.role!=='gerente'){toast('Solo Gerencia puede eliminar contactos','error');return}
   const lead=allLeads.find(l=>l.id==id);button.disabled=true;button.textContent='Eliminando...';
   try{const{error}=await sb.from('leads').delete().eq('id',id);if(error)throw error;crmAudit('Contacto eliminado',lead?.nombre||String(id),id);allLeads=allLeads.filter(l=>l.id!=id);document.getElementById('lead-delete-modal')?.remove();updateUrgentBadge();toast('Contacto eliminado correctamente');showView('leads')}
-  catch(error){button.disabled=false;button.textContent='Reintentar';toast('No se pudo eliminar: '+(error.message||'sin conexión'),'error')}
+  catch(error){button.disabled=false;button.textContent='Reintentar';toast('No se pudo eliminar: '+(error.message||'sin conexiÃ³n'),'error')}
 }
+
 
 
 // ═══════════════════════════════════════════════════════════════
