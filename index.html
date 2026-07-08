@@ -3253,9 +3253,29 @@ const NAV_ITEMS = {
 let sb, currentUser=null, allLeads=[], currentView='';
 const R={};
 
+function sanitizeVisibleText(root=document.body){
+  if(!root)return;
+  const skip=new Set(['SCRIPT','STYLE','TEXTAREA']);
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
+    return node.parentElement&&skip.has(node.parentElement.tagName)?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;
+  }});
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{const fixed=fixText(n.nodeValue);if(fixed!==n.nodeValue)n.nodeValue=fixed;});
+  root.querySelectorAll?.('[placeholder],[title],[aria-label],option').forEach(el=>{
+    ['placeholder','title','aria-label'].forEach(a=>{if(el.hasAttribute?.(a)){const v=el.getAttribute(a),f=fixText(v);if(f!==v)el.setAttribute(a,f);}});
+    if(el.tagName==='OPTION'){const f=fixText(el.textContent);if(f!==el.textContent)el.textContent=f;}
+  });
+}
+function startTextSanitizer(){
+  sanitizeVisibleText();
+  const mo=new MutationObserver(()=>sanitizeVisibleText());
+  mo.observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+
 window.addEventListener('DOMContentLoaded',async()=>{
   const brandAsset=document.querySelector('[data-vimka-favicon]')?.href;
   if(brandAsset)document.querySelectorAll('[data-vimka-logo]').forEach(img=>{img.src=brandAsset;});
+  startTextSanitizer();
   document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
   try{
     sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
@@ -3426,7 +3446,9 @@ async function saveLead(lead){
       return saved;
     }catch(error){
       console.error('[CRM] Supabase SAVE ERROR:',error);
-      showToastError('Error al guardar lead: '+(error.message||'sin conexiÃ³n'));
+      const msg=String(error.message||'sin conexión');
+      if(msg.includes('row-level security'))showToastError('Error al guardar lead: política RLS bloquea la inserción. Ejecuta el SQL 05 de reparación en Supabase.');
+      else showToastError('Error al guardar lead: '+fixText(msg));
       return null;
     }
   }
