@@ -2615,9 +2615,9 @@ body {
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:4px;
-  min-width:76px;
-  padding:5px 9px;
+  gap:6px;
+  min-width:82px;
+  padding:6px 10px;
   border-radius:999px;
   font-size:10px;
   font-weight:900;
@@ -2625,10 +2625,15 @@ body {
   text-transform:uppercase;
   border:1px solid rgba(19,63,62,.10);
   white-space:nowrap;
+  box-shadow:0 4px 12px rgba(20,55,52,.08);
 }
-.priority-high{background:#ffe9e4;color:#9b2e1d;border-color:#efb2a6;}
-.priority-medium{background:#fff4d9;color:#8a5d00;border-color:#e7c779;}
-.priority-low{background:#e7f4ee;color:#176548;border-color:#9ad3bb;}
+.priority-badge i{width:8px;height:8px;border-radius:50%;display:inline-block;box-shadow:0 0 0 3px rgba(255,255,255,.55);}
+.priority-high{background:#ffebe7;color:#942b1b;border-color:#ef9f92;}
+.priority-high i{background:#e24b38;}
+.priority-medium{background:#fff5d8;color:#7c5600;border-color:#e2c35e;}
+.priority-medium i{background:#d99a17;}
+.priority-low{background:#e5f5ed;color:#145f44;border-color:#86cfad;}
+.priority-low i{background:#1fa36c;}
 .dashboard-analytics-grid {
   display:grid;
   grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
@@ -3512,7 +3517,7 @@ function fmt(n){if(!n&&n!==0)return'—';return'S/ '+Number(n).toLocaleString('e
 function prioridadValor(l){return l?.prioridad||'Media'}
 function prioridadBadge(p){
   const v=p||'Media', cls=v==='Alta'?'priority-high':v==='Baja'?'priority-low':'priority-medium';
-  return`<span class="priority-badge ${cls}">${v==='Alta'?'⬆ ':v==='Baja'?'⬇ ':'● '}${esc(v)}</span>`;
+  return`<span class="priority-badge ${cls}"><i></i>${esc(v)}</span>`;
 }
 function pct(a,b){return b?Math.round((a/b)*100):0;}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -3619,7 +3624,7 @@ function openLead(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;
   showView('lead-detail');
   document.getElementById('detail-title').textContent=lead.nombre||'Lead';
-  const ownsLead=lead.owner_id===currentUser.id||currentUser.name===lead.asesor;
+  const ownsLead=lead.owner_id===currentUser.id||lead.visitor_id===currentUser.id||currentUser.name===lead.asesor||currentUser.name===lead.asesor_visita;
   const canEdit=['gerente','admin'].includes(currentUser.role)||ownsLead;
   const canEditContact=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||ownsLead;
   const canEditSeguimiento=['gerente','admin','jefe_ventas'].includes(currentUser.role)||ownsLead;
@@ -4279,7 +4284,7 @@ function pubOpenSource(name){showView('leads');setTimeout(()=>{const q=document.
 // EDICION COMPLETA DE CONTACTOS
 function leadOpenEditor(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;
-  const owns=lead.owner_id===currentUser.id||lead.asesor===currentUser.name,allowed=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||owns;if(!allowed){toast('No tienes permiso para editar este contacto','error');return}
+  const owns=lead.owner_id===currentUser.id||lead.visitor_id===currentUser.id||lead.asesor===currentUser.name||lead.asesor_visita===currentUser.name,allowed=['gerente','admin','jefe_ventas','coordinadora'].includes(currentUser.role)||owns;if(!allowed){toast('No tienes permiso para editar este contacto','error');return}
   document.getElementById('lead-editor-modal')?.remove();
   const advisors=[...new Set([lead.asesor,...getAsesores()].filter(Boolean))],sources=[...new Set([lead.fuente,'Facebook Ads','WhatsApp','Referido','Volanteo','OrgÃ¡nico','Otro'].filter(Boolean))];
   const modal=document.createElement('div');modal.id='lead-editor-modal';modal.className='lead-editor-modal';modal.onclick=e=>{if(e.target===modal)leadCloseEditor()};
