@@ -2668,6 +2668,50 @@ body {
 .prod-state-dot.good{background:rgba(45,184,122,.18);color:#1f8b5f}
 .prod-state-dot.mid{background:rgba(232,160,32,.18);color:#b07312}
 .prod-state-dot.bad{background:rgba(232,69,69,.16);color:#c73838}
+.toast-error-compact{
+  position:fixed!important;
+  top:18px!important;
+  right:18px!important;
+  bottom:auto!important;
+  left:auto!important;
+  width:min(340px,calc(100vw - 36px))!important;
+  min-width:0!important;
+  max-width:340px!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:12px 14px!important;
+  border-radius:14px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:4px!important;
+  background:#fff1f1!important;
+  color:#8f1d1d!important;
+  border:1px solid #efb4b4!important;
+  box-shadow:0 18px 42px rgba(79,18,18,.18)!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+  overflow:hidden!important;
+  z-index:2147483647!important;
+}
+.toast-error-compact strong{
+  font-size:12px!important;
+  font-weight:900!important;
+  color:#b42323!important;
+}
+.toast-error-compact span{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  font-weight:700!important;
+}
+@media(max-width:640px){
+  .toast-error-compact{
+    top:12px!important;
+    right:12px!important;
+    width:calc(100vw - 24px)!important;
+    max-width:none!important;
+  }
+}
 .dashboard-analytics-grid {
   display:grid;
   grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
@@ -3291,6 +3335,7 @@ const NAV_ITEMS = {
 
 let sb, currentUser=null, allLeads=[], currentView='';
 const R={};
+let _lastErrorToast={msg:'',time:0};
 
 function sanitizeVisibleText(root=document.body){
   if(!root)return;
@@ -3461,13 +3506,27 @@ async function fetchLeads(){
   return allLeads;
 }
 
+function normalizeErrorMessage(error,msg){
+  const raw=String(msg||error?.message||error||'');
+  const low=raw.toLowerCase();
+  if(low.includes('load failed')||low.includes('failed to fetch')||low.includes('networkerror')||low.includes('network request failed')){
+    return 'No se pudo conectar con Supabase. Revisa tu internet y vuelve a presionar Guardar.';
+  }
+  if(low.includes('row-level security'))return 'Supabase bloqueó el guardado por permisos RLS. Ejecuta el SQL 07 de reparación.';
+  if(low.includes('permission denied'))return 'Supabase no dio permiso para guardar en leads. Revisa las políticas RLS.';
+  return fixText(raw||'Ocurrió un error inesperado.');
+}
 function showToastError(msg){
+  const clean=normalizeErrorMessage(null,msg);
+  const now=Date.now();
+  if(_lastErrorToast.msg===clean&&now-_lastErrorToast.time<6000)return;
+  _lastErrorToast={msg:clean,time:now};
+  document.querySelectorAll('.toast.error,.toast-error-compact').forEach(x=>x.remove());
   const t=document.createElement('div');
-  t.className='toast error';
-  t.textContent='! '+msg;
-  t.style.cssText='position:fixed;top:80px;right:20px;background:#FFEBEB;color:#C00;border:1px solid #F99;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;max-width:320px';
+  t.className='toast error toast-error-compact';
+  t.innerHTML=`<strong>No se pudo guardar</strong><span>${esc(clean)}</span>`;
   document.body.appendChild(t);
-  setTimeout(()=>t.remove(),8000);
+  setTimeout(()=>t.remove(),6500);
 }
 async function saveLead(lead){
   lead.created_at=lead.created_at||new Date().toISOString();
@@ -3486,12 +3545,11 @@ async function saveLead(lead){
     }catch(error){
       console.error('[CRM] Supabase SAVE ERROR:',error);
       const msg=String(error.message||'sin conexión');
-      if(msg.includes('row-level security'))showToastError('Error al guardar lead: política RLS bloquea la inserción. Ejecuta el SQL 05 de reparación en Supabase.');
-      else showToastError('Error al guardar lead: '+fixText(msg));
+      showToastError(normalizeErrorMessage(error,msg));
       return null;
     }
   }
-  showToastError('No existe una sesiÃ³n vÃ¡lida.');
+  showToastError('No existe una sesión válida. Vuelve a iniciar sesión.');
   return null;
 }
 async function updateLead(id,updates){
@@ -3963,7 +4021,7 @@ async function submitLead(){
     console.log('[CRM] Total leads after save:', allLeads.length);
     setTimeout(()=>renderLeadForm(),2500);
   } else {
-    toast('Error al guardar â€” revisa la consola','error');
+    console.warn('[CRM] El lead no se guardó. Ya se mostró el aviso principal.');
   }
 }
 
