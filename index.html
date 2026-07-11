@@ -2634,6 +2634,40 @@ body {
 .priority-medium i{background:#d99a17;}
 .priority-low{background:#e5f5ed;color:#145f44;border-color:#86cfad;}
 .priority-low i{background:#1fa36c;}
+.action-link{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.action-link svg{
+  width:16px;
+  height:16px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.prod-state-dot{
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.5),0 10px 20px rgba(7,43,47,.16);
+}
+.prod-state-dot::after{
+  content:'';
+  width:11px;
+  height:11px;
+  border-radius:999px;
+  background:currentColor;
+}
+.prod-state-dot.good{background:rgba(45,184,122,.18);color:#1f8b5f}
+.prod-state-dot.mid{background:rgba(232,160,32,.18);color:#b07312}
+.prod-state-dot.bad{background:rgba(232,69,69,.16);color:#c73838}
 .dashboard-analytics-grid {
   display:grid;
   grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);
@@ -3430,7 +3464,7 @@ async function fetchLeads(){
 function showToastError(msg){
   const t=document.createElement('div');
   t.className='toast error';
-  t.textContent='âš  '+msg;
+  t.textContent='! '+msg;
   t.style.cssText='position:fixed;top:80px;right:20px;background:#FFEBEB;color:#C00;border:1px solid #F99;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;max-width:320px';
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),8000);
@@ -3526,7 +3560,12 @@ function fixText(value){
     .replace(/Ã¡/g,'á').replace(/Ã©/g,'é').replace(/Ã­/g,'í').replace(/Ã³/g,'ó').replace(/Ãº/g,'ú')
     .replace(/Ã/g,'Á').replace(/Ã‰/g,'É').replace(/Ã/g,'Í').replace(/Ã“/g,'Ó').replace(/Ãš/g,'Ú')
     .replace(/Ã±/g,'ñ').replace(/Ã‘/g,'Ñ').replace(/Â¿/g,'¿').replace(/Â°/g,'°')
+    .replace(/Ã‚Â·/g,'·').replace(/Â·/g,'·').replace(/Â /g,' ')
     .replace(/â€”/g,'—').replace(/â€“/g,'–').replace(/â†’/g,'→').replace(/âœ“/g,'✓').replace(/âœ—/g,'✕')
+    .replace(/â€º/g,'›').replace(/â†—/g,'↗').replace(/âœ…/g,'OK').replace(/âš /g,'!')
+    .replace(/ðŸ“ž/g,'').replace(/ðŸ’¬/g,'').replace(/ðŸ’°/g,'').replace(/ðŸ“…/g,'')
+    .replace(/ðŸ“ˆ/g,'').replace(/ðŸ‘¥/g,'').replace(/ðŸ /g,'').replace(/ðŸ†/g,'')
+    .replace(/ðŸ”´/g,'').replace(/ðŸŸ¡/g,'')
     .replace(/Ã¢â‚¬â€/g,'—').replace(/ÃƒÂ©/g,'é').replace(/ÃƒÂ³/g,'ó');
 }
 function attr(value){return esc(value).replace(/`/g,'&#96;');}
@@ -3568,14 +3607,14 @@ function renderDashboard(){
     {icon:'cotizacion',label:'Vencidos',val:vencidos,sub:'acciÃ³n fuera de fecha',tone:'amber'},
     {icon:'visitas',label:'Seguimientos hoy',val:seguimientosHoy,sub:'acciones programadas',tone:'blue'},
     {icon:'leads',label:'Sin asesor',val:sinAsesor,sub:'requieren asignaciÃ³n',tone:'slate'},
-  ].map(x=>`<button class="crm-priority-card ${x.tone}" onclick="showView('leads')"><span class="crm-priority-icon">${navIcon(x.icon)}</span><span><b>${x.val}</b><strong>${x.label}</strong><small>${x.sub}</small></span><i>â†’</i></button>`).join('');
+  ].map(x=>`<button class="crm-priority-card ${x.tone}" onclick="showView('leads')"><span class="crm-priority-icon">${navIcon(x.icon)}</span><span><b>${x.val}</b><strong>${x.label}</strong><small>${x.sub}</small></span><i>&rarr;</i></button>`).join('');
   const pulse=document.getElementById('executive-pulse-grid');if(pulse){const delta=leadsPrev?Math.round((leadsMonth-leadsPrev)/leadsPrev*100):(leadsMonth?100:0),coverage=pct(conProximaAccion,activos||1);pulse.innerHTML=[
     {label:'Nuevas relaciones',value:leadsMonth,meta:`${delta>=0?'+':''}${delta}% frente al mes anterior`,tone:delta>=0?'up':'down',icon:'leads'},
     {label:'Visitas efectivas',value:visitsMonth,meta:'realizadas durante el mes',tone:'neutral',icon:'visitas'},
     {label:'Cobertura de seguimiento',value:`${coverage}%`,meta:`${conProximaAccion} de ${activos} oportunidades activas`,tone:coverage>=75?'up':'warn',icon:'target'},
     {label:'Valor en negociaciÃ³n',value:forecast?fmt(forecast):'Por registrar',meta:`${quoted.length} oportunidades cotizadas`,tone:'neutral',icon:'ventas'},
     {label:'Cierres del mes',value:salesMonth,meta:'ventas concretadas',tone:salesMonth?'up':'warn',icon:'wallet'}
-  ].map(x=>`<button class="executive-pulse-card ${x.tone}" onclick="showView('${x.label.includes('seguimiento')?'crm-center':x.label.includes('Visitas')?'visitas':'leads'}')"><span class="executive-pulse-icon">${navIcon(x.icon)}</span><span><small>${x.label}</small><b>${x.value}</b><em>${x.meta}</em></span><i>â†—</i></button>`).join('')}
+  ].map(x=>`<button class="executive-pulse-card ${x.tone}" onclick="showView('${x.label.includes('seguimiento')?'crm-center':x.label.includes('Visitas')?'visitas':'leads'}')"><span class="executive-pulse-icon">${navIcon(x.icon)}</span><span><small>${x.label}</small><b>${x.value}</b><em>${x.meta}</em></span><i>&nearr;</i></button>`).join('')}
   const fc=['#3D7EFF','#2DB87A','#F5A623','#E84545','#9B59B6','#1ABC9C'];
   const fuentes={};leads.forEach(l=>{const f=l.fuente||'Sin fuente';fuentes[f]=(fuentes[f]||0)+1;});
   const maxF=Math.max(...Object.values(fuentes),1);
@@ -3584,10 +3623,10 @@ function renderDashboard(){
   const maxS=stages[0].val||1;
   document.getElementById('chart-funnel').innerHTML=stages.map(s=>`<div class="funnel-row"><div class="funnel-label">${s.label}</div><div class="funnel-bar" style="width:${Math.max(pct(s.val,maxS),8)}%;background:${s.color}">${s.val}</div></div>`).join('');
   const recent=[...leads].sort((a,b)=>String(b.created_at||b.fecha_ingreso||'').localeCompare(String(a.created_at||a.fecha_ingreso||''))).slice(0,5);
-  document.getElementById('recent-activity').innerHTML=recent.length?recent.map(l=>`<button class="recent-item" onclick="openLead('${l.id}')"><span class="recent-avatar">${esc((l.nombre||'?').trim().charAt(0).toUpperCase())}</span><span class="recent-copy"><strong>${esc(l.nombre||'Sin nombre')}</strong><small>${esc(l.asesor||'Sin asesor')} Â· ${esc(l.fecha_ingreso||'Sin fecha')}</small></span>${estadoBadge(l.estado)}<i>â€º</i></button>`).join(''):'<div class="empty-state"><p>Sin actividad reciente</p></div>';
+  document.getElementById('recent-activity').innerHTML=recent.length?recent.map(l=>`<button class="recent-item" onclick="openLead('${l.id}')"><span class="recent-avatar">${esc((l.nombre||'?').trim().charAt(0).toUpperCase())}</span><span class="recent-copy"><strong>${esc(l.nombre||'Sin nombre')}</strong><small>${esc(l.asesor||'Sin asesor')} &middot; ${esc(l.fecha_ingreso||'Sin fecha')}</small></span>${estadoBadge(l.estado)}<i>&rsaquo;</i></button>`).join(''):'<div class="empty-state"><p>Sin actividad reciente</p></div>';
   const urgLeads=leads.filter(l=>['URGENTE','VENCIDO'].includes(calcAlerta(l))).slice(0,10);
   const tbl=document.getElementById('urgent-leads-table');
-  if(!urgLeads.length){tbl.innerHTML='<div class="empty-state"><div class="empty-icon">âœ…</div><p>Sin leads urgentes</p></div>';return;}
+  if(!urgLeads.length){tbl.innerHTML=`<div class="empty-state"><div class="empty-icon">${navIcon('target')}</div><p>Sin leads urgentes</p></div>`;return;}
   tbl.innerHTML=`<div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Asesor</th><th>PrÃ³x. acciÃ³n</th></tr></thead><tbody>${urgLeads.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td class="table-name">${esc(l.nombre||'â€”')}</td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td>${esc(l.asesor||'â€”')}</td><td>${esc(l.fecha_proxima_accion||'â€”')}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
@@ -3599,7 +3638,7 @@ function renderLeadsTable(leads){
   const sel=document.getElementById('filter-asesor');
   if(sel&&sel.options.length<=1)asesores.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
   const wrap=document.getElementById('leads-table-wrap');
-  if(!toShow.length){wrap.innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">ðŸ‘¥</div><p>Sin leads</p></div></div>';return;}
+  if(!toShow.length){wrap.innerHTML=`<div class="section-card"><div class="empty-state"><div class="empty-icon">${navIcon('leads')}</div><p>Sin leads</p></div></div>`;return;}
   wrap.innerHTML=`<div class="section-card"><div class="section-header"><div class="section-title">${toShow.length} lead${toShow.length!==1?'s':''}</div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Alerta</th><th>Prioridad</th><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Fuente</th><th>Asesor</th><th>PrÃ³xima acciÃ³n</th><th>Ingreso</th></tr></thead><tbody>${toShow.map(l=>`<tr onclick="openLead('${l.id}')"><td>${alertaChip(calcAlerta(l))}</td><td>${prioridadBadge(prioridadValor(l))}</td><td><div class="table-name">${esc(l.nombre||'â€”')}</div><div class="table-phone">${esc(l.ciudad||'')}</div></td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fuente||'â€”')}</td><td style="font-size:12px">${esc(l.asesor||'â€”')}</td><td style="font-size:12px;color:${l.fecha_proxima_accion<today()&&l.fecha_proxima_accion?'var(--amber)':'var(--text-muted)'}">${esc(l.fecha_proxima_accion||'â€”')}</td><td style="font-size:12px;color:var(--text-muted)">${esc(l.fecha_ingreso||'â€”')}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function getFilteredLeads(){
@@ -3675,8 +3714,8 @@ function openLead(id){
         <div class="detail-card mt-16">
           <div class="detail-card-header">Acciones</div>
           <div style="padding:14px 18px;display:flex;flex-direction:column;gap:8px">
-            <a href="tel:${digits(lead.telefono)}" class="btn-ghost" style="text-align:center;text-decoration:none">ðŸ“ž Llamar</a>
-            <a href="https://wa.me/51${digits(lead.telefono)}" target="_blank" rel="noopener" class="btn-success" style="text-align:center;text-decoration:none">ðŸ’¬ WhatsApp</a>
+            <a href="tel:${digits(lead.telefono)}" class="btn-ghost action-link" style="text-align:center;text-decoration:none">${navIcon('phone')} Llamar</a>
+            <a href="https://wa.me/51${digits(lead.telefono)}" target="_blank" rel="noopener" class="btn-success action-link" style="text-align:center;text-decoration:none">${navIcon('phone')} WhatsApp</a>
             ${canEdit&&lead.estado!=='Perdido'?`<button class="btn-danger" onclick="markLost('${lead.id}')">Marcar como perdido</button>`:''}
             ${currentUser.role==='gerente'?`<button class="lead-delete-contact" onclick="leadConfirmDelete('${lead.id}')">Eliminar contacto</button>`:''}
           </div>
@@ -3713,7 +3752,7 @@ function renderLeadForm(){
   const asesores=getAsesores();
   document.getElementById('lead-form-wrap').innerHTML=`
     <div class="lead-form-intro"><div><span>1</span><b>IdentificaciÃ³n</b></div><i></i><div><span>2</span><b>CalificaciÃ³n</b></div><i></i><div><span>3</span><b>Seguimiento</b></div></div>
-    <div id="form-success" class="alert-box success" style="display:none">Lead registrado. <a href="#" onclick="showView('leads');return false">Ver leads â†’</a></div>
+    <div id="form-success" class="alert-box success" style="display:none">Lead registrado. <a href="#" onclick="showView('leads');return false">Ver leads &rarr;</a></div>
     <div id="form-error" class="alert-box error" style="display:none"></div>
     <div class="form-section-title">Datos del cliente</div>
     <div class="field-row">
@@ -3743,8 +3782,8 @@ function renderLeadForm(){
         </select></div>
     </div>
     <div class="form-section-title">Primer contacto</div>
-    <div class="field"><label>Â¿ContestÃ³? <span class="req">*</span></label>
-      <div class="pill-group" id="fpg-contesto"><div class="pill" data-val="SÃ­">âœ“ SÃ­</div><div class="pill" data-val="No">âœ— No</div></div></div>
+    <div class="field"><label>¿Contestó? <span class="req">*</span></label>
+      <div class="pill-group" id="fpg-contesto"><div class="pill" data-val="SÃ­">Sí</div><div class="pill" data-val="No">No</div></div></div>
     <div class="toggle-section" id="fts-si">
       <div class="field-row">
         <div class="field"><label>Fecha contacto</label><input type="date" id="f-fecha-cont" value="${hoy}"></div>
@@ -3821,7 +3860,7 @@ function renderLeadForm(){
     </div>
     <div class="field"><label>Observaciones</label><textarea id="f-obs" placeholder="Notas importantes..."></textarea></div>
     <div class="mt-24" style="display:flex;gap:12px">
-      <button class="btn-primary" style="flex:1;padding:14px;font-size:15px" onclick="submitLead()">Guardar lead â†’</button>
+      <button class="btn-primary" style="flex:1;padding:14px;font-size:15px" onclick="submitLead()">Guardar lead</button>
       <button class="btn-ghost" onclick="showView('leads')">Cancelar</button>
     </div>`;
   initFormPills();
@@ -3852,7 +3891,7 @@ function updateFormTiming(){
   const mins=Math.round((new Date(fc+'T'+hc)-new Date(fi+'T'+hi))/60000);
   const d=document.getElementById('f-timing-display');if(!d||mins<0)return;
   const u=mins>15;
-  d.innerHTML=`<div style="margin-top:10px;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;background:${u?'var(--red-light)':'var(--green-light)'};color:${u?'var(--red)':'var(--green)'}">${u?'âš ':'âœ“'} Tiempo: ${mins} min${u?' â€” supera 15 min':''}</div>`;
+  d.innerHTML=`<div style="margin-top:10px;padding:8px 12px;border-radius:6px;font-size:12px;font-weight:600;background:${u?'var(--red-light)':'var(--green-light)'};color:${u?'var(--red)':'var(--green)'}">${u?'Atención':'OK'}: ${mins} min${u?' &mdash; supera 15 min':''}</div>`;
   R._mins=mins;
 }
 async function submitLead(){
@@ -3915,12 +3954,12 @@ async function submitLead(){
   _isSaving=true;
   const saved = await saveLead(lead);
   _isSaving=false;
-  btn.textContent='Guardar lead â†’';btn.disabled=false;
+  btn.textContent='Guardar lead';btn.disabled=false;
   if(saved && saved.id){
     // Confirm by re-fetching from Supabase
     await fetchLeads();
     document.getElementById('form-success').style.display='block';
-    toast('Lead registrado â€” guardado en Supabase âœ“');
+    toast('Lead registrado — guardado en Supabase');
     console.log('[CRM] Total leads after save:', allLeads.length);
     setTimeout(()=>renderLeadForm(),2500);
   } else {
@@ -3940,12 +3979,12 @@ function renderVisitas(){
     const wv={};days.forEach(d=>{const ds=toDateStr(d);wv[ds]=all.filter(l=>l.fecha_visita===ds);});
     const dn=['Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b','Dom'];
     wrap.innerHTML=`<div class="section-card" style="margin-bottom:16px">
-      <div class="section-header"><div class="section-title">ðŸ“… Semana: ${toDateStr(sow)} â€” ${toDateStr(days[6])}</div></div>
+      <div class="section-header"><div class="section-title">Semana: ${toDateStr(sow)} &mdash; ${toDateStr(days[6])}</div></div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:16px;overflow-x:auto">
         ${days.map(d=>{const ds=toDateStr(d);const vis=wv[ds]||[];const isT=ds===today();
           return`<div style="border:1px solid var(--border);border-radius:8px;padding:10px;min-height:120px;${isT?'border-color:var(--accent);background:var(--accent-light)':'background:var(--surface2)'}">
             <div style="font-size:11px;font-weight:700;color:${isT?'var(--accent)':'var(--text-muted)'};margin-bottom:6px;text-transform:uppercase">${dn[d.getDay()===0?6:d.getDay()-1]} ${d.getDate()}</div>
-            ${vis.map(v=>`<div onclick="openLead('${v.id}')" style="background:var(--surface);border-left:3px solid var(--amber);padding:4px 6px;margin-bottom:4px;border-radius:3px;cursor:pointer;font-size:11px"><div style="font-weight:600">${esc((v.nombre||'').split(' ')[0])}</div><div style="color:var(--text-muted)">${esc(v.hora_visita||'â€”')} Â· ${esc((v.asesor_visita||v.asesor||'').split(' ')[0])}</div></div>`).join('')}
+            ${vis.map(v=>`<div onclick="openLead('${v.id}')" style="background:var(--surface);border-left:3px solid var(--amber);padding:4px 6px;margin-bottom:4px;border-radius:3px;cursor:pointer;font-size:11px"><div style="font-weight:600">${esc((v.nombre||'').split(' ')[0])}</div><div style="color:var(--text-muted)">${esc(v.hora_visita||'—')} &middot; ${esc((v.asesor_visita||v.asesor||'').split(' ')[0])}</div></div>`).join('')}
             ${!vis.length?`<div style="font-size:10px;color:var(--text-hint);text-align:center;margin-top:12px">Sin visitas</div>`:''}
           </div>`}).join('')}
       </div></div>`+prodCard()+visGroup('PrÃ³ximas visitas',all.filter(l=>l.asistio!=='SÃ­'&&l.estado!=='Perdido'),'var(--amber)')+visGroup('Realizadas',all.filter(l=>l.asistio==='SÃ­'),'var(--green)');
@@ -3972,12 +4011,12 @@ function prodCard(){
     const cm=allLeads.filter(l=>l.asesor===nombre&&l.estado==='Cierre ganado'&&l.fecha_ingreso>=toDateStr(ms)).length;
     const vo=vw>=5,co=cm>=5;
     return`<tr><td><div style="font-weight:600;font-size:13px">${esc(nombre.split(' ').slice(0,2).join(' '))}</div></td>
-      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vw}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vo?'âœ“ META':'âš  PENDIENTE'}</div></td>
-      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${cm}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${co?'âœ“ META':'âš  PENDIENTE'}</div></td>
-      <td style="text-align:center"><div style="width:36px;height:36px;border-radius:50%;background:${vo&&co?'var(--green)':!vo&&!co?'var(--red)':'var(--amber)'};display:inline-flex;align-items:center;justify-content:center;font-size:18px">${vo&&co?'ðŸ†':!vo&&!co?'ðŸ”´':'ðŸŸ¡'}</div></td>
+      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vw}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${vo?'var(--green)':'var(--amber)'}">${vo?'META':'PENDIENTE'}</div></td>
+      <td style="text-align:center"><div style="font-size:20px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${cm}</div><div style="font-size:10px;color:var(--text-muted)">meta: 5</div><div style="font-size:10px;font-weight:700;color:${co?'var(--green)':'var(--amber)'}">${co?'META':'PENDIENTE'}</div></td>
+      <td style="text-align:center"><span class="prod-state-dot ${vo&&co?'good':!vo&&!co?'bad':'mid'}"></span></td>
     </tr>`;
   }).join('');
-  return`<div class="section-card" style="margin-bottom:16px"><div class="section-header"><div class="section-title">ðŸ“ˆ Productividad del equipo</div></div>
+  return`<div class="section-card" style="margin-bottom:16px"><div class="section-header"><div class="section-title">Productividad del equipo</div></div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Asesor</th><th style="text-align:center">Visitas esta semana</th><th style="text-align:center">Cierres este mes</th><th style="text-align:center">Estado</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 function renderProductividad(){
@@ -3998,7 +4037,7 @@ function renderProductividad(){
   const maxActive=Math.max(...stats.map(a=>a.active),1),maxWon=Math.max(...stats.map(a=>a.won),1);
   el.innerHTML=`<div class="page-header prod-page-header"><div><div class="page-eyebrow">INTELIGENCIA COMERCIAL</div><h1 class="page-title">Productividad del equipo</h1><p class="page-subtitle">Rendimiento, seguimiento y cumplimiento de objetivos en tiempo real.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
   <div class="prod-kpi-grid">${prodKpi('Visitas esta semana',visitsWeek,'Actividad comercial','visitas')}${prodKpi('Cierres este mes',wonMonth,'Ventas concretadas','ventas')}${prodKpi('Respuesta promedio',avgTeam?avgTeam+' min':'â€”','Objetivo: 15 min','phone')}${prodKpi('Seguimientos vencidos',overdue,'Requieren atenciÃ³n','cotizacion',overdue?'warn':'')}</div>
-  <div class="prod-main-grid"><section class="prod-leaderboard"><div class="prod-section-head"><div><b>Ranking comercial</b><span>Ãndice combinado de contacto, seguimiento, visitas y conversiÃ³n.</span></div></div><div class="prod-ranking">${stats.map((a,i)=>`<button onclick="prodFilterAdvisor('${attr(a.name)}')"><span class="prod-rank ${i<3?'top':''}">${i+1}</span><span class="prod-person"><b>${esc(a.name)}</b><small>${a.active} oportunidades activas Â· ${a.won} cierre(s)</small></span><span class="prod-score"><b>${a.score}</b><small>puntos</small></span><span class="prod-score-ring" style="--score:${a.score}"><i>${a.score}%</i></span></button>`).join('')||'<div class="crm-empty">Sin asesores configurados.</div>'}</div></section>
+  <div class="prod-main-grid"><section class="prod-leaderboard"><div class="prod-section-head"><div><b>Ranking comercial</b><span>Índice combinado de contacto, seguimiento, visitas y conversión.</span></div></div><div class="prod-ranking">${stats.map((a,i)=>`<button onclick="prodFilterAdvisor('${attr(a.name)}')"><span class="prod-rank ${i<3?'top':''}">${i+1}</span><span class="prod-person"><b>${esc(a.name)}</b><small>${a.active} oportunidades activas &middot; ${a.won} cierre(s)</small></span><span class="prod-score"><b>${a.score}</b><small>puntos</small></span><span class="prod-score-ring" style="--score:${a.score}"><i>${a.score}%</i></span></button>`).join('')||'<div class="crm-empty">Sin asesores configurados.</div>'}</div></section>
   <section class="prod-goals"><div class="prod-section-head"><div><b>Cumplimiento de metas</b><span>Objetivo mensual sugerido: 5 cierres por asesor.</span></div></div>${stats.map(a=>`<div class="prod-goal-row"><span><b>${esc(a.name)}</b><small>${a.won} de 5 cierres</small></span><div><i style="width:${Math.min(a.won/5*100,100)}%"></i></div><strong>${Math.min(Math.round(a.won/5*100),100)}%</strong></div>`).join('')}</section></div>
   <div class="prod-analysis-grid"><section><div class="prod-section-head"><div><b>Carga comercial activa</b><span>Oportunidades abiertas por responsable.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.active,maxActive,'#267c73')).join('')}</section><section><div class="prod-section-head"><div><b>Cierres del mes</b><span>ComparaciÃ³n del rendimiento comercial.</span></div></div>${stats.map(a=>prodMetricBar(a.name,a.won,maxWon,'#9bb727')).join('')}</section></div>
   <section class="prod-detail-card"><div class="prod-section-head"><div><b>Indicadores por asesor</b><span>Selecciona una fila para ver sus clientes.</span></div></div><div class="table-wrap"><table class="data-table prod-table"><thead><tr><th>Asesor</th><th>Clientes</th><th>Contacto</th><th>Seguimiento</th><th>Asistencia</th><th>ConversiÃ³n</th><th>Resp. prom.</th><th>Ingresos</th><th>Estado</th></tr></thead><tbody>${stats.map(a=>`<tr onclick="prodFilterAdvisor('${attr(a.name)}')"><td class="table-name">${esc(a.name)}</td><td>${a.total}</td><td>${a.contact}%</td><td>${a.follow}%</td><td>${a.attendance}%</td><td>${a.conversion}%</td><td>${a.avg?a.avg+' min':'â€”'}</td><td>${fmt(a.revenue)}</td><td><span class="prod-status ${a.score>=75?'good':a.score>=50?'mid':'low'}">${a.score>=75?'Alto':a.score>=50?'En progreso':'AtenciÃ³n'}</span></td></tr>`).join('')}</tbody></table></div></section>`;
@@ -4013,7 +4052,7 @@ function renderVentas(){
   const cerradas=ventas.filter(l=>l.estado==='Cierre ganado');
   const mt=cerradas.reduce((s,l)=>s+(Number(l.monto_venta)||0),0);
   document.getElementById('ventas-kpi').innerHTML=[{label:'Ventas cerradas',val:cerradas.length,color:'green'},{label:'En separaciÃ³n',val:ventas.filter(l=>l.estado==='Reserva / SeparaciÃ³n').length,color:'amber'},{label:'Monto total',val:fmt(mt),color:'green',big:true},{label:'Margen estimado',val:fmt(cerradas.length*52250),color:'blue',big:true}].map(k=>`<div class="kpi-card ${k.color}"><div class="kpi-label">${k.label}</div><div class="kpi-value${k.big?' big':''}">${k.val}</div></div>`).join('');
-  if(!ventas.length){document.getElementById('ventas-wrap').innerHTML='<div class="section-card"><div class="empty-state"><div class="empty-icon">ðŸ’°</div><p>Sin ventas</p></div></div>';return;}
+  if(!ventas.length){document.getElementById('ventas-wrap').innerHTML=`<div class="section-card"><div class="empty-state"><div class="empty-icon">${navIcon('ventas')}</div><p>Sin ventas</p></div></div>`;return;}
   document.getElementById('ventas-wrap').innerHTML=`<div class="section-card"><div class="section-header"><div class="section-title">Ventas y separaciones</div></div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Nombre</th><th>TelÃ©fono</th><th>Estado</th><th>Asesor</th><th>SeparaciÃ³n</th><th>Monto venta</th><th>Ingreso</th></tr></thead>
     <tbody>${ventas.map(l=>`<tr onclick="openLead('${l.id}')"><td class="table-name">${esc(l.nombre||'â€”')}</td><td class="table-phone">${esc(l.telefono||'â€”')}</td><td>${estadoBadge(l.estado)}</td><td style="font-size:12px">${esc(l.vendedor||l.asesor||'â€”')}</td><td>${fmt(l.monto_separacion)}</td><td style="font-weight:600;color:var(--green)">${fmt(l.monto_venta)}</td><td style="color:var(--text-muted);font-size:12px">${esc(l.fecha_ingreso||'â€”')}</td></tr>`).join('')}
@@ -4080,7 +4119,7 @@ async function saveEditUser(userId){
   const user=document.getElementById('legacy-eu-user').value.trim().toLowerCase();
   const role=document.getElementById('legacy-eu-role')?.value;
   const ok=await updateUser(userId,{name,user,role});
-  if(ok){toast('Usuario actualizado âœ“');renderUsuarios();}
+  if(ok){toast('Usuario actualizado');renderUsuarios();}
   else{toast('Error al actualizar','error');}
 }
 async function deleteUserById(userId){
@@ -4128,7 +4167,7 @@ function exportCSV(){
     tr:nth-child(even) td{background:#eef5f2}
   </style></head><body>
     <h1>Clientes y Leads - CRM Inmobiliario VIMKA</h1>
-    <div class="meta">Exportado el ${new Date().toLocaleString('es-PE')} Ã‚Â· ${leads.length} registro(s)</div>
+    <div class="meta">Exportado el ${new Date().toLocaleString('es-PE')} &middot; ${leads.length} registro(s)</div>
     <table><thead><tr>${columns.map(([h])=>`<th>${excelCell(h)}</th>`).join('')}</tr></thead><tbody>${rows||`<tr><td colspan="${columns.length}">Sin registros</td></tr>`}</tbody></table>
   </body></html>`;
   const b=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel;charset=utf-8'});
@@ -4162,11 +4201,11 @@ function crmOpenAlert(type){
   const title=type==='today'?'Acciones programadas para hoy':'Seguimientos vencidos',subtitle=type==='today'?'Llamadas, visitas y tareas que deben realizarse hoy.':'Clientes que requieren atenciÃ³n y una nueva fecha de seguimiento.';
   document.getElementById('crm-alert-modal')?.remove();
   const modal=document.createElement('div');modal.id='crm-alert-modal';modal.className='crm-alert-modal open';modal.onclick=e=>{if(e.target===modal)crmCloseAlert()};
-  modal.innerHTML=`<div class="crm-alert-dialog"><header><div><small>CENTRO DE SEGUIMIENTO</small><b>${title}</b><span>${subtitle}</span></div><button onclick="crmCloseAlert()" aria-label="Cerrar">Ã—</button></header><div class="crm-alert-summary"><strong>${rows.length}</strong><span>${type==='today'?'acciones para hoy':'acciones fuera de fecha'}</span></div><div class="crm-alert-list">${rows.slice(0,250).map(l=>`<button onclick="crmCloseAlert();openLead('${l.id}')"><time>${crmDateLabel(l.fecha_proxima_accion||l.fecha_visita)}</time><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.accion_pendiente||'Seguimiento comercial')} Â· ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`).join('')||'<div class="crm-empty">No existen registros en esta categorÃ­a.</div>'}${rows.length>250?`<div class="crm-alert-more">Mostrando 250 de ${rows.length}. Usa el buscador para localizar un cliente.</div>`:''}</div></div>`;
+  modal.innerHTML=`<div class="crm-alert-dialog"><header><div><small>CENTRO DE SEGUIMIENTO</small><b>${title}</b><span>${subtitle}</span></div><button onclick="crmCloseAlert()" aria-label="Cerrar">&times;</button></header><div class="crm-alert-summary"><strong>${rows.length}</strong><span>${type==='today'?'acciones para hoy':'acciones fuera de fecha'}</span></div><div class="crm-alert-list">${rows.slice(0,250).map(l=>`<button onclick="crmCloseAlert();openLead('${l.id}')"><time>${crmDateLabel(l.fecha_proxima_accion||l.fecha_visita)}</time><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.accion_pendiente||'Seguimiento comercial')} &middot; ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`).join('')||'<div class="crm-empty">No existen registros en esta categoría.</div>'}${rows.length>250?`<div class="crm-alert-more">Mostrando 250 de ${rows.length}. Usa el buscador para localizar un cliente.</div>`:''}</div></div>`;
   document.body.appendChild(modal);document.body.style.overflow='hidden';
 }
 function crmCloseAlert(){document.getElementById('crm-alert-modal')?.remove();document.body.style.overflow='';}
-function renderCRMSearch(){const q=(document.getElementById('crm-global-q')?.value||'').trim().toLowerCase(),box=document.getElementById('crm-search-results');if(!box)return;if(q.length<2){box.innerHTML='';box.classList.remove('open');return;}const found=crmScopedLeads().filter(l=>[l.nombre,l.telefono,l.ciudad,l.asesor,l.estado,l.fuente,l.proyecto].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);box.innerHTML=found.length?found.map(l=>`<button onclick="openLead('${l.id}')"><span class="crm-result-avatar">${esc((l.nombre||'?').slice(0,1))}</span><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.telefono||'Sin telÃ©fono')} Â· ${esc(l.estado||'Sin estado')}</small></span><em>${crmScore(l)}%</em></button>`).join(''):'<div class="crm-empty">No se encontraron coincidencias.</div>';box.classList.add('open');}
+function renderCRMSearch(){const q=(document.getElementById('crm-global-q')?.value||'').trim().toLowerCase(),box=document.getElementById('crm-search-results');if(!box)return;if(q.length<2){box.innerHTML='';box.classList.remove('open');return;}const found=crmScopedLeads().filter(l=>[l.nombre,l.telefono,l.ciudad,l.asesor,l.estado,l.fuente,l.proyecto].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,8);box.innerHTML=found.length?found.map(l=>`<button onclick="openLead('${l.id}')"><span class="crm-result-avatar">${esc((l.nombre||'?').slice(0,1))}</span><span><b>${esc(l.nombre||'Sin nombre')}</b><small>${esc(l.telefono||'Sin teléfono')} &middot; ${esc(l.estado||'Sin estado')}</small></span><em>${crmScore(l)}%</em></button>`).join(''):'<div class="crm-empty">No se encontraron coincidencias.</div>';box.classList.add('open');}
 function crmPipelineHTML(leads){const cols=[['Prospectos',['Lead nuevo']],['Contactados',['Contactado','Calificado']],['Visitas',['Visita agendada','Visita confirmada','VisitÃ³ proyecto']],['NegociaciÃ³n',['CotizaciÃ³n enviada','Seguimiento activo']],['Cierre',['Reserva / SeparaciÃ³n','Cierre ganado']]];return`<div class="crm-panel-heading"><div><b>Embudo comercial</b><span>Arrastra las oportunidades para actualizar su etapa.</span></div><div class="crm-pipeline-total">${leads.length} oportunidades</div></div><div class="crm-kanban">${cols.map(([label,states])=>{const list=leads.filter(l=>states.includes(l.estado));return`<div class="crm-kanban-col" ondragover="event.preventDefault()" ondrop="crmDropLead(event,'${states[0]}')"><div class="crm-kanban-head"><span>${label}</span><b>${list.length}</b></div><div class="crm-kanban-list">${list.slice(0,30).map(l=>`<article class="crm-deal" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','${l.id}')" onclick="openLead('${l.id}')"><div><strong>${esc(l.nombre||'Sin nombre')}</strong><span>${esc(l.asesor||'Sin asesor')}</span></div><small>${crmDateLabel(l.fecha_proxima_accion)} Â· ${crmScore(l)}%</small></article>`).join('')||'<div class="crm-col-empty">Sin oportunidades</div>'}</div></div>`}).join('')}</div>`;}
 async function crmDropLead(event,estado){event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(!id)return;const lead=allLeads.find(l=>l.id==id),owns=lead&&(lead.owner_id===currentUser.id||lead.asesor===currentUser.name);if(!['gerente','admin','jefe_ventas'].includes(currentUser.role)&&!owns){toast('No tienes permiso para mover esta oportunidad','error');return;}const ok=await updateLead(id,{estado,estado_final:estado==='Cierre ganado'?'Ganado':'Abierto'});if(ok){toast('Etapa actualizada');renderCRMCentro();}}
 function crmAgendaHTML(leads){const rows=leads.filter(l=>l.fecha_proxima_accion||l.fecha_visita).sort((a,b)=>String(a.fecha_proxima_accion||a.fecha_visita).localeCompare(String(b.fecha_proxima_accion||b.fecha_visita))).slice(0,80);return`<div class="crm-panel-heading"><div><b>Agenda comercial</b><span>PrÃ³ximas llamadas, seguimientos y visitas.</span></div><button class="btn-primary" onclick="showView('nuevo-lead')">Nuevo contacto</button></div><div class="crm-agenda-list">${rows.map(l=>{const date=l.fecha_proxima_accion||l.fecha_visita,late=date<today()&&!['Cierre ganado','Perdido'].includes(l.estado);return`<button onclick="openLead('${l.id}')" class="${late?'late':''}"><time>${crmDateLabel(date)}</time><span><b>${esc(l.accion_pendiente||'Seguimiento comercial')}</b><small>${esc(l.nombre||'Sin nombre')} Â· ${esc(l.asesor||'Sin asesor')}</small></span>${estadoBadge(l.estado)}</button>`}).join('')||'<div class="crm-empty">No hay actividades programadas.</div>'}</div>`;}
@@ -4202,16 +4241,16 @@ function renderVisitas(){
 }
 function visitWeekHTML(rows){
   const now=new Date(),start=new Date(now);start.setDate(now.getDate()-((now.getDay()+6)%7));start.setHours(0,0,0,0);const days=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d)}
-  return`<section class="visit-calendar-card"><header><div><b>Semana actual</b><span>${crmDateLabel(toDateStr(start))} â€” ${crmDateLabel(toDateStr(days[6]))}</span></div><em>${rows.length} visita(s) filtradas</em></header><div class="visit-week-grid">${days.map(d=>{const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds).sort((a,b)=>String(a.hora_visita||'').localeCompare(String(b.hora_visita||'')));return`<div class="visit-day ${ds===today()?'today':''}"><div class="visit-day-head"><span>${d.toLocaleDateString('es-PE',{weekday:'short'}).replace('.','')}</span><b>${d.getDate()}</b></div><div class="visit-day-events">${items.map(visitEventHTML).join('')||'<small class="visit-empty-day">Sin visitas</small>'}</div></div>`}).join('')}</div></section>${visGroup('Detalle de la semana',rows.filter(l=>l.fecha_visita>=toDateStr(start)&&l.fecha_visita<=toDateStr(days[6])),'')}`;
+  return`<section class="visit-calendar-card"><header><div><b>Semana actual</b><span>${crmDateLabel(toDateStr(start))} &mdash; ${crmDateLabel(toDateStr(days[6]))}</span></div><em>${rows.length} visita(s) filtradas</em></header><div class="visit-week-grid">${days.map(d=>{const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds).sort((a,b)=>String(a.hora_visita||'').localeCompare(String(b.hora_visita||'')));return`<div class="visit-day ${ds===today()?'today':''}"><div class="visit-day-head"><span>${d.toLocaleDateString('es-PE',{weekday:'short'}).replace('.','')}</span><b>${d.getDate()}</b></div><div class="visit-day-events">${items.map(visitEventHTML).join('')||'<small class="visit-empty-day">Sin visitas</small>'}</div></div>`}).join('')}</div></section>${visGroup('Detalle de la semana',rows.filter(l=>l.fecha_visita>=toDateStr(start)&&l.fecha_visita<=toDateStr(days[6])),'')}`;
 }
 function visitMonthHTML(rows){
   const y=visitMonthCursor.getFullYear(),m=visitMonthCursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),offset=(first.getDay()+6)%7,cells=[];for(let i=0;i<offset;i++)cells.push(null);for(let d=1;d<=last.getDate();d++)cells.push(new Date(y,m,d));while(cells.length%7)cells.push(null);
-  return`<section class="visit-calendar-card month"><header><div class="visit-month-nav"><button onclick="visitMoveMonth(-1)">â€¹</button><div><b>${first.toLocaleDateString('es-PE',{month:'long',year:'numeric'})}</b><span>Calendario mensual de visitas</span></div><button onclick="visitMoveMonth(1)">â€º</button></div><em>${rows.filter(l=>String(l.fecha_visita||'').slice(0,7)===`${y}-${String(m+1).padStart(2,'0')}`).length} programadas</em></header><div class="visit-month-weekdays">${['Lun','Mar','MiÃ©','Jue','Vie','SÃ¡b','Dom'].map(x=>`<span>${x}</span>`).join('')}</div><div class="visit-month-grid">${cells.map(d=>{if(!d)return'<div class="outside"></div>';const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds);return`<div class="visit-month-day ${ds===today()?'today':''}"><b>${d.getDate()}</b>${items.slice(0,3).map(v=>`<button class="${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'â€”')}</time><span>${esc((v.nombre||'Cliente').split(' ')[0])}</span></button>`).join('')}${items.length>3?`<small>+${items.length-3} mÃ¡s</small>`:''}</div>`}).join('')}</div></section>`;
+  return`<section class="visit-calendar-card month"><header><div class="visit-month-nav"><button onclick="visitMoveMonth(-1)">&lsaquo;</button><div><b>${first.toLocaleDateString('es-PE',{month:'long',year:'numeric'})}</b><span>Calendario mensual de visitas</span></div><button onclick="visitMoveMonth(1)">&rsaquo;</button></div><em>${rows.filter(l=>String(l.fecha_visita||'').slice(0,7)===`${y}-${String(m+1).padStart(2,'0')}`).length} programadas</em></header><div class="visit-month-weekdays">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(x=>`<span>${x}</span>`).join('')}</div><div class="visit-month-grid">${cells.map(d=>{if(!d)return'<div class="outside"></div>';const ds=toDateStr(d),items=rows.filter(l=>l.fecha_visita===ds);return`<div class="visit-month-day ${ds===today()?'today':''}"><b>${d.getDate()}</b>${items.slice(0,3).map(v=>`<button class="${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'—')}</time><span>${esc((v.nombre||'Cliente').split(' ')[0])}</span></button>`).join('')}${items.length>3?`<small>+${items.length-3} más</small>`:''}</div>`}).join('')}</div></section>`;
 }
 function visitEventHTML(v){return`<button class="visit-event ${visitStatusClass(v)}" onclick="openLead('${v.id}')"><time>${esc(v.hora_visita||'â€”')}</time><b>${esc((v.nombre||'Cliente').split(' ').slice(0,2).join(' '))}</b><span>${esc((v.asesor_visita||v.asesor||'Sin asesor').split(' ').slice(0,2).join(' '))}</span></button>`}
 function visGroup(title,items,color){
   const sorted=[...items].sort((a,b)=>`${a.fecha_visita||'9999'} ${a.hora_visita||''}`.localeCompare(`${b.fecha_visita||'9999'} ${b.hora_visita||''}`));
-  return`<div class="section-card visits-group upcoming"><div class="section-header"><div><div class="section-title">${title}</div><div class="chart-caption">InformaciÃ³n y acciones de seguimiento</div></div><span class="visits-count">${sorted.length}</span></div><div class="table-wrap"><table class="data-table visit-table"><thead><tr><th>Cliente</th><th>Fecha y hora</th><th>Asesor propietario</th><th>Asesor de visita</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${sorted.map(l=>`<tr><td onclick="openLead('${l.id}')"><b class="table-name">${esc(l.nombre||'â€”')}</b><small class="visit-phone">${esc(l.telefono||'Sin telÃ©fono')}</small></td><td onclick="openLead('${l.id}')"><b class="visit-date">${crmDateLabel(l.fecha_visita)}</b><small>${esc(l.hora_visita||'Hora pendiente')}</small></td><td><span class="owner-advisor">${esc(l.asesor||'Sin asignar')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'Sin asignar')}</span></td><td><span class="visit-state ${visitStatusClass(l)}">${visitStatusLabel(l)}</span></td><td><div class="visit-actions">${visitStatusClass(l)==='pending'?`<button title="Confirmar" onclick="visitQuickAction('${l.id}','confirm')">âœ“</button>`:''}${!['done','missed'].includes(visitStatusClass(l))?`<button title="Registrar visita" onclick="visitQuickAction('${l.id}','done')">â—</button><button title="No asistiÃ³" onclick="visitQuickAction('${l.id}','missed')">Ã—</button>`:''}<button title="Reprogramar" onclick="visitOpenReschedule('${l.id}')">â†»</button><button title="Abrir cliente" onclick="openLead('${l.id}')">â†’</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="crm-empty">No hay visitas para los filtros seleccionados.</div></td></tr>'}</tbody></table></div></div>`;
+  return`<div class="section-card visits-group upcoming"><div class="section-header"><div><div class="section-title">${title}</div><div class="chart-caption">Información y acciones de seguimiento</div></div><span class="visits-count">${sorted.length}</span></div><div class="table-wrap"><table class="data-table visit-table"><thead><tr><th>Cliente</th><th>Fecha y hora</th><th>Asesor propietario</th><th>Asesor de visita</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${sorted.map(l=>`<tr><td onclick="openLead('${l.id}')"><b class="table-name">${esc(l.nombre||'—')}</b><small class="visit-phone">${esc(l.telefono||'Sin teléfono')}</small></td><td onclick="openLead('${l.id}')"><b class="visit-date">${crmDateLabel(l.fecha_visita)}</b><small>${esc(l.hora_visita||'Hora pendiente')}</small></td><td><span class="owner-advisor">${esc(l.asesor||'Sin asignar')}</span></td><td><span class="visit-advisor"><i></i>${esc(l.asesor_visita||l.asesor||'Sin asignar')}</span></td><td><span class="visit-state ${visitStatusClass(l)}">${visitStatusLabel(l)}</span></td><td><div class="visit-actions">${visitStatusClass(l)==='pending'?`<button title="Confirmar" onclick="visitQuickAction('${l.id}','confirm')">&#10003;</button>`:''}${!['done','missed'].includes(visitStatusClass(l))?`<button title="Registrar visita" onclick="visitQuickAction('${l.id}','done')">&#9679;</button><button title="No asistió" onclick="visitQuickAction('${l.id}','missed')">&times;</button>`:''}<button title="Reprogramar" onclick="visitOpenReschedule('${l.id}')">&#8635;</button><button title="Abrir cliente" onclick="openLead('${l.id}')">&rarr;</button></div></td></tr>`).join('')||'<tr><td colspan="6"><div class="crm-empty">No hay visitas para los filtros seleccionados.</div></td></tr>'}</tbody></table></div></div>`;
 }
 async function visitQuickAction(id,action){const l=allLeads.find(x=>x.id==id);if(!l)return;const changes=action==='confirm'?{estado:'Visita confirmada'}:action==='done'?{asistio:'SÃ­',estado:'VisitÃ³ proyecto',fecha_proxima_accion:today(),accion_pendiente:'Enviar cotizaciÃ³n y dar seguimiento'}:{asistio:'No',estado:'Seguimiento activo',fecha_proxima_accion:today(),accion_pendiente:'Reprogramar visita'};const ok=await updateLead(id,changes);if(ok){crmAudit(action==='confirm'?'Visita confirmada':action==='done'?'Visita realizada':'Inasistencia registrada',l.nombre||'Cliente',id);toast('Visita actualizada');renderVisitas()}}
 function visitOpenReschedule(id){const l=allLeads.find(x=>x.id==id);if(!l)return;document.getElementById('visit-modal')?.remove();const modal=document.createElement('div');modal.id='visit-modal';modal.className='visit-modal';modal.onclick=e=>{if(e.target===modal)visitCloseModal()};modal.innerHTML=`<div><header><span><small>AGENDA COMERCIAL</small><b>Reprogramar visita</b><em>${esc(l.nombre||'Cliente')}</em></span><button onclick="visitCloseModal()">Ã—</button></header><section><label>Nueva fecha<input type="date" id="visit-new-date" value="${attr(l.fecha_visita||today())}"></label><label>Nueva hora<input type="time" id="visit-new-time" value="${attr(l.hora_visita||'09:00')}"></label><label>Asesor de visita<select id="visit-new-advisor">${getAsesores().map(a=>`<option ${a===(l.asesor_visita||l.asesor)?'selected':''}>${esc(a)}</option>`).join('')}</select></label></section><footer><button class="btn-ghost" onclick="visitCloseModal()">Cancelar</button><button class="btn-primary" onclick="visitSaveReschedule('${l.id}')">Guardar cambio</button></footer></div>`;document.body.appendChild(modal)}
