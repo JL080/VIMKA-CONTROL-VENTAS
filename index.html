@@ -3780,7 +3780,7 @@ function obsHistoryArray(lead){
 function obsEntry(text,type='Observación'){
   const clean=String(text||'').trim();
   if(!clean)return null;
-  return{texto:clean,tipo,fecha:new Date().toISOString(),usuario:currentUser?.name||'Usuario',rol:currentUser?.role||''};
+  return{texto:clean,tipo:type,fecha:new Date().toISOString(),usuario:currentUser?.name||'Usuario',rol:currentUser?.role||''};
 }
 function addObsHistory(lead,text,type='Observación'){
   const entry=obsEntry(text,type);
