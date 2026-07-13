@@ -2775,6 +2775,29 @@ body {
   font-size:12px;
   font-weight:700;
 }
+.lead-status-message{
+  display:none;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(255,255,255,.42);
+  border:1px solid rgba(18,78,72,.16);
+  color:#315f5c;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.35;
+}
+.lead-status-message.show{display:block;}
+.lead-status-message.success{
+  background:#edf8ef;
+  border-color:#9bd4a4;
+  color:#1f7442;
+}
+.lead-status-message.error{
+  background:#fff0f0;
+  border-color:#e9a6a6;
+  color:#a82c2c;
+}
 .toast-error-compact{
   position:fixed!important;
   top:18px!important;
@@ -3443,6 +3466,7 @@ const NAV_ITEMS = {
 let sb, currentUser=null, allLeads=[], currentView='';
 const R={};
 let _lastErrorToast={msg:'',time:0};
+let _lastUpdateError='';
 
 function sanitizeVisibleText(root=document.body){
   if(!root)return;
@@ -3670,10 +3694,12 @@ async function saveLead(lead){
   return null;
 }
 async function updateLead(id,updates){
+  _lastUpdateError='';
   if(sb&&currentUser){
     try{
-      const{error}=await sb.from('leads').update(updates).eq('id',id);
+      const{data,error}=await sb.from('leads').update(updates).eq('id',id).select('id');
       if(error)throw error;
+      if(!data||!data.length)throw new Error('Supabase no actualizó el contacto. Revisa permisos RLS o que el asesor sea dueño/asesor de visita.');
       const idx=allLeads.findIndex(l=>l.id==id);
       if(idx>=0)allLeads[idx]={...allLeads[idx],...updates};
       crmAudit('Cliente actualizado',allLeads[idx]?.nombre||String(id),id);
@@ -3681,18 +3707,20 @@ async function updateLead(id,updates){
     }catch(error){
       if(updates?.observaciones_historial){
         const fallback={...updates};delete fallback.observaciones_historial;
-        const{error:retryError}=await sb.from('leads').update(fallback).eq('id',id);
-        if(!retryError){
+        const{data:retryData,error:retryError}=await sb.from('leads').update(fallback).eq('id',id).select('id');
+        if(!retryError&&retryData?.length){
           const idx=allLeads.findIndex(l=>l.id==id);
           if(idx>=0)allLeads[idx]={...allLeads[idx],...fallback};
           toast('Cambios guardados. Ejecuta el SQL 08 para activar el historial.','success');
           return true;
         }
-        error=retryError;
+        error=retryError||new Error('Supabase no actualizó el contacto. Revisa permisos RLS o que el asesor sea dueño/asesor de visita.');
       }
-      showToastError('No se pudo actualizar: '+(error.message||'sin conexión'));return false;
+      _lastUpdateError=normalizeErrorMessage(error,error.message||'sin conexión');
+      showToastError('No se pudo actualizar: '+_lastUpdateError);return false;
     }
   }
+  _lastUpdateError='No hay sesión activa. Cierra sesión e ingresa nuevamente.';
   return false;
 }
 async function refreshAll(){
@@ -3925,7 +3953,8 @@ function openLead(id){
             <div class="field"><label>Nuevo estado</label><select id="upd-estado"><option value="">— Sin cambio —</option><option>Lead nuevo</option><option>Contactado</option><option>Calificado</option><option>Visita agendada</option><option>Visita confirmada</option><option>Visitó proyecto</option><option>Cotización enviada</option><option>Seguimiento activo</option><option>Reserva / Separación</option><option>Cierre ganado</option><option>Perdido</option></select></div>
             <div class="field"><label>Observación</label><textarea id="upd-obs" placeholder="Añadir nota..."></textarea></div>
             <div class="field"><label>Nueva fecha próxima acción</label><input type="date" id="upd-fecha"></div>
-            <button class="btn-primary full" onclick="updateLeadStatus('${lead.id}')">Guardar cambios</button>
+            <button class="btn-primary full" id="upd-save-btn" onclick="updateLeadStatus('${lead.id}',this)">Guardar cambios</button>
+            <div class="lead-status-message" id="upd-status-msg"></div>
           </div>`:'<div style="padding:14px 18px;font-size:12px;color:var(--text-muted)">Solo lectura — coordinación</div>'}
         </div>
         <div class="detail-card mt-16">
@@ -3958,13 +3987,34 @@ async function programarVisita(id){
   const ok=await updateLead(id,{visita_agendada:'SÃ­',fecha_visita:fecha,hora_visita:hora,asesor_visita:asesor,visitor_id:visitor?.id||null,estado:'Visita agendada',fecha_proxima_accion:fecha,accion_pendiente:'Visita con '+asesor});
   if(ok){toast('Visita agendada con '+asesor);openLead(id);}
 }
-async function updateLeadStatus(id){
-  const lead=allLeads.find(l=>l.id==id)||{};
-  const estado=document.getElementById('upd-estado').value,prioridad=document.getElementById('upd-prioridad')?.value,obs=document.getElementById('upd-obs').value.trim(),fecha=document.getElementById('upd-fecha').value;
-  const updates={};if(prioridad)updates.prioridad=prioridad;if(estado)updates.estado=estado;if(obs)updates.observaciones=obs;if(fecha)updates.fecha_proxima_accion=fecha;
-  if(obs)updates.observaciones_historial=addObsHistory(lead,obs,'Seguimiento');
-  if(!Object.keys(updates).length){toast('Nada que actualizar','error');return;}
-  if(await updateLead(id,updates)){toast('Lead actualizado');openLead(id);}
+async function updateLeadStatus(id,button){
+  const msgEl=document.getElementById('upd-status-msg');
+  try{
+    const lead=allLeads.find(l=>l.id==id)||{};
+    const estado=document.getElementById('upd-estado')?.value||'',prioridad=document.getElementById('upd-prioridad')?.value||'',obs=(document.getElementById('upd-obs')?.value||'').trim(),fecha=document.getElementById('upd-fecha')?.value||'';
+    const updates={};if(prioridad)updates.prioridad=prioridad;if(estado)updates.estado=estado;if(obs)updates.observaciones=obs;if(fecha)updates.fecha_proxima_accion=fecha;
+    if(obs)updates.observaciones_historial=addObsHistory(lead,obs,'Seguimiento');
+    if(!Object.keys(updates).length){
+      if(msgEl){msgEl.className='lead-status-message error show';msgEl.textContent='No hay cambios para guardar.';}
+      toast('Nada que actualizar','error');return;
+    }
+    if(button){button.disabled=true;button.textContent='Guardando...';}
+    if(msgEl){msgEl.className='lead-status-message show';msgEl.textContent='Guardando cambios en Supabase...';}
+    const ok=await updateLead(id,updates);
+    if(ok){
+      if(msgEl){msgEl.className='lead-status-message success show';msgEl.textContent='Cambios guardados correctamente.';}
+      toast('Lead actualizado');
+      setTimeout(()=>openLead(id),450);
+    }else{
+      if(button){button.disabled=false;button.textContent='Guardar cambios';}
+      if(msgEl){msgEl.className='lead-status-message error show';msgEl.textContent=_lastUpdateError||'No se pudo guardar. Revisa permisos o conexión.';}
+    }
+  }catch(error){
+    console.error('[CRM] updateLeadStatus:',error);
+    if(button){button.disabled=false;button.textContent='Guardar cambios';}
+    if(msgEl){msgEl.className='lead-status-message error show';msgEl.textContent=normalizeErrorMessage(error,error.message);}
+    showToastError(normalizeErrorMessage(error,error.message));
+  }
 }
 async function markLost(id){
   const motivo=prompt('Motivo de pÃ©rdida (requerido):');if(!motivo)return;
