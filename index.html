@@ -2668,6 +2668,113 @@ body {
 .prod-state-dot.good{background:rgba(45,184,122,.18);color:#1f8b5f}
 .prod-state-dot.mid{background:rgba(232,160,32,.18);color:#b07312}
 .prod-state-dot.bad{background:rgba(232,69,69,.16);color:#c73838}
+.observations-card{overflow:hidden;}
+.observations-current{
+  padding:18px 22px;
+  font-size:14px;
+  color:#365d5b;
+  line-height:1.65;
+  background:rgba(255,255,255,.34);
+  border-bottom:1px solid rgba(20,75,72,.12);
+}
+.observations-history{
+  padding:18px 22px 20px;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04));
+}
+.observations-history-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.observations-history-title b{
+  color:#123f3e;
+  font-size:13px;
+  font-weight:900;
+}
+.observations-history-title span{
+  padding:4px 9px;
+  border-radius:999px;
+  background:#e9f2ed;
+  color:#4f716e;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.observation-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:18px 1fr;
+  gap:10px;
+  padding:0 0 16px;
+}
+.observation-item:not(:last-child)::before{
+  content:'';
+  position:absolute;
+  left:6px;
+  top:18px;
+  bottom:0;
+  width:2px;
+  background:rgba(28,101,95,.18);
+}
+.observation-dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  margin-top:3px;
+  background:#b6d625;
+  box-shadow:0 0 0 5px rgba(182,214,37,.16);
+  z-index:1;
+}
+.observation-body{
+  border:1px solid rgba(24,82,78,.13);
+  border-radius:14px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.48);
+  box-shadow:0 10px 24px rgba(8,48,46,.06);
+}
+.observation-body header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:7px;
+}
+.observation-body header b{
+  color:#11534d;
+  font-size:12px;
+  font-weight:900;
+}
+.observation-body time{
+  color:#6e8784;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.observation-body p{
+  margin:0;
+  color:#294f4d;
+  font-size:13px;
+  line-height:1.55;
+}
+.observation-body footer{
+  margin-top:8px;
+  color:#78918d;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.observations-empty{
+  padding:12px 14px;
+  border-radius:12px;
+  background:rgba(255,255,255,.36);
+  color:#6e8784;
+  font-size:12px;
+  font-weight:700;
+}
 .toast-error-compact{
   position:fixed!important;
   top:18px!important;
@@ -3545,6 +3652,16 @@ async function saveLead(lead){
     }catch(error){
       console.error('[CRM] Supabase SAVE ERROR:',error);
       const msg=String(error.message||'sin conexión');
+      if(lead.observaciones_historial&&(msg.includes('observaciones_historial')||msg.includes('schema cache'))){
+        const fallback={...lead};delete fallback.observaciones_historial;
+        const{data:retryData,error:retryError}=await sb.from('leads').insert([fallback]).select();
+        if(!retryError&&retryData?.[0]){
+          const saved=retryData[0];allLeads.unshift(saved);crmAudit('Cliente creado',saved.nombre||'Sin nombre',saved.id);
+          showToastError('El lead se guardó, pero falta ejecutar el SQL 08 para activar el historial de observaciones.');
+          return saved;
+        }
+        error=retryError||error;
+      }
       showToastError(normalizeErrorMessage(error,msg));
       return null;
     }
@@ -3561,7 +3678,21 @@ async function updateLead(id,updates){
       if(idx>=0)allLeads[idx]={...allLeads[idx],...updates};
       crmAudit('Cliente actualizado',allLeads[idx]?.nombre||String(id),id);
       return true;
-    }catch(error){showToastError('No se pudo actualizar: '+(error.message||'sin conexiÃ³n'));return false;}
+    }catch(error){
+      const msg=String(error.message||'');
+      if(updates?.observaciones_historial&&(msg.includes('observaciones_historial')||msg.includes('schema cache'))){
+        const fallback={...updates};delete fallback.observaciones_historial;
+        const{error:retryError}=await sb.from('leads').update(fallback).eq('id',id);
+        if(!retryError){
+          const idx=allLeads.findIndex(l=>l.id==id);
+          if(idx>=0)allLeads[idx]={...allLeads[idx],...fallback};
+          showToastError('La observación se guardó, pero falta ejecutar el SQL 08 para activar el historial.');
+          return true;
+        }
+        error=retryError;
+      }
+      showToastError('No se pudo actualizar: '+(error.message||'sin conexión'));return false;
+    }
   }
   return false;
 }
@@ -3610,6 +3741,44 @@ function prioridadValor(l){return l?.prioridad||'Media'}
 function prioridadBadge(p){
   const v=p||'Media', cls=v==='Alta'?'priority-high':v==='Baja'?'priority-low':'priority-medium';
   return`<span class="priority-badge ${cls}"><i></i>${esc(v)}</span>`;
+}
+function obsHistoryArray(lead){
+  const raw=lead?.observaciones_historial;
+  if(Array.isArray(raw))return raw;
+  if(typeof raw==='string'){
+    try{const parsed=JSON.parse(raw);return Array.isArray(parsed)?parsed:[];}catch{return [];}
+  }
+  return [];
+}
+function obsEntry(text,type='Observación'){
+  const clean=String(text||'').trim();
+  if(!clean)return null;
+  return{texto:clean,tipo,fecha:new Date().toISOString(),usuario:currentUser?.name||'Usuario',rol:currentUser?.role||''};
+}
+function addObsHistory(lead,text,type='Observación'){
+  const entry=obsEntry(text,type);
+  if(!entry)return obsHistoryArray(lead);
+  return[entry,...obsHistoryArray(lead)].slice(0,80);
+}
+function formatObsDate(iso){
+  if(!iso)return'';
+  try{return new Date(iso).toLocaleString('es-PE',{dateStyle:'short',timeStyle:'short'});}catch{return String(iso);}
+}
+function observacionesHTML(lead){
+  const history=obsHistoryArray(lead);
+  const current=String(lead?.observaciones||'').trim();
+  if(!current&&!history.length)return'';
+  return`<div class="detail-card mt-16 observations-card">
+    <div class="detail-card-header">Observaciones</div>
+    ${current?`<div class="observations-current">${esc(current)}</div>`:''}
+    <div class="observations-history">
+      <div class="observations-history-title"><b>Historial de observaciones</b><span>${history.length} registro${history.length===1?'':'s'}</span></div>
+      ${history.length?history.map(h=>`<article class="observation-item">
+        <div class="observation-dot"></div>
+        <div class="observation-body"><header><b>${esc(fixText(h.tipo||'Observación'))}</b><time>${esc(formatObsDate(h.fecha))}</time></header><p>${esc(fixText(h.texto||''))}</p><footer>${esc(h.usuario||'Usuario')}${h.rol?` · ${esc(rolLabel(h.rol))}`:''}</footer></div>
+      </article>`).join(''):'<div class="observations-empty">Aún no hay observaciones registradas en el historial.</div>'}
+    </div>
+  </div>`;
 }
 function pct(a,b){return b?Math.round((a/b)*100):0;}
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -3741,7 +3910,7 @@ function openLead(id){
           <div class="detail-card-header">Visita y operación</div>
           ${dr('Visita agendada',lead.visita_agendada)}${dr('Fecha visita',lead.fecha_visita)}${dr('Asesor visita',lead.asesor_visita)}${dr('¿Asistió?',lead.asistio)}${dr('Cotización',lead.cotizacion)}${dr('Separó',lead.separo)}${dr('Monto sep.',fmt(lead.monto_separacion))}${dr('Monto venta',fmt(lead.monto_venta))}${dr('Motivo pérdida',lead.motivo_perdida)}
         </div>
-        ${lead.observaciones?`<div class="detail-card mt-16"><div class="detail-card-header">Observaciones</div><div style="padding:14px 18px;font-size:13px;color:var(--text-muted);line-height:1.6">${esc(lead.observaciones)}</div></div>`:''}
+        ${observacionesHTML(lead)}
       </div>
       <div>
         <div class="detail-card crm-360-card">
@@ -3791,8 +3960,10 @@ async function programarVisita(id){
   if(ok){toast('Visita agendada con '+asesor);openLead(id);}
 }
 async function updateLeadStatus(id){
+  const lead=allLeads.find(l=>l.id==id)||{};
   const estado=document.getElementById('upd-estado').value,prioridad=document.getElementById('upd-prioridad')?.value,obs=document.getElementById('upd-obs').value.trim(),fecha=document.getElementById('upd-fecha').value;
   const updates={};if(prioridad)updates.prioridad=prioridad;if(estado)updates.estado=estado;if(obs)updates.observaciones=obs;if(fecha)updates.fecha_proxima_accion=fecha;
+  if(obs)updates.observaciones_historial=addObsHistory(lead,obs,'Seguimiento');
   if(!Object.keys(updates).length){toast('Nada que actualizar','error');return;}
   if(await updateLead(id,updates)){toast('Lead actualizado');openLead(id);}
 }
@@ -3966,6 +4137,7 @@ async function submitLead(){
   const visitorProfile=(_usersCache||[]).find(u=>u.name===asesorVisita);
   // Helper: convert empty string to null for date/number fields
   const dn = v => v && v.trim() !== '' ? v.trim() : null;
+  const initialObs=dn(gf('f-obs'));
   const lead={
     nombre:nombre.toUpperCase(),
     telefono,
@@ -4006,7 +4178,8 @@ async function submitLead(){
     motivo_perdida:dn(gf('f-motivo')),
     fecha_proxima_accion:dn(fechaAcc),
     accion_pendiente:accion,
-    observaciones:dn(gf('f-obs'))
+    observaciones:initialObs,
+    observaciones_historial:initialObs?[obsEntry(initialObs,'Registro inicial')]:[]
   };
   const btn=document.querySelector('#lead-form-wrap .btn-primary');btn.textContent='Guardando...';btn.disabled=true;
   _isSaving=true;
@@ -4406,7 +4579,9 @@ async function leadSaveEditor(id){
   const lead=allLeads.find(l=>l.id==id);if(!lead)return;const name=leadEditorValue('ec-name'),phone=leadEditorValue('ec-phone'),phoneKey=digits(phone).slice(-9),error=document.getElementById('ec-error'),button=document.getElementById('ec-save');
   if(name.length<3||phoneKey.length<7){error.textContent='Completa un nombre vÃ¡lido y un telÃ©fono de al menos 7 dÃ­gitos.';error.classList.add('show');return}
   const duplicate=allLeads.find(l=>l.id!=id&&digits(l.telefono).slice(-9)===phoneKey);if(duplicate){error.innerHTML=`El telÃ©fono ya pertenece a <b>${esc(duplicate.nombre||'otro contacto')}</b>.`;error.classList.add('show');return}
-  const advisor=leadEditorValue('ec-advisor'),profile=(_usersCache||[]).find(u=>u.name===advisor),updates={nombre:name.toUpperCase(),telefono:phone,ciudad:leadEditorValue('ec-city')||null,proyecto:leadEditorValue('ec-project')||null,prioridad:leadEditorValue('ec-priority')||'Media',fuente:leadEditorValue('ec-source')||null,campana:leadEditorValue('ec-campaign')||null,asesor:advisor||null,vendedor:advisor||null,owner_id:profile?.id||lead.owner_id||null,observaciones:leadEditorValue('ec-notes')||null};
+  const newObs=leadEditorValue('ec-notes')||null;
+  const advisor=leadEditorValue('ec-advisor'),profile=(_usersCache||[]).find(u=>u.name===advisor),updates={nombre:name.toUpperCase(),telefono:phone,ciudad:leadEditorValue('ec-city')||null,proyecto:leadEditorValue('ec-project')||null,prioridad:leadEditorValue('ec-priority')||'Media',fuente:leadEditorValue('ec-source')||null,campana:leadEditorValue('ec-campaign')||null,asesor:advisor||null,vendedor:advisor||null,owner_id:profile?.id||lead.owner_id||null,observaciones:newObs};
+  if(newObs&&newObs!==String(lead.observaciones||''))updates.observaciones_historial=addObsHistory(lead,newObs,'Edición de observación');
   button.disabled=true;button.textContent='Guardando...';error.classList.remove('show');
   if(await updateLead(id,updates)){crmAudit('Datos de contacto editados',updates.nombre,id);leadCloseEditor();toast('Contacto actualizado correctamente');openLead(id);updateUrgentBadge()}else{button.disabled=false;button.textContent='Guardar cambios';error.textContent='No se pudieron guardar los cambios. Revisa tu conexiÃ³n o permisos.';error.classList.add('show')}
 }
