@@ -3652,15 +3652,15 @@ async function saveLead(lead){
     }catch(error){
       console.error('[CRM] Supabase SAVE ERROR:',error);
       const msg=String(error.message||'sin conexión');
-      if(lead.observaciones_historial&&(msg.includes('observaciones_historial')||msg.includes('schema cache'))){
+      if(lead.observaciones_historial){
         const fallback={...lead};delete fallback.observaciones_historial;
         const{data:retryData,error:retryError}=await sb.from('leads').insert([fallback]).select();
         if(!retryError&&retryData?.[0]){
           const saved=retryData[0];allLeads.unshift(saved);crmAudit('Cliente creado',saved.nombre||'Sin nombre',saved.id);
-          showToastError('El lead se guardó, pero falta ejecutar el SQL 08 para activar el historial de observaciones.');
+          toast('Guardado correctamente. Ejecuta el SQL 08 para activar el historial.','success');
           return saved;
         }
-        error=retryError||error;
+        if(retryError)error=retryError;
       }
       showToastError(normalizeErrorMessage(error,msg));
       return null;
@@ -3679,14 +3679,13 @@ async function updateLead(id,updates){
       crmAudit('Cliente actualizado',allLeads[idx]?.nombre||String(id),id);
       return true;
     }catch(error){
-      const msg=String(error.message||'');
-      if(updates?.observaciones_historial&&(msg.includes('observaciones_historial')||msg.includes('schema cache'))){
+      if(updates?.observaciones_historial){
         const fallback={...updates};delete fallback.observaciones_historial;
         const{error:retryError}=await sb.from('leads').update(fallback).eq('id',id);
         if(!retryError){
           const idx=allLeads.findIndex(l=>l.id==id);
           if(idx>=0)allLeads[idx]={...allLeads[idx],...fallback};
-          showToastError('La observación se guardó, pero falta ejecutar el SQL 08 para activar el historial.');
+          toast('Cambios guardados. Ejecuta el SQL 08 para activar el historial.','success');
           return true;
         }
         error=retryError;
