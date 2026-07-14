@@ -3585,8 +3585,31 @@ function startTextSanitizer(){
 }
 
 window.addEventListener('DOMContentLoaded',async()=>{
-  const brandAsset=document.querySelector('[data-vimka-favicon]')?.href;
-  if(brandAsset)document.querySelectorAll('[data-vimka-logo]').forEach(img=>{img.src=brandAsset;});
+  const embeddedLogo=window.VIMKA_LOGO_B64||(typeof LOGO_B64!=='undefined'?LOGO_B64:'');
+  const brandAsset=document.querySelector('[data-vimka-favicon]')?.href||embeddedLogo;
+  if(brandAsset){
+    document.querySelectorAll('[data-vimka-logo]').forEach(img=>{
+      img.src=brandAsset;
+      img.removeAttribute('srcset');
+    });
+    const iconType=brandAsset.startsWith('data:image/png')?'image/png':'image/jpeg';
+    let favicon=document.querySelector('link[rel="icon"]');
+    if(!favicon){
+      favicon=document.createElement('link');
+      favicon.rel='icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href=brandAsset;
+    favicon.type=iconType;
+    favicon.setAttribute('data-vimka-favicon','');
+    let appleIcon=document.querySelector('link[rel="apple-touch-icon"]');
+    if(!appleIcon){
+      appleIcon=document.createElement('link');
+      appleIcon.rel='apple-touch-icon';
+      document.head.appendChild(appleIcon);
+    }
+    appleIcon.href=brandAsset;
+  }
   startTextSanitizer();
   document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
   try{
@@ -4774,6 +4797,8 @@ const LOGO_B64 = 'data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BS
 // ═══════════════════════════════════════════════════════════════
 // TABLA DE DESCUENTOS POR INICIAL
 // ═══════════════════════════════════════════════════════════════
+window.VIMKA_LOGO_B64 = LOGO_B64;
+
 const DESCUENTOS_INICIAL = [
   { min: 30000, desc: 5000, label: 'S/ 30,000 o más' },
   { min: 20000, desc: 3000, label: 'S/ 20,000' },
