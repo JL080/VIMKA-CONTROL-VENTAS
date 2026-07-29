@@ -5062,6 +5062,10 @@ body::after{content:none!important}
     <div id="view-notificaciones" class="view" style="display:none">
     </div>
 
+    <!-- VIEW: NUMEROS NUEVOS -->
+    <div id="view-numeros-nuevos" class="view" style="display:none">
+    </div>
+
     <!-- VIEW: PRODUCTIVIDAD -->
     <div id="view-productividad" class="view" style="display:none">
     </div>
@@ -5120,49 +5124,54 @@ async function deactivateUser(id){
 
 const NAV_ITEMS = {
   jefe_ventas:[
-    {id:'dashboard',    label:'Dashboard',      icon:'ðŸ“Š'},
-    {id:'leads',        label:'Clientes y Leads',icon:'ðŸ‘¥'},
-    {id:'visitas',      label:'Visitas',        icon:'ðŸ '},
-    {id:'ventas',       label:'Ventas',         icon:'ðŸ’°'},
-    {id:'cotizacion',   label:'CotizaciÃ³n',     icon:'ðŸ“„'},
-    {id:'productividad',label:'Productividad',  icon:'ðŸ“ˆ'},
+    {id:'dashboard',    label:'Dashboard',      icon:'📊'},
+    {id:'leads',        label:'Clientes y Leads',icon:'👥'},
+    {id:'numeros-nuevos',label:'Números Nuevos', icon:'📱'},
+    {id:'visitas',      label:'Visitas',        icon:'🏠'},
+    {id:'ventas',       label:'Ventas',         icon:'💰'},
+    {id:'cotizacion',   label:'Cotización',     icon:'📄'},
+    {id:'productividad',label:'Productividad',  icon:'📈'},
   ],
   gerente:[
-    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
-    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
-    {id:'visitas',label:'Visitas',icon:'ðŸ '},
-    {id:'ventas',label:'Ventas',icon:'ðŸ’°'},
-    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
-    {id:'productividad',label:'Productividad',icon:'ðŸ“ˆ'},
-    {id:'publicidad',label:'Publicidad',icon:'ðŸ“£'},
-    {id:'usuarios',label:'Usuarios',icon:'âš™ï¸'},
+    {id:'dashboard',label:'Dashboard',icon:'📊'},
+    {id:'leads',label:'Clientes y Leads',icon:'👥'},
+    {id:'numeros-nuevos',label:'Números Nuevos',icon:'📱'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
+    {id:'visitas',label:'Visitas',icon:'🏠'},
+    {id:'ventas',label:'Ventas',icon:'💰'},
+    {id:'cotizacion',label:'Cotización',icon:'📄'},
+    {id:'productividad',label:'Productividad',icon:'📈'},
+    {id:'publicidad',label:'Publicidad',icon:'📣'},
+    {id:'usuarios',label:'Usuarios',icon:'⚙️'},
   ],
   admin:[
-    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
-    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
-    {id:'visitas',label:'Visitas',icon:'ðŸ '},
-    {id:'ventas',label:'Ventas',icon:'ðŸ’°'},
-    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
+    {id:'dashboard',label:'Dashboard',icon:'📊'},
+    {id:'leads',label:'Clientes y Leads',icon:'👥'},
+    {id:'numeros-nuevos',label:'Números Nuevos',icon:'📱'},
+    {id:'visitas',label:'Visitas',icon:'🏠'},
+    {id:'ventas',label:'Ventas',icon:'💰'},
+    {id:'cotizacion',label:'Cotización',icon:'📄'},
   ],
   publicidad:[
-    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
-    {id:'publicidad',label:'Publicidad',icon:'ðŸ“£'},
-    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
+    {id:'dashboard',label:'Dashboard',icon:'📊'},
+    {id:'publicidad',label:'Publicidad',icon:'📣'},
+    {id:'leads',label:'Clientes y Leads',icon:'👥'},
   ],
   coordinadora:[
-    {id:'dashboard',label:'Dashboard',icon:'ðŸ“Š'},
-    {id:'leads',label:'Clientes y Leads',icon:'ðŸ‘¥'},
-    {id:'visitas',label:'Calendario Visitas',icon:'ðŸ—“ï¸'},
-    {id:'productividad',label:'Productividad',icon:'ðŸ“ˆ'},
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
-    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
+    {id:'dashboard',label:'Dashboard',icon:'📊'},
+    {id:'leads',label:'Clientes y Leads',icon:'👥'},
+    {id:'numeros-nuevos',label:'Números Nuevos',icon:'📱'},
+    {id:'visitas',label:'Calendario Visitas',icon:'🗓️'},
+    {id:'productividad',label:'Productividad',icon:'📈'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
+    {id:'cotizacion',label:'Cotización',icon:'📄'},
   ],
   asesor:[
-    {id:'nuevo-lead',label:'Nuevo contacto',icon:'âž•'},
-    {id:'leads',label:'Mis clientes',icon:'ðŸ‘¥'},
-    {id:'visitas',label:'Mis Visitas',icon:'ðŸ '},
-    {id:'cotizacion',label:'CotizaciÃ³n',icon:'ðŸ“„'},
+    {id:'nuevo-lead',label:'Nuevo contacto',icon:'➕'},
+    {id:'numeros-nuevos',label:'Números Nuevos',icon:'📱'},
+    {id:'leads',label:'Mis clientes',icon:'👥'},
+    {id:'visitas',label:'Mis Visitas',icon:'🏠'},
+    {id:'cotizacion',label:'Cotización',icon:'📄'},
   ],
 };
 
@@ -5269,7 +5278,9 @@ async function startApp(){
   buildNav();
   await fetchLeads();
   await fetchEditRequests();
+  await fetchNumeros();
   updateUrgentBadge();
+  updateNumerosBadge();
   const def={gerente:'dashboard',admin:'dashboard',publicidad:'dashboard',
              coordinadora:'visitas',jefe_ventas:'dashboard',asesor:'nuevo-lead'};
   showView(def[currentUser.role]||'nuevo-lead');
@@ -5284,7 +5295,7 @@ function buildNav(){
   items.splice(dashboardPos>=0?dashboardPos+2:1,0,{id:'notificaciones',label:'Notificaciones',icon:'notificaciones'});
   const renderItems=prefix=>`<div class="nav-section-label">GestiÃ³n comercial</div>`+items.map(i=>`<div class="nav-item" id="${prefix}-${i.id}" data-view="${i.id}" data-nav-key="${i.id}" onclick="showView('${i.id}')">
     <span class="nav-icon">${navIcon(i.id)}</span><span class="nav-label">${i.label}</span>
-    ${i.id==='leads'?'<span class="nav-badge" data-urgent-badge style="display:none">0</span>':i.id==='crm-center'?'<span class="nav-badge crm-alert-badge" data-crm-alert-badge style="display:none">0</span>':i.id==='notificaciones'?'<span class="nav-badge crm-alert-badge" data-notification-badge style="display:none">0</span>':''}
+    ${i.id==='leads'?'<span class="nav-badge" data-urgent-badge style="display:none">0</span>':i.id==='crm-center'?'<span class="nav-badge crm-alert-badge" data-crm-alert-badge style="display:none">0</span>':i.id==='notificaciones'?'<span class="nav-badge crm-alert-badge" data-notification-badge style="display:none">0</span>':i.id==='numeros-nuevos'?'<span class="nav-badge" data-numeros-badge style="display:none">0</span>':''}
   </div>`).join('');
   document.getElementById('sidebar-nav').innerHTML=renderItems('nav');
   document.getElementById('mobile-nav').innerHTML=renderItems('mnav');
@@ -5307,6 +5318,7 @@ function navIcon(id){
     ventas:'<path d="M3 3v18h18"/><path d="m7 16 4-5 4 3 5-7"/><path d="M17 7h3v3"/>',
     cotizacion:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
     productividad:'<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',
+    'numeros-nuevos':'<path d="M17 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M11 18h2"/><path d="M15 6h3M16.5 4.5v3"/>',
     phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.69 2.78a2 2 0 0 1-.45 2.11L8.09 9.87a16 16 0 0 0 6 6l1.26-1.26a2 2 0 0 1 2.11-.45c.88.33 1.82.56 2.78.69A2 2 0 0 1 22 16.92z"/>',
     wallet:'<rect x="2" y="5" width="20" height="15" rx="3"/><path d="M16 12h6M18 12h.01M6 9h6"/>',
     target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><path d="m15 9 5-5M16 4h4v4"/>',
@@ -5337,6 +5349,7 @@ function showView(id){
   else if(id==='crm-center')renderCRMCentro();
   else if(id==='notificaciones')renderNotificaciones();
   else if(id==='leads')renderLeadsTable();
+  else if(id==='numeros-nuevos')renderNumerosNuevos();
   else if(id==='nuevo-lead')renderLeadForm();
   else if(id==='visitas')renderVisitas();
   else if(id==='ventas')renderVentas();
@@ -5549,7 +5562,9 @@ async function updateLead(id,updates){
 async function refreshAll(){
   await fetchLeads();
   await fetchEditRequests();
+  await fetchNumeros();
   updateUrgentBadge();
+  updateNumerosBadge();
   // Always re-render current view after data loads
   renderCurrentView();
 }
@@ -5558,6 +5573,7 @@ function renderCurrentView(){
   else if(currentView==='crm-center')renderCRMCentro();
   else if(currentView==='notificaciones')renderNotificaciones();
   else if(currentView==='leads')renderLeadsTable();
+  else if(currentView==='numeros-nuevos')renderNumerosNuevos();
   else if(currentView==='visitas')renderVisitas();
   else if(currentView==='ventas')renderVentas();
   else if(currentView==='publicidad')renderPublicidad();
@@ -6322,7 +6338,7 @@ function renderProductividad(){
   }).sort((a,b)=>b.score-a.score);
   const visitsWeek=stats.reduce((s,a)=>s+a.visits,0),wonMonth=stats.reduce((s,a)=>s+a.won,0),responses=scope.map(l=>Number(l.tiempo_respuesta)).filter(n=>n>0),avgTeam=responses.length?Math.round(responses.reduce((a,b)=>a+b,0)/responses.length):0,overdue=scope.filter(l=>l.fecha_proxima_accion&&l.fecha_proxima_accion<td&&!['Cierre ganado','Perdido'].includes(l.estado)).length;
   const maxActive=Math.max(...stats.map(a=>a.active),1),maxWon=Math.max(...stats.map(a=>a.won),1);
-  el.innerHTML=`<div class="page-header prod-page-header"><div><div class="page-eyebrow">INTELIGENCIA COMERCIAL</div><h1 class="page-title">Productividad del equipo</h1><p class="page-subtitle">Rendimiento, seguimiento y cumplimiento de objetivos en tiempo real.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button></div>
+  el.innerHTML=`<div class="page-header prod-page-header"><div><div class="page-eyebrow">INTELIGENCIA COMERCIAL</div><h1 class="page-title">Productividad del equipo</h1><p class="page-subtitle">Rendimiento, seguimiento y cumplimiento de objetivos en tiempo real.</p></div><button class="btn-ghost" onclick="refreshAll()">Actualizar</button>${['jefe_ventas','admin','gerente'].includes(currentUser.role)?'<button class="btn-ghost" onclick="exportMovimientos()">Exportar movimientos</button>':''}</div>
   <div class="prod-kpi-grid">${prodKpi('Visitas esta semana',visitsWeek,'Actividad comercial','visitas')}${prodKpi('Cierres este mes',wonMonth,'Ventas concretadas','ventas')}${prodKpi('Respuesta promedio',avgTeam?avgTeam+' min':'â€”','Objetivo: 15 min','phone')}${prodKpi('Seguimientos vencidos',overdue,'Requieren atenciÃ³n','cotizacion',overdue?'warn':'')}</div>
   <div class="prod-main-grid"><section class="prod-leaderboard"><div class="prod-section-head"><div><b>Ranking comercial</b><span>Índice combinado de contacto, seguimiento, visitas y conversión.</span></div></div><div class="prod-ranking">${stats.map((a,i)=>`<button onclick="prodFilterAdvisor('${attr(a.name)}')"><span class="prod-rank ${i<3?'top':''}">${i+1}</span><span class="prod-person"><b>${esc(a.name)}</b><small>${a.active} oportunidades activas &middot; ${a.won} cierre(s)</small></span><span class="prod-score"><b>${a.score}</b><small>puntos</small></span><span class="prod-score-ring" style="--score:${a.score}"><i>${a.score}%</i></span></button>`).join('')||'<div class="crm-empty">Sin asesores configurados.</div>'}</div></section>
   <section class="prod-goals"><div class="prod-section-head"><div><b>Cumplimiento de metas</b><span>Objetivo mensual sugerido: 5 cierres por asesor.</span></div></div>${stats.map(a=>`<div class="prod-goal-row"><span><b>${esc(a.name)}</b><small>${a.won} de 5 cierres</small></span><div><i style="width:${Math.min(a.won/5*100,100)}%"></i></div><strong>${Math.min(Math.round(a.won/5*100),100)}%</strong></div>`).join('')}</section></div>
@@ -6509,7 +6525,162 @@ function exportCSV(){
 function crmScopedLeads(){return currentUser?.role==='asesor'?allLeads.filter(l=>l.owner_id===currentUser.id||l.asesor===currentUser.name):allLeads;}
 function crmStoreGet(key){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}}
 function crmStoreSet(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch{}}
-function crmAudit(action,target,leadId){if(!currentUser)return;const items=crmStoreGet('vimka_crm_audit');items.unshift({at:new Date().toISOString(),action,target,leadId,user:currentUser.name,role:rolLabel(currentUser.role)});crmStoreSet('vimka_crm_audit',items.slice(0,150));}
+function crmAudit(action,target,leadId){
+  if(!currentUser)return;
+  const items=crmStoreGet('vimka_crm_audit');
+  items.unshift({at:new Date().toISOString(),action,target,leadId,user:currentUser.name,role:rolLabel(currentUser.role)});
+  crmStoreSet('vimka_crm_audit',items.slice(0,150));
+  if(sb){
+    sb.from('movimientos').insert([{usuario:currentUser.name,rol:currentUser.role,accion:action,detalle:target?String(target):null,lead_id:leadId?String(leadId):null}]).then(({error})=>{if(error)console.error('[CRM] movimientos insert:',error.message);});
+  }
+}
+
+// ---------- NUMEROS NUEVOS (primer contacto desde WhatsApp) ----------
+let allNumeros=[];
+async function fetchNumeros(){
+  if(!sb||!currentUser)return;
+  try{
+    const{data,error}=await sb.from('numeros_nuevos').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    allNumeros=data||[];
+  }catch(e){console.error('[CRM] fetchNumeros:',e.message);}
+}
+function updateNumerosBadge(){
+  const pend=allNumeros.filter(n=>n.estado==='Pendiente').length;
+  document.querySelectorAll('[data-numeros-badge]').forEach(b=>{
+    if(pend>0){b.textContent=pend;b.style.display='inline-flex';}else{b.style.display='none';}
+  });
+}
+function normalizePhoneNumero(raw){
+  let d=String(raw||'').replace(/\D/g,'');
+  if(!d)return'';
+  if(d.length===9)d='51'+d;
+  else if(d.length===11&&d.startsWith('0'))d='51'+d.slice(1);
+  return d;
+}
+function openWhatsappNumero(telefono){
+  const n=normalizePhoneNumero(telefono);
+  if(!n){toast('Numero invalido','error');return;}
+  window.open('https://wa.me/'+n,'_blank');
+}
+async function addNumeroNuevo(){
+  const telInput=document.getElementById('nn-telefono');
+  const nombreInput=document.getElementById('nn-nombre');
+  const notaInput=document.getElementById('nn-nota');
+  const telefono=telInput?telInput.value.trim():'';
+  if(!telefono){toast('Ingresa un numero de telefono','error');return;}
+  const btn=document.getElementById('nn-submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
+  try{
+    const row={telefono,nombre:nombreInput&&nombreInput.value.trim()?nombreInput.value.trim():null,nota:notaInput&&notaInput.value.trim()?notaInput.value.trim():null,estado:'Pendiente',registrado_por:currentUser.name};
+    const{data,error}=await sb.from('numeros_nuevos').insert([row]).select();
+    if(error)throw error;
+    allNumeros.unshift(data[0]);
+    crmAudit('Numero nuevo registrado',telefono,null);
+    if(telInput)telInput.value='';
+    if(nombreInput)nombreInput.value='';
+    if(notaInput)notaInput.value='';
+    updateNumerosBadge();
+    renderNumerosNuevos();
+    toast('Numero registrado correctamente');
+  }catch(e){console.error(e);toast('No se pudo registrar: '+e.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Registrar numero';}}
+}
+function triggerEvidenciaUpload(id){
+  const input=document.getElementById('nn-file-input');
+  if(!input)return;
+  input.dataset.targetId=id;
+  input.value='';
+  input.click();
+}
+async function handleEvidenciaFile(input){
+  const id=input.dataset.targetId;
+  const file=input.files&&input.files[0];
+  if(!id||!file)return;
+  if(file.size>8*1024*1024){toast('La imagen debe pesar menos de 8MB','error');return;}
+  const row=document.querySelector('[data-numero-row="'+id+'"]');
+  const btn=row?row.querySelector('[data-evidencia-btn]'):null;
+  if(btn){btn.disabled=true;btn.textContent='Subiendo...';}
+  try{
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+    const path=id+'-'+Date.now()+'.'+ext;
+    const{error:upErr}=await sb.storage.from('evidencias').upload(path,file,{upsert:true});
+    if(upErr)throw upErr;
+    const{data:pub}=sb.storage.from('evidencias').getPublicUrl(path);
+    const updates={estado:'Contactado',evidencia_url:pub.publicUrl,contactado_por:currentUser.name,contactado_en:new Date().toISOString()};
+    const{error}=await sb.from('numeros_nuevos').update(updates).eq('id',id);
+    if(error)throw error;
+    const idx=allNumeros.findIndex(n=>String(n.id)===String(id));
+    if(idx>=0)allNumeros[idx]=Object.assign({},allNumeros[idx],updates);
+    crmAudit('Evidencia de contacto subida',idx>=0?allNumeros[idx].telefono:String(id),null);
+    updateNumerosBadge();
+    renderNumerosNuevos();
+    toast('Evidencia subida, numero marcado como contactado');
+  }catch(e){console.error(e);toast('No se pudo subir la evidencia: '+e.message,'error');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Subir evidencia';}}
+}
+async function deleteNumeroNuevo(id){
+  if(!confirm('Eliminar este numero registrado?'))return;
+  try{
+    const{error}=await sb.from('numeros_nuevos').delete().eq('id',id);
+    if(error)throw error;
+    allNumeros=allNumeros.filter(n=>String(n.id)!==String(id));
+    updateNumerosBadge();
+    renderNumerosNuevos();
+    toast('Numero eliminado');
+  }catch(e){toast('No se pudo eliminar: '+e.message,'error');}
+}
+function renderNumerosNuevos(){
+  const el=document.getElementById('view-numeros-nuevos');if(!el)return;
+  const canManage=isManagerRole();
+  const pendientes=allNumeros.filter(n=>n.estado==='Pendiente').length;
+  el.innerHTML='<div class="page-header"><div><div class="page-eyebrow">Primer contacto</div><h1 class="page-title">Numeros Nuevos</h1><p class="page-subtitle">Registra los numeros que llegan por WhatsApp para hacer el primer contacto y deja evidencia de la conversacion.</p></div></div>'
+    +'<div class="form-card" style="margin-bottom:20px"><div class="form-section-title" style="margin-top:0">Registrar numero</div>'
+    +'<div class="field-row"><div class="field"><label>Telefono</label><input type="tel" id="nn-telefono" placeholder="Ej. 987654321"></div>'
+    +'<div class="field"><label>Nombre (opcional)</label><input type="text" id="nn-nombre" placeholder="Si lo conoces"></div></div>'
+    +'<div class="field"><label>Nota (opcional)</label><input type="text" id="nn-nota" placeholder="Ej. Interesado en Proyecto..."></div>'
+    +'<button class="btn-primary" id="nn-submit-btn" onclick="addNumeroNuevo()">Registrar numero</button></div>'
+    +'<div class="section-card"><div class="section-header"><div class="section-title">Numeros registrados</div><span class="badge '+(pendientes?'badge-red':'badge-green')+'">'+pendientes+' pendiente'+(pendientes===1?'':'s')+'</span></div>'
+    +'<div class="table-wrap"><table class="data-table"><thead><tr><th>Telefono</th><th>Nombre</th><th>Nota</th><th>Registrado por</th><th>Estado</th><th>Evidencia</th><th>Acciones</th></tr></thead><tbody>'
+    +(allNumeros.length?allNumeros.map(function(n){
+      return '<tr data-numero-row="'+n.id+'">'
+        +'<td><button class="btn-ghost sm" onclick="openWhatsappNumero(\''+attr(n.telefono)+'\')" title="Abrir WhatsApp">'+esc(n.telefono)+'</button></td>'
+        +'<td>'+esc(n.nombre||'-')+'</td>'
+        +'<td style="max-width:220px;white-space:normal">'+esc(n.nota||'-')+'</td>'
+        +'<td style="font-size:12px">'+esc(n.registrado_por||'-')+'</td>'
+        +'<td><span class="badge '+(n.estado==='Contactado'?'badge-green':'badge-amber')+'">'+esc(n.estado)+'</span></td>'
+        +'<td>'+(n.evidencia_url?'<a href="'+attr(n.evidencia_url)+'" target="_blank" rel="noopener">Ver imagen</a>':'-')+'</td>'
+        +'<td style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn-ghost sm" data-evidencia-btn onclick="triggerEvidenciaUpload(\''+n.id+'\')">'+(n.evidencia_url?'Reemplazar':'Subir evidencia')+'</button>'
+        +(canManage?'<button class="btn-danger" style="padding:5px 10px;font-size:12px" onclick="deleteNumeroNuevo(\''+n.id+'\')">Eliminar</button>':'')
+        +'</td></tr>';
+    }).join(''):'<tr><td colspan="7"><div class="empty-state"><p>Aun no hay numeros registrados.</p></div></td></tr>')
+    +'</tbody></table></div></div>'
+    +'<input type="file" id="nn-file-input" accept="image/*" style="display:none" onchange="handleEvidenciaFile(this)">';
+}
+async function exportMovimientos(){
+  if(!sb){toast('Sin conexion','error');return;}
+  try{
+    toast('Generando exportacion...');
+    const pageSize=1000;let offset=0;const rows=[];
+    while(true){
+      const{data,error}=await sb.from('movimientos').select('*').order('created_at',{ascending:false}).range(offset,offset+pageSize-1);
+      if(error)throw error;
+      rows.push.apply(rows,data||[]);
+      if(!data||data.length<pageSize)break;
+      offset+=pageSize;
+    }
+    if(!rows.length){toast('No hay movimientos registrados aun','error');return;}
+    const h=['Fecha','Hora','Usuario','Rol','Accion','Detalle'];
+    const body=rows.map(function(m){
+      const d=new Date(m.created_at);
+      return[isNaN(d)?m.created_at:d.toLocaleDateString('es-PE'),isNaN(d)?'':d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}),m.usuario,rolLabel(m.rol)||m.rol,m.accion,m.detalle].map(csvCell);
+    });
+    const csv=[h.join(','),].concat(body.map(function(r){return r.join(',')})).join('\n');
+    const b=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='movimientos_'+today()+'.csv';a.click();
+    toast('Movimientos exportados');
+  }catch(e){console.error(e);toast('No se pudo exportar: '+e.message,'error');}
+}
 function crmQualityIssues(l){const a=[];if(!l.telefono)a.push('Sin telÃ©fono');if(!l.asesor)a.push('Sin asesor');if(!l.fuente)a.push('Sin fuente');if(!l.estado)a.push('Sin estado');if(!l.fecha_proxima_accion&&!['Cierre ganado','Perdido'].includes(l.estado))a.push('Sin seguimiento');if(!l.ciudad)a.push('Sin ciudad');return a;}
 function crmScore(l){return Math.max(20,100-crmQualityIssues(l).length*13-(calcAlerta(l)==='VENCIDO'?12:0));}
 function crmDateLabel(v){if(!v)return'â€”';const d=new Date(v+'T12:00:00');return isNaN(d)?v:d.toLocaleDateString('es-PE',{day:'2-digit',month:'short'});}
