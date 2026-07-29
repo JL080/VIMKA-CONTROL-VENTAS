@@ -6593,15 +6593,45 @@ function triggerEvidenciaUpload(id){
   input.value='';
   input.click();
 }
+function compressImageForUpload(file,maxWidth,quality){
+  return new Promise(function(resolve){
+    if(!file||!/^image\//.test(file.type)){resolve(file);return;}
+    try{
+      const reader=new FileReader();
+      reader.onload=function(e){
+        const img=new Image();
+        img.onload=function(){
+          let w=img.width,h=img.height;
+          if(w>maxWidth){h=Math.round(h*(maxWidth/w));w=maxWidth;}
+          const canvas=document.createElement('canvas');
+          canvas.width=w;canvas.height=h;
+          const ctx=canvas.getContext('2d');
+          ctx.drawImage(img,0,0,w,h);
+          canvas.toBlob(function(blob){
+            if(!blob){resolve(file);return;}
+            const name=(file.name||'evidencia').replace(/\.[^.]+$/,'')+'.jpg';
+            resolve(new File([blob],name,{type:'image/jpeg'}));
+          },'image/jpeg',quality);
+        };
+        img.onerror=function(){resolve(file);};
+        img.src=e.target.result;
+      };
+      reader.onerror=function(){resolve(file);};
+      reader.readAsDataURL(file);
+    }catch(e){resolve(file);}
+  });
+}
 async function handleEvidenciaFile(input){
   const id=input.dataset.targetId;
-  const file=input.files&&input.files[0];
-  if(!id||!file)return;
-  if(file.size>8*1024*1024){toast('La imagen debe pesar menos de 8MB','error');return;}
+  const original=input.files&&input.files[0];
+  if(!id||!original)return;
+  if(original.size>15*1024*1024){toast('La imagen debe pesar menos de 15MB','error');return;}
   const row=document.querySelector('[data-numero-row="'+id+'"]');
   const btn=row?row.querySelector('[data-evidencia-btn]'):null;
-  if(btn){btn.disabled=true;btn.textContent='Subiendo...';}
+  if(btn){btn.disabled=true;btn.textContent='Optimizando...';}
   try{
+    const file=await compressImageForUpload(original,1280,0.72);
+    if(btn)btn.textContent='Subiendo...';
     const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
     const path=id+'-'+Date.now()+'.'+ext;
     const{error:upErr}=await sb.storage.from('evidencias').upload(path,file,{upsert:true});
